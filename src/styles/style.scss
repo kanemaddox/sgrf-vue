@@ -80,6 +80,11 @@ body {
   //background-color: var(--cui-border-color);
   color:white;
 }
+.space{
+  margin-top: -12px;
+  font-size: 12px;
+  color: #6e6e6e;
+}
 .headercolor .btn-close {
   filter: invert(5); /* vuelve blanca la X */
 }
@@ -89,4 +94,16 @@ body {
 .btn-block { 
   display: block; 
   width: 100%; 
+}
+
+.form-control {
+  border:var(--cui-border-width) solid #afb2b8
+}
+
+.dropdown-item:hover{
+  background-color:var(--cui-secondary-bg-subtle)
+}
+
+.form-check-input{
+  border: var(--cui-border-width) solid #6e6e6e
 }

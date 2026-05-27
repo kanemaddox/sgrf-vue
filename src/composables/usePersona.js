@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { updateCelularService } from '@/services/personaService'
+import {getPersonaProfesionUsuarioService} from '@/services/personaProfesionService'
 
 export const usePersona = () => {
     const loadingPersona = ref(false)
@@ -25,7 +26,20 @@ export const usePersona = () => {
             return await updateCelularService(personaResponse)
         }catch(errr){
             errorPersona.value = err
-            throw err
+            throw errr
+        }finally{
+            loadingPersona.value=false
+        }
+    }
+    const getPersonaProfesionUsuarioUse = async (value) => {
+        loadingPersona.value = true
+        errorPersona.value = null
+        try{
+            const {data} = await getPersonaProfesionUsuarioService(value)
+            return data
+        }catch(errr){
+            errorPersona.value = err
+            throw errr
         }finally{
             loadingPersona.value=false
         }
@@ -33,6 +47,7 @@ export const usePersona = () => {
 
     return {
         updateCelularUse,
+        getPersonaProfesionUsuarioUse,
         loadingPersona,
         errorPersona
     }

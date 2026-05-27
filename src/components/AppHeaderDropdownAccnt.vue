@@ -5,13 +5,13 @@
     </CDropdownToggle>
     <CDropdownMenu class="pt-0">
       <CDropdownHeader component="h6" class="bg-body-secondary text-body-secondary fw-semibold my-2">
-        Settings
+        Cuenta
       </CDropdownHeader>
       <CDropdownItem style="cursor: pointer;" @click="profile">
-        <CIcon icon="cil-user"/> Profile
+        <CIcon icon="cil-user"/> Perfil Usuario
       </CDropdownItem>
       <CDropdownItem style="cursor: pointer;">
-        <CIcon icon="cil-settings"/> Settings
+        <CIcon icon="cil-dollar"/> Cuentas Bancarias
       </CDropdownItem>
       <CDropdownDivider />
       <CDropdownItem style="cursor: pointer;" @click="confirmLogout">

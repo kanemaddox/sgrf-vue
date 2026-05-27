@@ -21,47 +21,61 @@
  *
  * @type {Array<Object>}
  */
+
 export default [
   {
     component: 'CNavTitle',
-    name: 'Settings',
+    name: 'Preferencias',
   },
   {
     component: 'CNavItem',
-    name: 'settings',
+    name: 'Mi Cuenta',
     icon: 'cil-settings',
+    key:'mi_cuenta',
     items: [
       {
         component: 'CNavItem',
-        name: 'Profile',
-        to: '/usuarios/profile',
+        name: 'Perfil Usuario',
+        to: '/cuenta/profile',
+        key:'perfil',
+      },
+      {
+        component:'CNavItem',
+        name:'Cuentas Bancarias',
+        to:'/cuenta/cuentabancaria',
+        key:'cuenta_bancaria',
       },
     ],
   },
   {
     component: 'CNavTitle',
-    name: 'Administrador',
+    name: 'Menu',
   },
   {
     component: 'CNavItem',
     name: 'Usuarios',
     icon: 'cil-user-plus',
+    key:'usuarios',
     items: [
       {
         component: 'CNavItem',
         name: 'Lista de Usuarios',
         to: '/usuarios/lista',
+        key:'listar_usuarios',
       },
       {
         component: 'CNavItem',
         name: 'Importar Usuarios',
         to: '/usuarios/importar',
+        key:'importar_usuarios',
       },
+      {
+        component: 'CNavItem',
+        name: 'Registrar Usuario',
+        to: '/usuarios/registrar',
+        key:'registrar_usuarios',
+      }
     ],
-  },
-  {
-    component: 'CNavTitle',
-    name: 'SGRF',
   },
   {
     component: 'CNavItem',
@@ -69,4 +83,56 @@ export default [
     to: '/dashboard',
     icon: 'cil-speedometer',
   },
+  {
+    component: 'CNavItem',
+    name: 'Solicitud de Fondos',
+    icon: 'cil-description',
+    key:'formulario_solicitud',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Menu',
+        to: '/srf/menu',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Crear Solicitud',
+        to: '/srf/crear',
+        key:'crear_solicitud',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Solisitudes Pendientes',
+        to: '/srf/estado/pendiente',
+        key:'listar_solicitud',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Revisar Solicitudes',
+        to: '/srf/autorizar/pendiente',
+        key:'aprobar_solicitud',
+      },
+    ],
+  },
+  {
+    component: 'CNavItem',
+    name: 'Rendicion de Gastos',
+    icon: 'cil-folder',
+    key:'formulario_repocicion',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Crear Rendicion',
+        to: '/usuarios/importar',
+        key:'crear_repocicion',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Rendiciones de Gastos',
+        to: '/usuarios/lista',
+        key:'listar_repocicion',
+      },
+    ],
+  },
+  
 ]

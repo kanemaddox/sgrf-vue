@@ -10,15 +10,3 @@ export const login = (credentials) => {
   }
   return axios.post(usuario_api+'login', request)
 }
-
-/*export const refreshToken = (refreshToken) => {
-  return axios.post(usuario_api+'/auth/refresh', { refreshToken })
-}
-
-export const getMe = () => {
-  return axios.get(usuario_api+'/auth/me')
-}
-
-export const logout = () => {
-  return axios.post(usuario_api+'/auth/logout')
-}*/

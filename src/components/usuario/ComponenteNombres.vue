@@ -8,7 +8,7 @@
     </div>
     <div class="mb-3 row">
         <label for="apellido" class="col-4">Apellidos : </label>
-        <label for="nombre" class="col-8">{{props.datos.apellido}}</label>
+        <label for="nombre" class="col-8">{{props.datos.apellidos}}</label>
     </div>
 </template>
 

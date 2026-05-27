@@ -4,11 +4,17 @@ import { useColorModes } from '@coreui/vue'
 
 import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
 import AppHeaderDropdownAccnt from '@/components/AppHeaderDropdownAccnt.vue'
+import AppHeaderMenu from '@/components/AppHeaderMenu.vue'
 import { useSidebarStore } from '@/stores/sidebar.js'
 
 const headerClassNames = ref('mb-4 p-0')
 const { colorMode, setColorMode } = useColorModes('coreui-free-vue-admin-template-theme')
 const sidebar = useSidebarStore()
+
+import { useAuthStore } from '@/stores/authStores'
+const auth = useAuthStore()
+
+const pernicions = ref(auth.pernicions)
 
 onMounted(() => {
   document.addEventListener('scroll', () => {
@@ -27,31 +33,14 @@ onMounted(() => {
       <CHeaderToggler @click="sidebar.toggleVisible()" style="margin-inline-start: -14px">
         <CIcon icon="cil-menu" size="lg" />
       </CHeaderToggler>
-      <CHeaderNav class="d-none d-md-flex">
-        <CNavItem>
-          <CNavLink href="/dashboard"> Dashboard </CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#">Users</CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#">Settings</CNavLink>
-        </CNavItem>
-      </CHeaderNav>
+
       <CHeaderNav class="ms-auto">
+        <CNavItem v-if="pernicions?.menuAdmin">
+          <AppHeaderMenu />
+        </CNavItem>
         <CNavItem>
           <CNavLink href="#">
             <CIcon icon="cil-bell" size="lg" />
-          </CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#">
-            <CIcon icon="cil-list" size="lg" />
-          </CNavLink>
-        </CNavItem>
-        <CNavItem>
-          <CNavLink href="#">
-            <CIcon icon="cil-envelope-open" size="lg" />
           </CNavLink>
         </CNavItem>
       </CHeaderNav>

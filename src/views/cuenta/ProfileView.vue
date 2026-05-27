@@ -1,11 +1,11 @@
 <template>
     <CRow>
         <!--Datos Personales -->
-        <CCol :xs="6">
+        <CCol :xs="12" :sm="6" :md="5">
             <CCard>
                 <CCardHeader class="headercolor">
                     <h6>
-                        <CIcon icon="cil-description" size="lg" class="me-2" />Datos Personales
+                        <CIcon icon="cil-description" size="lg" class="me-2" />Perfil
                     </h6>
                 </CCardHeader>
                 <CCardBody>
@@ -13,23 +13,17 @@
                         <CWidgetStatsC class="mb-3" :value="persona.idp" :progress="{ color: 'success', value: 100 }"
                             title="Visitors">
                             <template #icon>
-                                <img :src="imagen" class="img-fluid rounded-start" alt="..."><br>
+                                <img :src="imagen" class="img-fluid " alt="..."><br>
                                 <CButton color="dark" @click="clickModalFoto(true)" size="sm" class="mt-2">
                                     <CIcon icon="cil-camera" class="me-1"></CIcon> Actualizar Foto
                                 </CButton>
                             </template>
+
                             <template #title>
                                 {{ persona.nombre }} {{ persona.paterno }} {{ persona.materno }}
-                                <ul>
-                                    <li class="lista">IDP : {{ persona.idp }} </li>
-                                    <li class="lista">Correo : {{ persona.email }}</li>
-                                    <li class="lista">Celular : {{ persona.celular }}</li>
-                                    <li class="lista">Fecha N : {{ persona.fechaNacimiento }}</li>
-                                    <li class="lista" v-if="persona.sexo == 1">Sexo : Femenino</li>
-                                    <li class="lista" v-else>Sexo : Masculino</li>
-                                </ul>
                             </template>
                         </CWidgetStatsC>
+
                     </CCol>
 
                 </CCardBody>
@@ -38,12 +32,12 @@
         <!--End Datos Personales -->
 
         <!--Datos De Usuario -->
-        <CCol :xs="6">
+        <CCol :xs="12" :sm="6" :md="7">
             <br>
             <CCard>
                 <CCardHeader class="headercolor">
                     <h6>
-                        <CIcon icon="cil-at" size="lg" class="me-2" />Datos Empleados
+                        <CIcon icon="cil-user" size="lg" class="me-2" />Datos  del Perfil
                     </h6>
                 </CCardHeader>
                 <CCardBody>
@@ -58,6 +52,13 @@
                         <CNavItem>
                             <CNavLink :active="tab == 2" @click="clickTab(2)"
                                 class="d-flex align-items-center gap-2 px-3 py-2 rounded" style="cursor: pointer;">
+                                <CIcon icon="cil-clipboard"></CIcon>
+                                <span class="d-none d-md-inline">Archivo</span>
+                            </CNavLink>
+                        </CNavItem>
+                        <CNavItem>
+                            <CNavLink :active="tab == 3" @click="clickTab(3)"
+                                class="d-flex align-items-center gap-2 px-3 py-2 rounded" style="cursor: pointer;">
                                 <CIcon icon="cil-pencil"></CIcon>
                                 <span class="d-none d-md-inline">Actualizar</span>
                             </CNavLink>
@@ -66,28 +67,35 @@
                     <CTabContent>
                         <CTabPane :visible="tab == 1">
                             <br>
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">ID app</CInputGroupText>
-                                <CFormInput type="text" :value="idUsuario" disabled />
-                            </CInputGroup>
-
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">IDP</CInputGroupText>
-                                <CFormInput type="text" :value="persona.idp" disabled />
-                            </CInputGroup>
-
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Email</CInputGroupText>
-                                <CFormInput type="text" :value="persona.email" disabled />
-                            </CInputGroup>
-
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Celular</CInputGroupText>
-                                <CFormInput type="text" :value="persona.celular" disabled />
-                            </CInputGroup>
+                            <ComponenteDatos :persona="persona" />
                         </CTabPane>
 
                         <CTabPane :visible="tab == 2">
+                            <br>
+                            <CInputGroup size="sm" class="mb-3">
+                                <CInputGroupText as="label">Profesion</CInputGroupText>
+                                <CFormInput type="text" :value="perfil?.profesionNombre" disabled />
+                            </CInputGroup>
+
+                            <CInputGroup size="sm" class="mb-3">
+                                <CInputGroupText as="label">Cargo</CInputGroupText>
+                                <CFormInput type="text" :value="perfil?.cargoNombre" disabled />
+                            </CInputGroup>
+
+                            <CWidgetStatsB class="mb-3" :progress="{ color: 'success', value: 100 }">
+                                <template #value>{{ perfil?.prefijoSucursal }}</template>
+                                <template #title>{{perfil?.nombreArea}}</template>
+                                <template #text>
+                                    <ul>
+                                        <li>{{perfil?.codigoSucursal}} | {{ perfil?.nombreSucursal }}</li>
+                                        <li>{{perfil?.codigoCentroCostos}} | {{ perfil?.nombreCentroCostos }}</li>
+                                        <li>Inmediato Superior : {{ perfil?.idpJefe }}</li>
+                                    </ul>
+                                </template>
+                            </CWidgetStatsB>
+                        </CTabPane>
+
+                        <CTabPane :visible="tab == 3">
                             <br>
                             <CInputGroup size="sm" class="mb-3">
                                 <CInputGroupText as="label">ID Usuario</CInputGroupText>
@@ -125,7 +133,6 @@
             </CCard>
         </CCol>
         <!--Datos De Usuario -->
-
     </CRow>
 
     <!-- Modal  Actualizar Celular-->
@@ -134,7 +141,7 @@
             <CModalHeader class="headercolor" dismiss @close="clickModalCelular(false)">
                 <CModalTitle>
                     <h6>
-                        <CIcon icon="cil-at" size="lg" class="me-2" />Actualizar Numero de Celular
+                        <CIcon icon="cil-pencil" size="lg" class="me-2" />Actualizar Numero de Celular
                     </h6>
                 </CModalTitle>
             </CModalHeader>
@@ -166,7 +173,7 @@
             <CModalHeader class="headercolor" dismiss @close="clickModalPass(false)">
                 <CModalTitle>
                     <h6>
-                        <CIcon icon="cil-at" size="lg" class="me-2" />Actualizar Contraseña
+                        <CIcon icon="cil-pencil" size="lg" class="me-2" />Actualizar Contraseña
                     </h6>
                 </CModalTitle>
             </CModalHeader>
@@ -234,7 +241,7 @@
                     <CFormInput type="file" ref="fileInput" id="filedoc" accept="image/png,image/jpeg"
                         @change="selectFile" :valid="fileValid" :disabled="uploading" required />
                     <CInputGroupText v-if="fileValid">
-                        <CIcon icon="cil-check" class="text-success" />
+                        <CIcon icon="cil-check-alt" class="text-success" />
                     </CInputGroupText>
                 </CInputGroup>
 
@@ -279,33 +286,40 @@
 <script setup>
 
 /**Imports de librerias  y Propos*/
-import { nextTick, ref, reactive, computed } from 'vue'
+import { nextTick, ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
+const router = useRouter()
+
 import { useAuthStore } from '@/stores/authStores'
+const auth = useAuthStore()
+
 import { uploadProfile } from '@/services/uploadService'
+
+/**Importaciones de Componentes */
 import ComponenteNombres from '@/components/usuario/ComponenteNombres.vue'
-import { CRow } from '@coreui/vue';
+import ComponenteDatos from '@/components/usuario/ComponenteDatos.vue'
+
+import { CRow } from '@coreui/vue'
+
 import { useAuth } from '@/composables/useAuth'
 const { logout } = useAuth()
 
 import { useUsuario } from '@/composables/useUsuario'
-const { updateUsuarioImagenUse, updatePassUse, loading, errorUse } = useUsuario()
+const { updateUsuarioImagenUse, updatePassUse, getDatosUse, loading, errorUse } = useUsuario()
 
 import { usePersona } from '@/composables/usePersona'
-const { updateCelularUse,loadingPersona,errorPersona } = usePersona()
+const { updateCelularUse, loadingPersona, errorPersona } = usePersona()
 
-import { API_URL_IMG200, API_URL_IMG800 } from "@/env"
+import { API_URL_IMG100, API_URL_IMG200, API_URL_IMG800 } from "@/env"
 const img200 = API_URL_IMG200
 const img800 = API_URL_IMG800
-
+const img100 = API_URL_IMG100
 import { useAlert } from '@/composables/useAlert'
 const { confirm, success, error } = useAlert()
 
-
-
 /** Declaraciones de VAriables reactibas */
-const router = useRouter()
-const auth = useAuthStore()
+
+const perfil = ref(null)
 const tab = ref(1)
 
 const archivo = ref(null)
@@ -316,9 +330,12 @@ const fileValid = ref(false)
 
 const nombre = ref(auth.nombre)
 const idUsuario = ref(auth.idUsuario)
-var nombre200 = "/public/usuario.png"
+
+var nombre100 = "/public/usuario.png"
+var nombre200 = nombre100
 var nombre800 = nombre200
-if (auth.imagen != "usuario.png"){
+if (auth.imagen != "usuario.png") {
+    nombre100 = img100 + auth.imagen
     nombre200 = img200 + auth.imagen
     nombre800 = img800 + auth.imagen
 }
@@ -404,12 +421,12 @@ const uploadFile = () => {
             if (resultAlert.isConfirmed) {
                 const resultService = await updateUsuarioImagenUse(idUsuario.value, data)
                 if (resultService.status == 200) {
-                    await success('La Foto de Perfil fue guardado correctamente')
+                    await success('Operación Exitosa !!!','La Foto de Perfil fue guardado correctamente')
                     localStorage.setItem('imagen', data)
                     location.reload()
                 }
                 else {
-                    await error('No se pudo guardar la Foto de Perfil')
+                    await error('Error !!!!!','No se pudo guardar la Foto de Perfil','')
                 }
             }
             else {
@@ -443,7 +460,7 @@ const updateCelular = async () => {
                 persona.celular = celularAnt
             }
         } catch (err) {
-            await error('Error al Actualizar los datos intente mas tarde '+err)
+            await error('Error al Actualizar los datos intente mas tarde ' + err)
             persona.celular = celularAnt
         }
     }
@@ -454,13 +471,13 @@ const updateCelular = async () => {
 }
 const updatePass = async () => {
     clickModalPass(false)
-    const resultAlert = await confirm('Desea Actualizar la Contrasena ?')
+    const resultAlert = await confirm('Esta Seguro ???','Desea Actualizar la Contrasena ?')
     if (resultAlert.isConfirmed) {
         pass.id = idUsuario.value
         try {
             const resultService = await updatePassUse(pass)
             if (resultService == true) {
-                await success('Constrasena Actualizada Correctamente, Ingrese nuevamente con sus nuevas credenciales')
+                await success('Operación exitosa!!!!','Constrasena Actualizada Correctamente, Ingrese nuevamente con sus nuevas credenciales')
                 logout()
             }
             else {
@@ -471,8 +488,21 @@ const updatePass = async () => {
         }
     }
     else {
-        await error('Datos Cancelados')
+        await error('Datos Cancelados','','')
     }
 }
+const getDatos = async () => {
+    try {
+        perfil.value = await getDatosUse(persona.id)
+        console.log(perfil.value)
+    } catch (errr) {
+        console.log("==================="+errr)
+
+    }
+}
+
+onMounted(() => {
+    getDatos()
+})
 
 </script>

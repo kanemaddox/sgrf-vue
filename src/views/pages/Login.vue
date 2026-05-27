@@ -23,8 +23,8 @@
                       autocomplete="current-password" />
                   </CInputGroup>
                   <!-- ERROR -->
-                  <p v-if="error" class="text-danger text-center">
-                    {{ error }}
+                  <p v-if="errors" class="text-danger text-center">
+                    {{ errors }}
                   </p>
 
                   <CRow class="text-center">
@@ -66,28 +66,41 @@
 <script setup>
 import { ref } from 'vue'
 import { reactive } from 'vue'
+
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
-
-
 const router = useRouter()
+
+import { useAuth } from '@/composables/useAuth'
 const { login, loading } = useAuth()
 
-const error = ref(null) 
+import { useAlert } from '@/composables/useAlert'
+const { error } = useAlert()
+
+
+const errors = ref(null)
 
 const loginRequest = reactive({
-  username:'',
-  password:''
+  username: '',
+  password: ''
 })
 
 const onSubmit = async () => {
-  error.value = null // limpiar error previo
-  const ok = await login(loginRequest)
-
-  if (ok) {
+  errors.value = null // limpiar error previo
+  const resultLogin = await login(loginRequest)
+  if (resultLogin.user != 0) {
     router.push({ name: 'Dashboard' })
   } else {
-    error.value = 'Usuario o contraseña incorrectos'
+    errors.value = 'Usuario o contraseña incorrectos'
+    if (resultLogin.nombre != "El Usuario NO Existe") {
+      if (resultLogin.intentos < 3)
+        await error('Error!!!', 'Los datos Ingresados son Incorrectos, verifique e intente Nuevamente, o comuníquese con el administrador.', '<a href="#">Porque pasa esto?</a>')
+      else
+        await error('Demasiados intentos!!!!', 'Comuníquese con el administrador.', '<a href="#">Porque pasa esto?</a>')
+    }
+    else 
+      await error(resultLogin.nombre+'!!!!', 'Comuníquese con el administrador.', '<a href="#">Porque pasa esto?</a>')
+
+    location.reload()
   }
 }
 </script>
