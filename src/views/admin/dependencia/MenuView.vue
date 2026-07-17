@@ -11,7 +11,7 @@
                 </CCardHeader>
                 <CCardBody class="text-center">
                     <i class="bi bi-person-workspace" style="font-size: 5rem;"></i>
-                    <p>Categoria de Jefes</p>
+                    <p>Administrar Categoria de Jefes</p>
                 </CCardBody>
                 <CCardFooter class="text-center">
                     <CButton color="secondary" variant="outline" size="sm" @click="getJefes">
@@ -26,38 +26,39 @@
             <CCard>
                 <CCardHeader class="headercolor text-center">
                     <div class="align-items-center">
-                        <i class="bi bi-buildings me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Areas</label>
+                        <i class="bi bi-building-check me-2"></i>
+                        <label class="mb-0 fs-6 text-white">Centro Costos</label>
                     </div>
                 </CCardHeader>
                 <CCardBody class="text-center">
-                    <i class="bi bi-buildings" style="font-size: 5rem;"></i>
-                    <p>Areas de Trabajo</p>
+                    <i class="bi bi-building-check" style="font-size: 5rem;"></i>
+                    <p>Administrar Centros de Costo</p>
                 </CCardBody>
                 <CCardFooter class="text-center">
                     <CButton color="secondary" variant="outline" size="sm" @click="getAreas">
-                        <i class="bi bi-buildings"></i> Ingresar
+                        <i class="bi bi-building-check"></i> Ingresar
                     </CButton>
                 </CCardFooter>
             </CCard>
         </CCol>
+
 
         <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.sucursales && admin">
             <br />
             <CCard>
                 <CCardHeader class="headercolor text-center">
                     <div class="align-items-center">
-                        <i class="bi bi-house-door me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Sucursales</label>
+                        <i class="bi bi-person-vcard me-2"></i>
+                        <label class="mb-0 fs-6 text-white">Cuentas de Gastos</label>
                     </div>
                 </CCardHeader>
                 <CCardBody class="text-center">
-                    <i class="bi bi-house-door" style="font-size: 5rem;"></i>
-                    <p>Sucursales de Trabajo</p>
+                    <i class="bi bi-person-vcard" style="font-size: 5rem;"></i>
+                    <p>Adminsitrar Cuentas de Gastos</p>
                 </CCardBody>
                 <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getSucursales">
-                        <i class="bi bi-house-door"></i> Ingresar
+                    <CButton color="secondary" variant="outline" size="sm" @click="getGastos">
+                        <i class="bi bi-person-vcard"></i> Ingresar
                     </CButton>
                 </CCardFooter>
             </CCard>
@@ -89,10 +90,14 @@ const getJefes = () => {
     router.push({ name: 'Lista de Jefes' })
 }
 const getAreas = () => {
-    router.push({ name: 'Lista de Areas' })
+    router.push({ name: 'AREA' })
 }
 const getSucursales = () => {
     router.push({ name: 'Lista de Sucursales' })
+}
+
+const getGastos = () => {
+    router.push({ name: 'GASTOS' })
 }
 
 </script>

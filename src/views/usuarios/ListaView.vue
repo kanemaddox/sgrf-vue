@@ -148,7 +148,7 @@ const findAllResponse = async (value) => {
 }
 const getPerfil = (value) => {
   router.push({
-    name: 'Perfil de Usuario',
+    name: 'PerfilUsuario',
     params: { idUsuario: value }
   })
 }

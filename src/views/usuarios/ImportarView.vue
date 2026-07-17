@@ -35,19 +35,21 @@
                 <CCardBody>
                     <div class="table-responsive">
                         <CTable hover responsive>
-                            <CTableHead>
+                            <CTableHead color="dark">
                                 <CTableRow>
                                     <CTableHeaderCell>#</CTableHeaderCell>
-                                    <CTableHeaderCell>IDP</CTableHeaderCell>
+                                    <CTableHeaderCell>{{ idpName }}</CTableHeaderCell>
                                     <CTableHeaderCell>Datos Personales</CTableHeaderCell>
                                     <CTableHeaderCell>Area</CTableHeaderCell>
                                     <CTableHeaderCell>Datos Bancarios</CTableHeaderCell>
+                                    <CTableHeaderCell>Autorizador</CTableHeaderCell>
                                     <CTableHeaderCell>Responsable</CTableHeaderCell>
                                     <CTableHeaderCell>Estado</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
-                                <CTableRow v-for="(item, index) in usuarios" :key="index" :color="item.estado?'success':'warning'">
+                                <CTableRow v-for="(item, index) in usuarios" :key="index"
+                                    :color="item.estado ? 'success' : 'warning'">
                                     <CTableDataCell>{{ index + 1 }}</CTableDataCell>
                                     <CTableDataCell>{{ item.idp }}</CTableDataCell>
                                     <CTableDataCell>
@@ -64,10 +66,12 @@
 
                                     </CTableDataCell>
                                     <CTableDataCell>
-                                        {{ item.nombreArea }}
+                                        {{ item.nombreCentroCostos }}
                                         <div class="small text-body-secondary text-nowrap">
-                                            <span> {{ item.nombreSucursal }} | {{ item.codigoSucursal }}</span><br>
-                                            <span> {{ item.nombreCentroCostos }} | {{ item.codigoCentroCostos }}</span>
+                                            <span> {{ item.nombreCentroCostos }} | {{ item.codigoCentroCostos
+                                                }}</span><br>
+                                            <span> {{ item.nombreSubCentroCostos }} | {{ item.codigoSubCentroCostos
+                                                }}</span>
                                         </div>
                                     </CTableDataCell>
 
@@ -79,9 +83,17 @@
                                         </div>
                                     </CTableDataCell>
                                     <CTableDataCell>
+                                        {{ item.nombreCAutorizador }}
                                         <div class="small text-body-secondary text-nowrap">
-                                            <strong>{{ item.jefe }}</strong><br>
-                                            <span>{{ item.idpJefe }}</span>
+                                            <strong>{{ item.codigoCAutorizador }}</strong><br>
+                                            <span>{{ item.idpJefe }} | {{ item.jefe }}</span>
+                                        </div>
+                                    </CTableDataCell>
+                                    <CTableDataCell>
+                                        <div class="small text-body-secondary text-nowrap">
+                                            {{ item.nombreCPago }}<br>
+                                            <strong>{{ item.codigoCPago }}</strong><br>
+                                            <span>{{ item.idpPago }} | {{ item.pago }}</span>
                                         </div>
                                     </CTableDataCell>
                                     <CTableDataCell>{{ item.estado }}</CTableDataCell>
@@ -108,7 +120,7 @@
             <CModalBody>
                 <!-- INPUT -->
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Archivo</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">Archivo</CInputGroupText>
                     <CFormInput type="file" ref="fileInput" id="filedoc" accept=".xls,.xlsx" @change="selectFile"
                         :valid="fileValid" :disabled="uploading" required />
                     <CInputGroupText v-if="fileValid">
@@ -132,7 +144,8 @@
                             <CIcon icon="cil-x-circle" size="3xl" />
                         </CCol>
                         <CCol :xs="10">
-                            <p>No sepudo cargar todo el archivo, verifique el correo electronico de los registros afectados</p>
+                            <p>No sepudo cargar todo el archivo, verifique el correo electronico de los registros
+                                afectados</p>
                             <hr />
                             {{ errorMsg }}
                         </CCol>
@@ -214,7 +227,8 @@
                             <CIcon icon="cil-x-circle" size="3xl" />
                         </CCol>
                         <CCol :xs="10">
-                            <p>No sepudo cargar todo el archivo, verifique el correo electronico de los registros afectados.</p>
+                            <p>No sepudo cargar todo el archivo, verifique el correo electronico de los registros
+                                afectados.</p>
                             <hr />
                             {{ errorMsg }}
                         </CCol>
@@ -273,6 +287,10 @@ const { success, confirm, error } = useAlert()
 
 import { useUsuario } from '@/composables/useUsuario'
 const { addDatosUse, setEstadoUse, getEmpleadosFileUse, loading, errorUse } = useUsuario()
+
+import { useAuthStore } from '@/stores/authStores'
+const auth = useAuthStore()
+const idpName = ref(auth.idpName)
 
 /**VAriables para el Archivo */
 const archivo = ref(null)
@@ -345,19 +363,33 @@ const uploadTable = () => {
             nombre: fila[1],
             paterno: fila[2] || '',
             materno: fila[3] || '',
-            email: fila[11],
             profesion: fila[4] || 'Ninguno',
             cargoNombre: fila[5] || 'Ninguno',
-            numero: fila[14] || 'Ninguno',
-            tipoCuenta: fila[12] || 'Ninguno',
-            bancoNombre: fila[13] || 'Ninguno',
-            codigoSucursal: fila[6] || 'Ninguno',
-            nombreSucursal: fila[7] || 'Ninguno',
-            codigoCentroCostos: fila[8] || 'Ninguno',
-            nombreCentroCostos: fila[9] || 'Ninguno',
-            nombreArea: fila[15] || 'Ninguno',
+            emailCor: fila[6] || 'Ninguno',
+            email: fila[7],
+            //datos para el banco
+            bancoNombre: fila[8] || 'Ninguno',
+            numero: fila[9] || 'Ninguno',
+            tipoCuenta: fila[10] || 'Ninguno',
+
+            //Centros de Costo
+            codigoCentroCostos: fila[11] || 'Ninguno',
+            nombreCentroCostos: fila[12] || 'Ninguno',
+            codigoSubCentroCostos: fila[13] || 'Ninguno',
+            nombreSubCentroCostos: fila[14] || 'Ninguno',
+
+            // Autorizadores
+            codigoCAutorizador: fila[15] || 'Ninguno',
+            nombreCAutorizador: fila[16] || 'Ninguno',
             idpJefe: fila[17] || '',
-            jefe: fila[16],
+            jefe: fila[18],
+
+            // Responsable de pago
+            codigoCPago: fila[21] || 'Ninguno',
+            nombreCPago: fila[22] || 'Ninguno',
+            idpPago: fila[23] || 'Ninguno',
+            pago: fila[24] || 'Ninguno',
+
             estado: true,
             tipo: false
         }
@@ -383,9 +415,8 @@ const uploadDatos = async () => {
         errorMsg.value = null
         let procesados = 0
         let errores = 0
-        const listaCarga = [...usuarios.value]; 
+        const listaCarga = [...usuarios.value];
         const result = await setEstadoUse(false)
-        
         if (result == 200) {
             for (const value of listaCarga) {
                 try {
@@ -393,11 +424,10 @@ const uploadDatos = async () => {
                     if (resultService.status !== 201) {
                         errores++
                     }
-                    usuarios.value=usuarios.value.filter(item => item.idp !== value.idp)
+                    usuarios.value = usuarios.value.filter(item => item.idp !== value.idp)
                 } catch (err) {
                     errores++
                     value.estado = false
-                    console.log(value)
                 }
                 procesados++
                 uploadProgress.value = Math.round((procesados / registros.value) * 100)

@@ -13,8 +13,11 @@ export const useAuthStore = defineStore('auth', {
     pass: localStorage.getItem('pass') || null,
     idUsuario: localStorage.getItem('idUsuario') || null,
     persona: JSON.parse(localStorage.getItem('persona')) || null,
-    pernicions : JSON.parse(localStorage.getItem('pernicions')) || null,
+    pernicions: JSON.parse(localStorage.getItem('pernicions')) || null,
     rol: localStorage.getItem('rol') || null,
+    srfCantidad: localStorage.getItem('srfCantidad') || null,
+    rdgCantidad: localStorage.getItem('rdgCantidad') || null,
+    idpName: localStorage.getItem('idpName') || null,
     loading: false,
   }),
 
@@ -36,6 +39,9 @@ export const useAuthStore = defineStore('auth', {
           this.persona = data.persona
           this.pernicions = data.pernicions
           this.rol = data.rol
+          this.idpName = data.idpName
+          this.srfCantidad = data.srf
+          this.rdgCantidad = data.rdg 
 
           localStorage.setItem('token', data.token)
           localStorage.setItem('imagen', data.imagen)
@@ -43,8 +49,11 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('nombre', data.nombre)
           localStorage.setItem('idUsuario', data.idUsuario)
           localStorage.setItem('persona', JSON.stringify(data.persona))
-          localStorage.setItem('pernicions',JSON.stringify(data.pernicions))
-          localStorage.setItem('rol',data.rol)
+          localStorage.setItem('pernicions', JSON.stringify(data.pernicions))
+          localStorage.setItem('rol', data.rol)
+          localStorage.setItem('idpName', data.idpName)
+          localStorage.setItem('srfCantidad',data.srf)
+          localStorage.setItem('rdgCantidad',data.rdg)
           //await this.fetchUser()
           this.user = {
             user: data.user,
@@ -82,6 +91,10 @@ export const useAuthStore = defineStore('auth', {
       this.persona = null
       this.pernicions = null
       this.rol = null
+      this.idpName = null
+      this.srfCantidad = null
+      this.rdgCantidad = null
+
       localStorage.removeItem('token')
       localStorage.removeItem('persona')
       localStorage.removeItem('imagen')
@@ -90,6 +103,9 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('idUsuario')
       localStorage.removeItem('pernicions')
       localStorage.removeItem('rol')
+      localStorage.removeItem('idpName')
+      localStorage.removeItem('srfCantidad')
+      localStorage.removeItem('rdgCantidad')
       router.replace({ name: 'Login' })
     },
 

@@ -66,11 +66,11 @@
                 </CCardHeader>
                 <CListGroup flush>
                     <CListGroupItem class="text-center">
-                        <i class="bi bi-folder-fill text-warning" style="font-size: 2rem;"></i> 
+                        <i class="bi bi-folder-fill text-warning" style="font-size: 2rem;"></i>
                     </CListGroupItem>
                     <CListGroupItem class="d-grid gap-2">
                         <CButton color="secondary" variant="outline" size="sm" @click="getSolicitudes('pendiente')">
-                            <i class="bi bi-exclamation-triangle"></i> Pendientes
+                            <i class="bi bi-exclamation-triangle"></i> Pendientes <CBadge color="danger">{{ srfCantidad }}</CBadge>
                         </CButton>
                     </CListGroupItem>
                     <CListGroupItem class="d-grid gap-2">
@@ -87,8 +87,8 @@
                 </CListGroup>
                 <CCardFooter class="text-center">
                     <CButton color="secondary" variant="outline" size="sm" @click="getSolicitudes('rechazado')">
-                            <i class="bi bi-folder-fill "></i> Ingresar
-                        </CButton>
+                        <i class="bi bi-folder-fill "></i> Ingresar
+                    </CButton>
                 </CCardFooter>
             </CCard>
         </CCol>
@@ -112,6 +112,7 @@ const router = useRouter()
 const pernicions = ref(auth.pernicions)
 const rol = ref(auth.rol)
 const admin = ref(rol.value === 'ADMIN' ? true : false)
+const srfCantidad = ref(auth.srfCantidad)
 
 
 const getFondos = () => {
@@ -126,10 +127,10 @@ const getSolicitudes = (value) => {
 }
 
 const getRevisar = (value) => {
-    router.push({ 
+    router.push({
         name: 'SolicitudSRF',
-        params:{solicitud:value}
-     })
+        params: { solicitud: value }
+    })
 }
 
 /**Funciones */

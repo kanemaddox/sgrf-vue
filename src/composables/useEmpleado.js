@@ -6,6 +6,7 @@ import { getEmpleadoCargoUsuarioService } from '@/services/empleadoCargoService'
 export const useEmpleado = () =>{
     const loadingEmpleado = ref(false)
     const errorEmpleado = ref(null)
+    const listaCargos = ref([])
 
     const getPersonaUse = async (value) =>{
         loadingEmpleado.value = true
@@ -37,8 +38,18 @@ export const useEmpleado = () =>{
     const getEmpleadoCargoUsuarioUse = async (value) =>{
         loadingEmpleado.value = true
         errorEmpleado.value = null
+        listaCargos.value = []
         try{
             const {data} = await getEmpleadoCargoUsuarioService(value)
+            listaCargos.value = data.map(item => ({
+                id: item.id,
+                cargo: item.cargo,
+                estado: item.estado,
+                idpJefe: item.idpJefe,
+                jefe: item.jefe,
+                del: item.fechaCreacion,
+                al: item.fechaActualizacion
+            }))
             return data
         }catch(errr){
             errorEmpleado.value = errr
@@ -52,6 +63,7 @@ export const useEmpleado = () =>{
         getPersonaUse,
         findByTipoUse,
         getEmpleadoCargoUsuarioUse,
+        listaCargos,
         loadingEmpleado,
         errorEmpleado
     }

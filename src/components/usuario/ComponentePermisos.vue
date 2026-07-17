@@ -118,7 +118,6 @@ watch(() => props.userPernicions,
         if (newValue) {
             user.value.id = newValue.id
             user.value.rol = newValue.rol
-            console.log(user.value.rol)
 
             user.value.pernicions = {
                 mi_cuenta: newValue.pernicions?.mi_cuenta || false,

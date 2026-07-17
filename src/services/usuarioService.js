@@ -35,6 +35,11 @@ export const addDatosService = (datosRequest) => {
 export const getDatosService = (value) => {
   return axiosService.get(sgrf + 'datos/getDatos', { params: { idPersona: value } })
 }
+
+export const getPerfilService = (value) => {
+  return axiosService.get(sgrf + 'datos/getPerfil', { params: { idPersona: value } })
+}
+
 export const getDatosUsuarioService = (value) => {
   return axiosService.get(sgrf + 'datos/getDatosUsuario', { params: { idUsuario: value } })
 }

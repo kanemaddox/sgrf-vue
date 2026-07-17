@@ -5,7 +5,7 @@
             <CCard>
                 <CCardHeader class="headercolor">
                     <h6>
-                        <CIcon icon="cil-description" size="lg" class="me-2" />Perfil
+                        <CIcon icon="cil-user" size="lg" class="me-2" />Perfil
                     </h6>
                 </CCardHeader>
                 <CCardBody>
@@ -20,7 +20,7 @@
                             </template>
 
                             <template #title>
-                                {{ persona.nombre }} {{ persona.paterno }} {{ persona.materno }}
+                                {{perfilCuenta.nombre}}
                             </template>
                         </CWidgetStatsC>
 
@@ -37,98 +37,92 @@
             <CCard>
                 <CCardHeader class="headercolor">
                     <h6>
-                        <CIcon icon="cil-user" size="lg" class="me-2" />Datos  del Perfil
+                        <CIcon icon="cil-user" size="lg" class="me-2" />Datos del Perfil
                     </h6>
                 </CCardHeader>
                 <CCardBody>
-                    <CNav variant="tabs" class="nav nav-tabs">
-                        <CNavItem>
-                            <CNavLink :active="tab == 1" @click="clickTab(1)"
-                                class="d-flex align-items-center gap-2 px-3 py-2 rounded" style="cursor: pointer;">
+                    <CTabs :activeItemKey="1">
+                        <CTabList variant="tabs" layout="justified">
+                            <CTab class="d-flex align-items-center gap-2 px-3 " :itemKey="1">
                                 <CIcon icon="cil-user"></CIcon>
                                 <span class="d-none d-md-inline">Datos</span>
-                            </CNavLink>
-                        </CNavItem>
-                        <CNavItem>
-                            <CNavLink :active="tab == 2" @click="clickTab(2)"
-                                class="d-flex align-items-center gap-2 px-3 py-2 rounded" style="cursor: pointer;">
+                            </CTab>
+                            <CTab class="d-flex align-items-center gap-2 px-3 " :itemKey="2">
                                 <CIcon icon="cil-clipboard"></CIcon>
                                 <span class="d-none d-md-inline">Archivo</span>
-                            </CNavLink>
-                        </CNavItem>
-                        <CNavItem>
-                            <CNavLink :active="tab == 3" @click="clickTab(3)"
-                                class="d-flex align-items-center gap-2 px-3 py-2 rounded" style="cursor: pointer;">
+                            </CTab>
+                            <CTab class="d-flex align-items-center gap-2 px-3 " :itemKey="3">
                                 <CIcon icon="cil-pencil"></CIcon>
                                 <span class="d-none d-md-inline">Actualizar</span>
-                            </CNavLink>
-                        </CNavItem>
-                    </CNav>
-                    <CTabContent>
-                        <CTabPane :visible="tab == 1">
-                            <br>
-                            <ComponenteDatos :persona="persona" />
-                        </CTabPane>
+                            </CTab>
+                        </CTabList>
+                        <CTabContent>
+                            <CTabPanel class="p-3" :itemKey="1">
+                                <br>
+                                <ComponenteDatos :persona="persona" :idpName="idpName" />
+                            </CTabPanel>
+                            <CTabPanel class="p-3" :itemKey="2">
+                                <br>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">Profesion : </CInputGroupText>
+                                    <CFormInput type="text" :value="perfilCuenta.profesion" disabled />
+                                </CInputGroup>
 
-                        <CTabPane :visible="tab == 2">
-                            <br>
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Profesion</CInputGroupText>
-                                <CFormInput type="text" :value="perfil?.profesionNombre" disabled />
-                            </CInputGroup>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">Cargo : </CInputGroupText>
+                                    <CFormInput type="text" :value="perfilCuenta.cargo" disabled />
+                                </CInputGroup>
 
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Cargo</CInputGroupText>
-                                <CFormInput type="text" :value="perfil?.cargoNombre" disabled />
-                            </CInputGroup>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText class="headercolor" as="label">Email Corporativo :
+                                    </CInputGroupText>
+                                    <CFormInput type="text" :value="perfilCuenta.corporativo" disabled />
+                                </CInputGroup>
 
-                            <CWidgetStatsB class="mb-3" :progress="{ color: 'success', value: 100 }">
-                                <template #value>{{ perfil?.prefijoSucursal }}</template>
-                                <template #title>{{perfil?.nombreArea}}</template>
-                                <template #text>
-                                    <ul>
-                                        <li>{{perfil?.codigoSucursal}} | {{ perfil?.nombreSucursal }}</li>
-                                        <li>{{perfil?.codigoCentroCostos}} | {{ perfil?.nombreCentroCostos }}</li>
-                                        <li>Inmediato Superior : {{ perfil?.idpJefe }}</li>
-                                    </ul>
-                                </template>
-                            </CWidgetStatsB>
-                        </CTabPane>
+                                <CWidgetStatsB class="mb-3" :progress="{ color: 'success', value: 100 }">
+                                    <template #value>{{ perfilCuenta.centroCostos }}</template>
+                                    <template #title>{{ perfilCuenta.subCentroCostos }} | {{ perfilCuenta.codigo }}</template>
+                                    <template #text>
+                                        {{ perfilCuenta.idpJefe }} | {{ perfilCuenta.jefe }}
+                                    </template>
+                                </CWidgetStatsB>
+                            </CTabPanel>
 
-                        <CTabPane :visible="tab == 3">
-                            <br>
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">ID Usuario</CInputGroupText>
-                                <CFormInput type="text" :value="idUsuario" disabled />
-                            </CInputGroup>
+                            <CTabPanel class="p-3" :itemKey="3">
+                                <br>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">ID Usuario :</CInputGroupText>
+                                    <CFormInput type="text" :value="idUsuario" disabled />
+                                </CInputGroup>
 
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">IPD.</CInputGroupText>
-                                <CFormInput type="text" :value="persona.idp" disabled />
-                            </CInputGroup>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">{{ idpName }} : </CInputGroupText>
+                                    <CFormInput type="text" :value="perfilCuenta.idp" disabled />
+                                </CInputGroup>
 
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Email</CInputGroupText>
-                                <CFormInput type="text" :value="persona.email" disabled />
-                            </CInputGroup>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">Email : </CInputGroupText>
+                                    <CFormInput type="text" :value="perfilCuenta.email" disabled />
+                                </CInputGroup>
 
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Celular</CInputGroupText>
-                                <CFormInput type="text" :value="persona.celular" disabled />
-                                <CButton type="button" color="success" class="font" size="sm"
-                                    @click="clickModalCelular(true)">
-                                    Actualizar</CButton>
-                            </CInputGroup>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">Celular : </CInputGroupText>
+                                    <CFormInput type="text" :value="perfilCuenta.celular" disabled />
+                                    <CButton type="button" color="success" class="font" size="sm"
+                                        @click="clickModalCelular(true)">
+                                        Actualizar</CButton>
+                                </CInputGroup>
 
-                            <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText as="label">Password</CInputGroupText>
-                                <CFormInput type="text" value="***************" disabled />
-                                <CButton type="button" color="success" class="font" size="sm"
-                                    @click="clickModalPass(true)">
-                                    Actualizar Contraseña</CButton>
-                            </CInputGroup>
-                        </CTabPane>
-                    </CTabContent>
+                                <CInputGroup size="sm" class="mb-3">
+                                    <CInputGroupText as="label" class="headercolor">Password : </CInputGroupText>
+                                    <CFormInput type="text" value="***************" disabled />
+                                    <CButton type="button" color="success" class="font" size="sm"
+                                        @click="clickModalPass(true)">
+                                        Actualizar Contraseña</CButton>
+                                </CInputGroup>
+                            </CTabPanel>
+                        </CTabContent>
+                    </CTabs>
                 </CCardBody>
             </CCard>
         </CCol>
@@ -149,7 +143,7 @@
                 <ComponenteNombres :datos="datos" />
                 <br>
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Nuevo Numero de Celular</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">Nuevo Numero de Celular : </CInputGroupText>
                     <CFormInput type="text" v-model="persona.celular" required />
                 </CInputGroup>
             </CModalBody>
@@ -182,17 +176,17 @@
                 <br>
 
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Contraseña Actual</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">Contraseña Actual : </CInputGroupText>
                     <CFormInput type="password" v-model="pass.pass1" />
                 </CInputGroup>
 
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Nueva Contraseña</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">Nueva Contraseña : </CInputGroupText>
                     <CFormInput type="password" v-model="pass.pass2" />
                 </CInputGroup>
 
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Confirmar Nueva Contraseña</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">Confirmar Nueva Contraseña : </CInputGroupText>
                     <CFormInput type="password" v-model="pass.pass3" />
                 </CInputGroup>
 
@@ -237,7 +231,7 @@
             <CModalBody>
                 <!-- INPUT -->
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Foto de Perfil</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor" for="filedoc">Foto de Perfil : </CInputGroupText>
                     <CFormInput type="file" ref="fileInput" id="filedoc" accept="image/png,image/jpeg"
                         @change="selectFile" :valid="fileValid" :disabled="uploading" required />
                     <CInputGroupText v-if="fileValid">
@@ -282,7 +276,6 @@
 
 </template>
 
-
 <script setup>
 
 /**Imports de librerias  y Propos*/
@@ -305,7 +298,7 @@ import { useAuth } from '@/composables/useAuth'
 const { logout } = useAuth()
 
 import { useUsuario } from '@/composables/useUsuario'
-const { updateUsuarioImagenUse, updatePassUse, getDatosUse, loading, errorUse } = useUsuario()
+const { perfilCuenta, updateUsuarioImagenUse, updatePassUse, getPerfilUse, loading, errorUse } = useUsuario()
 
 import { usePersona } from '@/composables/usePersona'
 const { updateCelularUse, loadingPersona, errorPersona } = usePersona()
@@ -320,7 +313,6 @@ const { confirm, success, error } = useAlert()
 /** Declaraciones de VAriables reactibas */
 
 const perfil = ref(null)
-const tab = ref(1)
 
 const archivo = ref(null)
 const uploadProgress = ref(0)
@@ -344,12 +336,14 @@ const nuevafoto = ref(nombre800)
 
 const persona = auth.persona
 const celularAnt = persona.celular
+const idpName = ref(auth.idpName)
 
 /**Declaracion de objetos */
 const datos = {
     idp: persona.idp,
     nombre: persona.nombre,
-    apellidos: persona.paterno + " " + persona.materno
+    apellidos: persona.paterno + " " + persona.materno,
+    idpName: idpName.value
 }
 
 const pass = reactive({
@@ -359,16 +353,13 @@ const pass = reactive({
     pass3: ''
 })
 
-
 /**Variables para Modales */
 const modalCelular = ref(false)
 const modalPass = ref(false)
 const modalFoto = ref(false)
 
+
 /** Funciones  */
-const clickTab = (value) => {
-    tab.value = value
-}
 
 const clickModalCelular = (value) => {
     modalCelular.value = value
@@ -393,7 +384,6 @@ const botones = computed(() => {
 const selectFile = (e) => {
     const file = e.target.files[0]
     if (!file) return
-
     archivo.value = file
     fileValid.value = true
     nuevafoto.value = URL.createObjectURL(file)
@@ -415,30 +405,17 @@ const uploadFile = () => {
 
         onSuccess: async (data) => {
             clickModalFoto(false)
-            const resultAlert = await confirm('Desea Subir su foto de perfil ?')
             nuevafoto.value = img800 + data
-
-            if (resultAlert.isConfirmed) {
-                const resultService = await updateUsuarioImagenUse(idUsuario.value, data)
-                if (resultService.status == 200) {
-                    await success('Operación Exitosa !!!','La Foto de Perfil fue guardado correctamente')
-                    localStorage.setItem('imagen', data)
-                    location.reload()
-                }
-                else {
-                    await error('Error !!!!!','No se pudo guardar la Foto de Perfil','')
-                }
+            const resultService = await updateUsuarioImagenUse(idUsuario.value, data)
+            if (resultService) {
+                localStorage.setItem('imagen', data)
+                location.reload()
             }
-            else {
-                await error('Datos Cancelados')
-            }
-
         },
 
         onError: async (err) => {
             errorMsg.value = 'Error al subir archivo'
             await error(errorMsg.value)
-
         }
     })
         .finally(() => {
@@ -447,62 +424,25 @@ const uploadFile = () => {
 }
 const updateCelular = async () => {
     clickModalCelular(false)
-    const resultAlert = await confirm('Desea Actualizar el numero de Celular ?')
-    if (resultAlert.isConfirmed) {
-        try {
-            const resultService = await updateCelularUse(persona)
-            if (resultService.status == 200) {
-                await success('Numero de Celular Actualizado Correctamente')
-                localStorage.setItem('persona', JSON.stringify(persona))
-            }
-            else {
-                await error('No se pudo Actualizar el nuevo Numero de celular, intente nuevamente')
-                persona.celular = celularAnt
-            }
-        } catch (err) {
-            await error('Error al Actualizar los datos intente mas tarde ' + err)
-            persona.celular = celularAnt
-        }
+    const resultService = await updateCelularUse(persona)
+    if (resultService) {
+        location.reload()
     }
     else {
-        await error('Datos Cancelados')
         persona.celular = celularAnt
     }
 }
 const updatePass = async () => {
     clickModalPass(false)
-    const resultAlert = await confirm('Esta Seguro ???','Desea Actualizar la Contrasena ?')
-    if (resultAlert.isConfirmed) {
-        pass.id = idUsuario.value
-        try {
-            const resultService = await updatePassUse(pass)
-            if (resultService == true) {
-                await success('Operación exitosa!!!!','Constrasena Actualizada Correctamente, Ingrese nuevamente con sus nuevas credenciales')
-                logout()
-            }
-            else {
-                await error('la contrasena actual no coincide con el enviado, verifique e intente nuevamente')
-            }
-        } catch (err) {
-            await error('Datos Cancelados' + err)
-        }
-    }
-    else {
-        await error('Datos Cancelados','','')
-    }
-}
-const getDatos = async () => {
-    try {
-        perfil.value = await getDatosUse(persona.id)
-        console.log(perfil.value)
-    } catch (errr) {
-        console.log("==================="+errr)
-
+    pass.id = idUsuario.value
+    const resultService = await updatePassUse(pass)
+    if (resultService) {
+        logout()
     }
 }
 
-onMounted(() => {
-    getDatos()
+onMounted(async () => {
+    await getPerfilUse(persona.id)
 })
 
 </script>

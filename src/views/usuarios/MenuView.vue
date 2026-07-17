@@ -71,7 +71,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const getUsuariosView = () => {
-    router.push({ name: 'Lista de Usuarios' })
+    router.push({ name: 'ListaUsuarios' })
 }
 const getUsuariosImport = () => {
     router.push({ name: 'Importar Usuarios' })

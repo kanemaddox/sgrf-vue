@@ -19,14 +19,13 @@
         <CCardBody>
           <CRow>
             <CCol :xs="7" :sm="8" :md="7" :lg="7">
-              <h5><strong>{{ formato?.value.titulo }}</strong></h5>
+              <h5><strong>{{ srf.formato?.titulo }}</strong></h5>
             </CCol>
             <CCol :xs="5" :sm="4" :md="5" :lg="5" class="text-end">
               <CRow>
                 <CButtonGroup role="group" size="sm">
                   <CButton v-if="updateApr.estado !== 'APROBADO'" color="success" variant="outline"
-                    @click="AprobarSolicitud()"
-                    v-c-tooltip="{ content: 'Aprobar Solicitud ' + srf.numero, placement: 'top' }">
+                    @click="AprobarSolicitud()" v-c-tooltip="{ content: 'Aprobar Solicitud ', placement: 'top' }">
                     <i class="bi bi-hand-thumbs-up d-inline-block"></i> <span
                       class="small d-none d-md-inline">Aprobar</span>
                   </CButton>
@@ -54,37 +53,17 @@
           </CRow>
           <div>
             <CAlert color="success" :style="vars">Fecha de solicitud: {{ srf.fechaInicio }}</CAlert>
-            <CAlert color="secondary" :style="vars">I. {{ formato?.value.seccionUno }}</CAlert>
+            <CAlert color="secondary" :style="vars">I. {{ srf.formato?.seccionUno }}</CAlert>
+
+            <ComponenteDatos :datos="datos" />
+
+            <CAlert color="secondary" :style="vars">II. {{ srf.formato?.seccionDos }}</CAlert>
 
             <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor d-none d-md-inline" as="label">Nombre Completo
-              </CInputGroupText>
-              <CFormInput type="text" :value="srf.nombre" disabled />
-              <CInputGroupText class="headercolor" as="label">IDP</CInputGroupText>
-              <CFormInput type="text" :value="srf.idp" disabled />
-            </CInputGroup>
-
-            <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor" as="label">Cargo</CInputGroupText>
-              <CFormInput type="text" :value="srf.cargo" disabled />
-            </CInputGroup>
-
-            <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor d-none d-md-inline" as="label">Centro de Costos
-              </CInputGroupText>
-              <CFormInput type="text" :value="srf.costo" disabled />
-              <CInputGroupText class="headercolor" as="label">CC</CInputGroupText>
-              <CFormInput type="text" :value="srf.codigo" disabled />
-            </CInputGroup>
-
-
-            <CAlert color="secondary" :style="vars">II. {{ formato?.value.seccionDos }}</CAlert>
-
-            <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor d-none d-md-inline" as="label">{{ formato.value.fecha }}
+              <CInputGroupText class="headercolor d-none d-md-inline" as="label">{{ srf.formato?.fecha }} :
               </CInputGroupText>
               <CFormInput type="text" :value="srf.fechaFin" disabled />
-              <CInputGroupText class="headercolor" as="label">{{ formato.value.monto }}
+              <CInputGroupText class="headercolor" as="label">{{ srf.formato?.monto }} :
               </CInputGroupText>
               <CFormInput type="text" :value="srf.monto" disabled />
             </CInputGroup>
@@ -93,27 +72,27 @@
             </CAlert>
 
             <hr>
-            <div v-if="formato.value.estadoDos">
-              <CAlert color="warning">{{ formato.value.cuidado }}</CAlert>
+            <div v-if="srf.formato?.trueEstadoDos">
+
               <CInputGroup size="sm" class="mb-3">
-                <CInputGroupText class="headercolor" as="label">{{ formato.value.detalleDos }}
+                <CInputGroupText class="headercolor" as="label">{{ srf.formato?.detalleDos }} :
                 </CInputGroupText>
                 <CFormInput type="text" :value="srf.texto" disabled />
 
-                <CInputGroupText class="headercolor" as="label">{{ formato.value.cantidadDos }}
+                <CInputGroupText class="headercolor" as="label">{{ srf.formato?.cantidadDos }} :
                 </CInputGroupText>
                 <CFormInput type="text" :value="srf.numerico" disabled />
               </CInputGroup>
             </div>
 
-            <div v-if="formato.value.estadoTres">
+            <div v-if="srf.formato?.estadoTres">
               <CAccordion>
                 <CAccordionItem>
                   <CAccordionHeader>
-                    III. {{ formato?.value.seccionTres }}
+                    III. {{ srf.formato?.seccionTres }}
                   </CAccordionHeader>
                   <CAccordionBody>
-                    <CAlert>{{ formato?.value.detalle }}</CAlert>
+                    <CAlert>{{ srf.formato?.detalle }}</CAlert>
                   </CAccordionBody>
                 </CAccordionItem>
               </CAccordion>
@@ -169,7 +148,7 @@
   </COffcanvas>
   <!--End Canvas Lista de Aprobadores-->
 
-  <!-- Modal  Observaciones-->
+  <!-- Modal  Rechazar-->
   <CModal :visible="modalRechazar" backdrop="static" @close="clickModalRechazar(false)">
     <CForm @submit.prevent="RechazarSolicitud">
       <CModalHeader class="headercolor" dismiss @close="clickModalRechazar(false)">
@@ -212,7 +191,7 @@
               <CInputGroupText>
                 <CFormCheck type="radio" value="otros" name="obs" id="flex10" v-model="motivoSeleccionado" required />
               </CInputGroupText>
-              <CFormInput type="text" v-model="updateApr.obs" placeholder="Otros motivos de Rechazo"
+              <CFormInput type="text" v-model="observacion" placeholder="Otros motivos de Rechazo"
                 :disabled="motivoSeleccionado !== 'otros'" />
             </CInputGroup>
           </CRow>
@@ -230,7 +209,7 @@
       </CModalFooter>
     </CForm>
   </CModal>
-  <!-- End Modal Observaciones-->
+  <!-- End Modal Rechazar-->
 
   <!-- Modal  Devolver-->
   <CModal :visible="modalDevolver" backdrop="static" @close="clickModalDevolver(false)">
@@ -249,9 +228,9 @@
         <CContainer>
           <CRow>
             <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor" as="label">Motivo
+              <CInputGroupText class="headercolor" as="label">Motivo :
               </CInputGroupText>
-              <CFormInput type="text" v-model="updateApr.obs" placeholder="Motivo de Devolucion" required/>
+              <CFormInput type="text" v-model="observacion" placeholder="Motivo de Devolucion" required />
             </CInputGroup>
           </CRow>
         </CContainer>
@@ -285,7 +264,7 @@ const solicitud = defineProps({
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import { ref, reactive, computed, onMounted } from 'vue'
-
+import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
 import { useFunction } from '@/composables/useFunction'
 const { getColor, getIcono } = useFunction()
 
@@ -296,30 +275,6 @@ import { useAlert } from '@/composables/useAlert'
 import { CContainer, CModal } from '@coreui/vue'
 const { confirm, error, success } = useAlert()
 
-import { useSettings } from '@/composables/useSettings'
-const { getSettingsUse } = useSettings()
-const formato = reactive({
-  id: null,
-  categoria: '',
-  nombre: '',
-  value: {
-    titulo: "",
-    seccionUno: "",
-    seccionDos: "",
-    fecha: "",
-    monto: "",
-    descripcion: "",
-    estadoDos: false,
-    cuidado: "",
-    detalleDos: "",
-    cantidadDos: "",
-    seccionTres: "",
-    detalle: "",
-    estadoTres: false,
-  },
-  fecha: '',
-})
-
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
 import { useUsuario } from '@/composables/useUsuario'
@@ -328,31 +283,13 @@ const { getDatosUse } = useUsuario()
 const persona = auth.persona
 const idUsuario = ref(auth.idUsuario)
 const perfil = ref(null)
+const idpName = ref(auth.idpName)
 
 import { useAprobacion } from '@/composables/useAprobacion'
 import router from '../../../router'
-const { updateAprobacionUse, getAprUse } = useAprobacion()
 
-const srf = reactive({
-  id: null,
-  numero: '',
-  gestion: '',
-  fechaInicio: '',
-  fechaFin: '',
-  monto: 0,
-  moneda: '',
-  detalle: '',
-  numerico: 0,
-  texto: '',
-  tipo: '',
-  estado: false,
-  nombre: '',
-  idp: '',
-  cargo: '',
-  codigo: '',
-  costo: '',
-  lista: []
-})
+const { updateAprobacionUse, getAprUse, srf } = useAprobacion()
+
 const updateApr = reactive({
   idApr: null,
   destino: 0,
@@ -363,39 +300,25 @@ const updateApr = reactive({
   obs: ''
 })
 
+const datos = reactive({
+  nombre: '',
+  idp: '',
+  idpName: '',
+  cargo: '',
+  centroCostos: '',
+  codigo: ''
+})
+
 const canvaApr = ref(false)
 const modalRechazar = ref(false)
 const modalDevolver = ref(false)
 const color = ref('danger')
 const icon = ref('')
 const motivoSeleccionado = ref('ninguna')
+const observacion = ref('')
 
 const getFoto = (value) => {
   return value === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + value
-}
-
-const getFormato = async () => {
-  try {
-    const formulario = await getSettingsUse(2)
-    formato.nombre = formulario.nombre
-    formato.categoria = formulario.categoria
-    formato.value.titulo = formulario.value.titulo
-    formato.value.seccionUno = formulario.value.seccionUno
-    formato.value.seccionDos = formulario.value.seccionDos
-    formato.value.fecha = formulario.value.fecha
-    formato.value.monto = formulario.value.monto
-    formato.value.descripcion = formulario.value.descripcion
-    formato.value.estadoDos = formulario.value.estadoDos
-    formato.value.cuidado = formulario.value.cuidado
-    formato.value.detalleDos = formulario.value.detalleDos
-    formato.value.cantidadDos = formulario.value.cantidadDos
-    formato.value.seccionTres = formulario.value.seccionTres
-    formato.value.detalle = formulario.value.detalle
-    formato.value.estadoTres = formulario.value.estadoTres
-    formato.fecha = formulario.fechaActualizacion
-  } catch (errr) {
-    console.log(errr)
-  }
 }
 
 const clickModalSrf = (value) => {
@@ -413,127 +336,88 @@ const clickModalDevolver = (value) => {
   modalDevolver.value = value
 }
 
-const getApr = async (value) => {
-  try {
-    const aprResult = await getAprUse(idUsuario.value, value)
-    srf.id = aprResult.srf.id
-    srf.numero = aprResult.srf.numero
-    srf.gestion = aprResult.srf.gestion
-    srf.fechaInicio = aprResult.srf.fechaSolicitud
-    srf.fechaFin = aprResult.srf.fechaEstimada.split('T')[0]
-    srf.monto = aprResult.srf.monto + ' ' + aprResult.srf.moneda
-    srf.moneda = aprResult.srf.moneda
-    srf.detalle = aprResult.srf.detalle
-    srf.numerico = aprResult.srf.campoNumerico
-    srf.texto = aprResult.srf.campoTexto
-    srf.tipo = aprResult.srf.tipo
-    srf.estado = aprResult.srf.estado
-    srf.lista = aprResult.srf.autorizador
-    srf.nombre = aprResult.srf.empleado.persona.nombre + ' ' + aprResult.srf.empleado.persona.paterno + ' ' + aprResult.srf.empleado.persona.materno
-    srf.idp = aprResult.srf.empleado.persona.idp
-    srf.cargo = aprResult.srf.cargo
-    srf.costo = aprResult.srf.centrocosto
-    srf.codigo = aprResult.srf.codigo
-    updateApr.idApr = aprResult.id
-    updateApr.destino = aprResult.destino
-    updateApr.estado = aprResult.estado
-    updateApr.idSrf = aprResult.srf.id
-    updateApr.idPersona = idUsuario.value
-    color.value = getColor(aprResult.estado)
-    icon.value = getIcono(aprResult.estado)
-  } catch (errr) {
-    console.log(errr)
-  }
-
-}
-
 const AprobarSolicitud = async () => {
-  const detail = 'Solicitud No. ' + srf.numero + ', por ' + srf.monto + ', Solicitado por ' + srf.nombre
-  const resultAlert = await confirm('Aprobar Solicitud', detail, '')
-  if (resultAlert.isConfirmed) {
-    try {
-      updateApr.estado = 'APROBADO'
-      updateApr.obs = 'Ninguno'
-      const resultService = await updateAprobacionUse(updateApr)
-      if (resultService.status == 200) {
-        await success('Well Done!', 'Solicitud Aprobada y enviada a ', '', '')
-        location.reload()
-      }
-      else {
-        await error('Error!', 'Datos Incorrectos verifique e intente nuevamente', '')
-      }
-    } catch (errr) {
-      await error('Error!', 'Servicio no Disponible', errr)
-    }
+  getTool()
+  updateApr.estado = 'APROBADO'
+  const ob = updateApr.obs === 'PENDIENTE' ? 'Ninguno' : (updateApr.obs + ' | Ninguno')
+  updateApr.obs = ob
+  const sms = "Solictud Aprobada Correctamente"
+  const resultService = await updateAprobacionUse(updateApr, srf.numero, srf.monto, srf.nombre, sms,'Aprobar Solicitud ?')
+  if (resultService) {
+    router.push({
+      name: 'SolicitudSRF',
+      params: { solicitud: 'pendiente' }
+    })
+  } else {
+    getLoadData()
   }
-  else {
-    await error('Aprobacion Cancelada', detail, '')
-  }
+
 }
 
 const RechazarSolicitud = async () => {
   clickModalRechazar(false)
-  const detail = 'Solicitud No. ' + srf.numero + ', por ' + srf.monto + ', Solicitado por ' + srf.nombre
-  const resultAlert = await confirm('Rechazar Solicitud', detail, '')
-  if (resultAlert.isConfirmed) {
-    try {
-      updateApr.estado = 'RECHAZADO'
-      updateApr.obs = motivoSeleccionado.value === 'otros' ? updateApr.obs : motivoSeleccionado.value
-      const resultService = await updateAprobacionUse(updateApr)
-      if (resultService.status == 200) {
-        await success('Well Done!', 'Solicitud Rechazada correctamente ', '', '')
-        location.reload()
-      }
-      else {
-        await error('Error!', 'Datos Incorrectos verifique e intente nuevamente', '')
-      }
-    } catch (errr) {
-      await error('Error!', 'Servicio no Disponible', errr)
-    }
-  }
-  else {
-    await error('Rechazo Cancelado', detail, '')
+  updateApr.estado = 'RECHAZADO'
+  updateApr.obs = motivoSeleccionado.value === 'otros' ? observacion.value : motivoSeleccionado.value
+  const sms = "Solictud Rechazada Correctamente"
+  const resultService = await updateAprobacionUse(updateApr, srf.numero, srf.monto, srf.nombre, sms)
+  if (resultService) {
+    router.push({
+      name: 'SolicitudSRF',
+      params: { solicitud: 'pendiente' }
+    })
+  } else {
+    getLoadData()
   }
 }
 
 const DevolverSolicitud = async () => {
   clickModalDevolver(false)
-  const detail = 'Solicitud No. ' + srf.numero + ', por ' + srf.monto + ', Solicitado por ' + srf.nombre
-  const resultAlert = await confirm('Devolver Solicitud', detail, '')
-  if (resultAlert.isConfirmed) {
-    try {
-      updateApr.estado = 'DEVUELTO'
-      const resultService = await updateAprobacionUse(updateApr)
-      if (resultService.status == 200) {
-        const result = await success('Well Done!', 'Solicitud Devuelta Correctamente ', '', '')
-        if (result.isConfirmed) {
-          router.push({
-            name: 'SolicitudSRF',
-            params: { solicitud: 'pendiente' }
-          })
-        }
-      }
-      else {
-        await error('Error!', 'Datos Incorrectos verifique e intente nuevamente', '')
-      }
-    } catch (errr) {
-      await error('Error!', 'Servicio no Disponible', errr)
-    }
-  }
-  else {
-    await error('Rechazo Cancelado', detail, '')
+  updateApr.estado = 'DEVUELTO'
+  updateApr.obs = observacion.value
+  const sms = "Solictud Devuelta Correctamente"
+  const resultService = await updateAprobacionUse(updateApr, srf.numero, srf.monto, srf.nombre, sms)
+  if (resultService) {
+    router.push({
+      name: 'SolicitudSRF',
+      params: { solicitud: 'pendiente' }
+    })
+  } else {
+    getLoadData()
   }
 }
 
+// para personalizacion de los Alerts
 const vars = {
   '--cui-alert-padding-y': '2px',
   '--cui-alert-border-radius': '0px'
 }
 
-onMounted(() => {
-  const tooltips = document.querySelectorAll('.tooltip');
-  tooltips.forEach(tooltip => tooltip.remove());
-  getFormato()
-  getApr(solicitud.idSrf)
+const getLoadData = () => {
+  updateApr.idApr = srf.idApr
+  updateApr.destino = srf.destino
+  updateApr.estado = srf.estado
+  updateApr.idSrf = srf.id
+  updateApr.idPersona = idUsuario.value
+  updateApr.obs = srf.obs
+  color.value = getColor(srf.estado)
+  icon.value = getIcono(srf.estado)
+
+  datos.nombre = srf.nombre
+  datos.idpName = idpName
+  datos.idp = srf.idp
+  datos.cargo = srf.cargo
+  datos.centroCostos = srf.centrocosto
+  datos.codigo = srf.codigo
+}
+const getTool = () => {
+  const tooltips = document.querySelectorAll('.tooltip')
+  tooltips.forEach(tooltip => tooltip.remove())
+}
+
+onMounted(async () => {
+  getTool()
+  await getAprUse(idUsuario.value, solicitud.idSrf)
+  getLoadData()
 })
+
 </script>

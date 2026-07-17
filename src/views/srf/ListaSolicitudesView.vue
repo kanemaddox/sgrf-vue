@@ -42,17 +42,15 @@
 
               <template #column-acciones="{ cellData }">
                 <CButtonGroup role="group" size="sm">
-                  <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
+                  <CButton color="secondary" variant="outline" @click="getSrf(cellData.id)"
                     v-c-tooltip="{ content: 'Detalle de la Solicitud', placement: 'top' }">
                     <i class="bi bi-clipboard me-2"></i>
                   </CButton>
 
-                  <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
-                    v-c-tooltip="{ content: 'Ver Perfil Usuario', placement: 'top' }">
-                    <i class="bi bi-person me-2"></i>
+                  <CButton v-if="cellData.estado==='APROBADO'" color="secondary" variant="outline" @click="getSrf(cellData.id)"
+                    v-c-tooltip="{ content: 'Crear Rendicion de Fondos', placement: 'top' }">
+                    <i class="bi bi-cash-coin me-2"></i>
                   </CButton>
-
-                  
 
                   <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
                     v-c-tooltip="{ content: 'Rendiciones de Gastos', placement: 'top' }">
@@ -147,7 +145,10 @@ const getSrfUsuarioEstado = async (value) => {
         estado: item.estado,
         //lista: item.aprobadores,
       },
-      acciones: item.id,
+      acciones: {
+        id:item.id,
+        estado:item.estado
+      }
     }))
     /*console.log(listaPendiente.value)*/
   } catch (errr) {

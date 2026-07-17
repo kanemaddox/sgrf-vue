@@ -102,6 +102,12 @@ import {
   cilLoopCircular,
   cilListHighPriority,
   cilSend,
+  cilAddressBook,
+  cilMobile,
+  cibWhatsapp,
+  cilShortText,
+  cilWallet,
+  cilPlus,
 } from '@coreui/icons'
 
 export const iconsSet = Object.assign(
@@ -183,6 +189,12 @@ export const iconsSet = Object.assign(
     cilLoopCircular,
     cilListHighPriority,
     cilSend,
+    cilAddressBook,
+    cilMobile,
+    cibWhatsapp,
+    cilShortText,
+    cilWallet,
+    cilPlus,
   },
   {
     cifUs,

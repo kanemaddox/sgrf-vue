@@ -1,63 +1,60 @@
 <template>
-    <CContainer>
-        <CRow>
-            <CCol :xs="1" class="align-self-start">
-            </CCol>
-            <CCol :xs="10" class="align-self-center">
-                <CForm @submit.prevent="createSrf">
-                    <CCard>
-                        <CCardHeader class="headercolor justify-content-between align-items-center">
-                            <div class="align-items-center">
-                                <CIcon icon="cil-description" size="lg" class="me-2 text-light" />
-                                <label class="mb-0 fs-6 text-white">{{ formato?.value.titulo }}</label>
-                            </div>
-                        </CCardHeader>
-                        <CCardBody>
-                            <CAlert color="success">Fecha de solicitud: {{ fecha }}</CAlert>
-                            <CAccordion>
-                                <CAccordionItem :item-key="1">
-                                    <CAccordionHeader :style="vars">
-                                        I. {{ formato?.value.seccionUno }}
-                                    </CAccordionHeader>
-                                    <CAccordionBody>
-                                        <CInputGroup size="sm" class="mb-3">
-                                            <CInputGroupText class="headercolor" as="label">Nombre Completo
-                                            </CInputGroupText>
-                                            <CFormInput type="text"
-                                                :value="`${persona.nombre} ${persona?.paterno} ${persona?.materno}`"
-                                                disabled />
-                                            <CInputGroupText class="headercolor" as="label">IDP</CInputGroupText>
-                                            <CFormInput type="text" :value="persona.idp" disabled />
-                                        </CInputGroup>
 
-                                        <CInputGroup size="sm" class="mb-3">
-                                            <CInputGroupText class="headercolor" as="label">Cargo</CInputGroupText>
-                                            <CFormInput type="text" :value="perfil?.cargoNombre" disabled />
-                                        </CInputGroup>
+    <CRow>
+        <CCol :xs="0" :sm="0" :md="1" :lg="1" class="align-self-start">
+        </CCol>
+        <CCol :xs="12" :sm="12" :md="10" :lg="10" class="align-self-center">
+            <CForm @submit.prevent="createSrf">
+                <CCard>
+                    <CCardHeader class="headercolor justify-content-between align-items-center">
+                        <div class="align-items-center">
+                            <CIcon icon="cil-description" size="lg" class="me-2 text-light" />
+                            <label class="mb-0 fs-6 text-white">{{ formatoSRF.value?.titulo }}</label>
+                        </div>
+                    </CCardHeader>
+                    <CCardBody>
+                        <CAlert color="success">Fecha de solicitud: {{ fecha }}</CAlert>
+                        <CAccordion>
+                            <CAccordionItem :item-key="1">
+                                <CAccordionHeader :style="vars">
+                                    I. {{ formatoSRF.value?.seccionUno }}
+                                </CAccordionHeader>
+                                <CAccordionBody>
 
-                                        <CInputGroup size="sm" class="mb-3">
-                                            <CInputGroupText class="headercolor" as="label">Centro de Costos
-                                            </CInputGroupText>
-                                            <CFormInput type="text"
-                                                :value="perfil?.nombreCentroCostos === 'NINGUNO' ? perfil?.nombreSucursal : perfil?.nombreCentroCostos"
-                                                disabled />
-                                            <CInputGroupText class="headercolor" as="label">CC</CInputGroupText>
-                                            <CFormInput type="text"
-                                                :value="perfil?.codigoCentroCostos === 'NINGUNO' ? perfil?.codigoSucursal : perfil?.codigoCentroCostos"
-                                                disabled />
-                                        </CInputGroup>
-                                    </CAccordionBody>
-                                </CAccordionItem>
-                            </CAccordion>
-                            <br>
-                            <CAlert color="secondary">II. {{ formato?.value.seccionDos }}</CAlert>
+                                    <ComponenteDatos :datos="datos" />
 
+                                </CAccordionBody>
+                            </CAccordionItem>
+                        </CAccordion>
+                        <br>
+                        <CAlert color="secondary">II. {{ formatoSRF.value?.seccionDos }}</CAlert>
+
+                        <CInputGroup size="sm" class="mb-3 d-none d-md-flex">
+                            <CInputGroupText class="headercolor" as="label">{{ formatoSRF.value?.fecha }} :
+                            </CInputGroupText>
+                            <CFormInput type="date" v-model="fechaSeleccionada" :min="hoy" @change="validarFecha"
+                                @keydown="bloquearTeclado" required />
+                            <CInputGroupText class="headercolor" as="label">{{ formatoSRF.value?.monto }} :
+                            </CInputGroupText>
+                            <CFormInput type="text" v-model="srf.monto" required />
+                            <CFormSelect v-model="srf.moneda" required>
+                                <option value="">Moneda</option>
+                                <option value="USD">Dollar</option>
+                                <option value="PESOS">Pesos</option>
+                                <option value="EUR">Euros</option>
+                            </CFormSelect>
+                        </CInputGroup>
+
+                        <div class="d-md-none mb-3">
                             <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText class="headercolor" as="label">{{ formato.value.fecha }}
+                                <CInputGroupText class="headercolor" as="label">{{ formatoSRF.value?.fecha }} :
                                 </CInputGroupText>
                                 <CFormInput type="date" v-model="fechaSeleccionada" :min="hoy" @change="validarFecha"
                                     @keydown="bloquearTeclado" required />
-                                <CInputGroupText class="headercolor" as="label">{{ formato.value.monto }}
+                            </CInputGroup>
+
+                            <CInputGroup size="sm" class="mb-3">
+                                <CInputGroupText class="headercolor" as="label">{{ formatoSRF.value?.monto }} :
                                 </CInputGroupText>
                                 <CFormInput type="text" v-model="srf.monto" required />
                                 <CFormSelect v-model="srf.moneda" required>
@@ -67,70 +64,105 @@
                                     <option value="EUR">Euros</option>
                                 </CFormSelect>
                             </CInputGroup>
+                        </div>
 
-                            <CFormTextarea :label="formato.value.descripcion" v-model="srf.detalle" rows="3" text="100."
-                                maxlength="100" required>
-                            </CFormTextarea>
-                            <hr>
-                            <div v-if="formato.value.estadoDos">
-                                <CAlert color="warning">{{ formato.value.cuidado }}</CAlert>
-                                <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText class="headercolor" as="label">{{ formato.value.detalleDos }}
-                                    </CInputGroupText>
-                                    <CFormInput type="text" v-model="srf.texto" />
-
-                                    <CInputGroupText class="headercolor" as="label">{{ formato.value.cantidadDos }}
-                                    </CInputGroupText>
-                                    <CFormInput type="text" v-model="srf.numerico" />
+                        <CFormTextarea :label="formatoSRF.value?.descripcion" v-model="srf.detalle" rows="3"
+                            :text="getCantidadCaracteres(150, srf.detalle.length)" maxlength="150" required>
+                        </CFormTextarea>
+                        <hr>
+                        <div v-if="formatoSRF.value?.estadoDos">
+                            <CAlert color="warning">
+                                <CInputGroup size="sm" class="mb-3 d-none d-md-flex checkcolor">
+                                    <CFormCheck type="checkbox" v-model="trueEstadoDos"
+                                        :label="formatoSRF.value?.cuidado" />
                                 </CInputGroup>
-                            </div>
 
-                            <div v-if="formato.value.estadoTres">
-                                <CAlert color="secondary">III. {{ formato?.value.seccionTres }}</CAlert>
-                                <CAlert>{{ formato?.value.detalle }}</CAlert>
-                            </div>
+                                <div v-if="trueEstadoDos">
+                                    <CInputGroup size="sm" class="mb-3 d-none d-md-flex">
+                                        <CInputGroupText class="headercolor" as="label">{{ formatoSRF.value?.detalleDos
+                                        }} :
+                                        </CInputGroupText>
+                                        <CFormInput type="text" v-model="srf.texto" />
 
-                        </CCardBody>
-                        <CCardFooter class="text-center">
-                            <CRow>
-                                <CCol :xs="2" :sm="6"></CCol>
-                                <CCol :xs="5" :sm="3" class="d-grid gap-2">
-                                    <CButton @click="clickModalFoto(false)" color="danger" size="sm" class="font">
-                                        <CIcon icon="cil-x" class="me-2" />
-                                        Cancelar
-                                    </CButton>
+                                        <CInputGroupText class="headercolor" as="label">{{ formatoSRF.value?.cantidadDos
+                                        }} :
+                                        </CInputGroupText>
+                                        <CFormInput type="text" v-model="srf.numerico" />
+                                    </CInputGroup>
 
-                                </CCol>
-                                <CCol :xs="5" :sm="3" class="d-grid gap-2">
-                                    <CButton type="submit" class="font" color="success" size="sm">
-                                        <CIcon icon="cil-description" class="me-2" />
-                                        Crear
-                                    </CButton>
-                                </CCol>
-                            </CRow>
-                        </CCardFooter>
-                    </CCard>
-                </CForm>
-            </CCol>
-            <CCol :xs="1" class="align-self-end">
-            </CCol>
-        </CRow>
-    </CContainer>
+                                    <div class="d-md-none mb-3">
+                                        <CInputGroup size="sm" class="mb-3">
+                                            <CInputGroupText class="headercolor" as="label">{{
+                                                formatoSRF.value?.detalleDos }} :
+                                            </CInputGroupText>
+                                            <CFormInput type="text" v-model="srf.texto" />
+                                        </CInputGroup>
+
+                                        <CInputGroup size="sm" class="mb-3">
+                                            <CInputGroupText class="headercolor" as="label">{{
+                                                formatoSRF.value?.cantidadDos }}
+                                                :
+                                            </CInputGroupText>
+                                            <CFormInput type="text" v-model="srf.numerico" />
+                                        </CInputGroup>
+                                    </div>
+                                </div>
+
+                            </CAlert>
+                        </div>
+
+                        <div v-if="formatoSRF.value?.estadoTres">
+                            <CAlert color="secondary">III. {{ formatoSRF.value?.seccionTres }}</CAlert>
+                            <CAlert>{{ formatoSRF.value?.detalle }}</CAlert>
+                        </div>
+
+                    </CCardBody>
+                    <CCardFooter class="text-center">
+                        <CRow>
+                            <CCol :xs="2" :sm="6"></CCol>
+                            <CCol :xs="5" :sm="3" class="d-grid gap-2">
+                                <CButton @click="cancelar" color="danger" size="sm" class="font">
+                                    <CIcon icon="cil-x" class="me-2" />
+                                    Cancelar
+                                </CButton>
+
+                            </CCol>
+                            <CCol :xs="5" :sm="3" class="d-grid gap-2">
+                                <CButton type="submit" class="font" color="success" size="sm">
+                                    <CIcon icon="cil-description" class="me-2" />
+                                    Crear
+                                </CButton>
+                            </CCol>
+                        </CRow>
+                    </CCardFooter>
+                </CCard>
+            </CForm>
+        </CCol>
+        <CCol :xs="0" :sm="0" :md="1" :lg="1" class="align-self-end">
+        </CCol>
+    </CRow>
+
 
 </template>
 <script setup>
-import { nextTick, ref, reactive, computed, onMounted } from 'vue'
+import { nextTick, ref, reactive, computed, onMounted, getCurrentWatcher } from 'vue'
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
 const persona = auth.persona
 const idUsuario = ref(auth.idUsuario)
+const idpName = ref(auth.idpName)
+const srfCantidad = ref(auth.srfCantidad)
+
+import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
 
 import { useUsuario } from '@/composables/useUsuario'
-const { getDatosUse } = useUsuario()
+const { perfilUsuario, getDatosUse,getPerfilUse,perfilCuenta } = useUsuario()
 
+import { useFunction } from '@/composables/useFunction'
+const { getCantidadCaracteres } = useFunction()
 
 import { useSettings } from '@/composables/useSettings'
-const { getSettingsUse } = useSettings()
+const { getFormatoSrfUse, formatoSRF } = useSettings()
 
 import { useSrf } from '@/composables/useSrf'
 import { CForm } from '@coreui/vue'
@@ -149,33 +181,12 @@ const srf = reactive({
     cargo: '',
     codigo: '',
     costo: '',
+    formato: ''
 })
+const trueEstadoDos = ref(false)
 
-import { useAlert } from '@/composables/useAlert'
+
 import router from '../../router'
-const { confirm, error, success } = useAlert()
-
-const formato = reactive({
-    id: null,
-    categoria: '',
-    nombre: '',
-    value: {
-        titulo: "",
-        seccionUno: "",
-        seccionDos: "",
-        fecha: "",
-        monto: "",
-        descripcion: "",
-        estadoDos: false,
-        cuidado: "",
-        detalleDos: "",
-        cantidadDos: "",
-        seccionTres: "",
-        detalle: "",
-        estadoTres: false
-    },
-    fecha: ''
-})
 
 const vars = {
     '--cui-accordion-btn-bg': 'var(--cui-secondary-bg-subtle)',
@@ -187,6 +198,14 @@ const vars = {
     '--cui-accordion-border-style': 'solid',
     '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
 }
+const datos = reactive({
+    nombre:'',
+    idp:'',
+    idpName:'',
+    cargo:'',
+    centroCostos:'',
+    codigo:''
+})
 
 const perfil = ref(null)
 const fecha = new Date()
@@ -205,69 +224,48 @@ const bloquearTeclado = (e) => {
     e.preventDefault()
 }
 
-const getDatos = async () => {
-    try {
-        perfil.value = await getDatosUse(persona.id)
-    } catch (errr) {
-        console.log("===================" + errr)
-    }
-}
-
-const getFormato = async () => {
-    try {
-        const formulario = await getSettingsUse(2)
-        formato.nombre = formulario.nombre,
-            formato.categoria = formulario.categoria,
-            formato.value.titulo = formulario.value.titulo,
-            formato.value.seccionUno = formulario.value.seccionUno,
-            formato.value.seccionDos = formulario.value.seccionDos,
-            formato.value.fecha = formulario.value.fecha,
-            formato.value.monto = formulario.value.monto,
-            formato.value.descripcion = formulario.value.descripcion,
-            formato.value.estadoDos = formulario.value.estadoDos,
-            formato.value.cuidado = formulario.value.cuidado,
-            formato.value.detalleDos = formulario.value.detalleDos,
-            formato.value.cantidadDos = formulario.value.cantidadDos,
-            formato.value.seccionTres = formulario.value.seccionTres,
-            formato.value.detalle = formulario.value.detalle,
-            formato.value.estadoTres = formulario.value.estadoTres,
-            formato.fecha = formulario.fechaActualizacion
-    } catch (errr) {
-        console.log(errr)
-    }
-}
 const createSrf = async () => {
-    const resultAlert = await confirm('Crear Solicitud', 'Desea crear y enviar la Solicitud ????', '')
-    if (resultAlert.isConfirmed) {
-        srf.idUsuario = idUsuario.value
-        srf.fechaInicio = new Date().toISOString().split('T')[0] + ' ' + new Date().toLocaleTimeString()
-        srf.fechaFin = fechaSeleccionada.value
-        srf.cargo = perfil.value.cargoNombre
-        srf.costo = perfil.value.nombreCentroCostos === 'NINGUNO' ? perfil.value.nombreSucursal : perfil.value.nombreCentroCostos
-        srf.codigo = perfil.value.codigoCentroCostos === 'NINGUNO' ? perfil.value.codigoSucursal : perfil.value.codigoCentroCostos
-        try {
-            const resultService = await createSrfUse(srf)
-            if (resultService.status == 201) {
-                const result = await success('Well Done!!!', 'Solicitud creada con exito, la solicitud se envio a su inmediato superior', '')
-                if (result.isConfirmed) {
-                    router.push({
-                        name: 'ListaSRF',
-                        params: { estado: 'pendiente' }
-                    })
-                }
-            }
-        } catch (errr) {
-            await error('Error !!!!', 'Datos cancelados ' + errr, '')
-        }
-    }
-    else {
-        await error('Datos Cancelados', '', '')
+
+    srf.idUsuario = idUsuario.value
+    srf.fechaInicio = new Date().toISOString().split('T')[0] + ' ' + new Date().toLocaleTimeString()
+    srf.fechaFin = fechaSeleccionada.value
+    srf.cargo = perfilCuenta.cargo
+    srf.costo = perfilCuenta.subCentroCostos
+    srf.codigo = perfilCuenta.codigo
+    srf.formato = formatoSRF.value
+    srf.formato.trueEstadoDos = trueEstadoDos.value
+    const resultService = await createSrfUse(srf)
+    if (resultService) {
+        auth.srfCantidad++
+        srfCantidad.value = auth.srfCantidad
+        localStorage.setItem('srfCantidad', Number(auth.srfCantidad))
+        router.push({
+            name: 'ListaSRF',
+            params: { estado: 'pendiente' }
+        })
     }
 
 }
+const cancelar = () => {
+    router.push({
+        name: 'MenuSrf'
+    })
+}
+const getLoadData=()=>{
+    datos.nombre = perfilCuenta.nombre
+    datos.idpName = idpName
+    datos.idp = perfilCuenta.idp
+    datos.cargo = perfilCuenta.cargo
+    datos.centroCostos = perfilCuenta.subCentroCostos
+    datos.codigo = perfilCuenta.codigo
+}
 
-onMounted(() => {
-    getFormato()
-    getDatos()
+onMounted(async () => {
+    const tooltips = document.querySelectorAll('.tooltip');
+    tooltips.forEach(tooltip => tooltip.remove());
+    await getPerfilUse(persona.id)
+    await getFormatoSrfUse(srfCantidad.value)
+    getLoadData()
+    
 })
 </script>

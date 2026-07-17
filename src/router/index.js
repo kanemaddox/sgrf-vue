@@ -58,12 +58,12 @@ const routes = [
             name: 'Cuentas Bancarias',
             component: () => import('@/views/cuenta/CuentasBancariasView.vue'),
           },
-
         ],
       },
       {// rutas para Usuarios
         path: '/usuarios',
         name: 'Usuarios',
+        meta: { title: 'Usuarios' },
         component: {
           render() { return h(resolveComponent('router-view')) },
         },
@@ -71,24 +71,36 @@ const routes = [
         children: [
           {
             path: '/usuarios/menu',
-            name: 'Usuarios Menu',
+            name: 'UsuariosMenu',
+            meta: { title: 'Menu Usuarios' },
             component: () => import('@/views/usuarios/MenuView.vue'),
           },
           {
             path: '/usuarios/lista',
-            name: 'Lista de Usuarios',
-            component: () => import('@/views/usuarios/ListaView.vue'),
+            name: 'ListaUsuarios',
+            meta: { title: 'Lista de Usuarios' },
+            component: {render() { return h(resolveComponent('router-view')) },},
+            redirect: '/usuarios/lista/listausuario',
+            children: [
+              {
+                path: 'listausuario',
+                name: '',
+                meta: { title: ' ' },
+                component: () => import('@/views/usuarios/ListaView.vue'),
+              },
+              {
+                path: 'perfilusuario/:idUsuario',
+                name: 'PerfilUsuario',
+                meta: { title: 'Perfil de Usuario' },
+                component: () => import('@/views/usuarios/ProfileUsuarioView.vue'),
+                props: true
+              },
+            ],
           },
           {
             path: '/usuarios/registrar',
             name: 'Registrar Usuario',
             component: () => import('@/views/usuarios/RegistrarUsuarioView.vue'),
-          },
-          {
-            path: '/usuarios/perfilusuario/:idUsuario',
-            name: 'Perfil de Usuario',
-            component: () => import('@/views/usuarios/ProfileUsuarioView.vue'),
-            props: true
           },
           {
             path: '/usuarios/importar',
@@ -102,6 +114,70 @@ const routes = [
         path: '/administradores',
         name: 'Administradores',
         component: () => import('@/views/admin/AdministradoresView.vue'),
+      },
+      {
+        path: '/area',
+        name: 'AREA',
+        meta: { title: 'Centros de Costo', },
+        component: {
+          render() { return h(resolveComponent('router-view')) },
+        },
+        redirect: '/area/menu',
+        children:[
+          {
+            path: 'menu',
+            name: 'MenuArea',
+            meta: { title: 'Menu', },
+            component: () => import('@/views/admin/area/MenuView.vue'),
+          },
+          {
+            path: 'lista', 
+            name: 'ListaArea',
+            meta: { title: 'Estructura', },
+            component: () => import('@/views/admin/area/ListaView.vue'),
+          },
+          {
+            path: 'registrar', 
+            name: 'RegistrarArea',
+            meta: { title: 'Registrar Centro de Costos', },
+            component: () => import('@/views/srf/CrearSolicitudView.vue'),
+          },
+          {
+            path: 'importar', 
+            name: 'ImportarArea',
+            meta: { title: 'Importar Centros de Costo', },
+            component: () => import('@/views/admin/area/ImportarView.vue'),
+          },
+        ],
+      },
+      {
+        path: '/gastos',
+        name: 'GASTOS',
+        meta: { title: 'Gastos', },
+        component: {
+          render() { return h(resolveComponent('router-view')) },
+        },
+        redirect: '/gastos/menu',
+        children:[
+          {
+            path: 'menu',
+            name: 'MenuGastos',
+            meta: { title: 'Menu', },
+            component: () => import('@/views/gasto/MenuView.vue'),
+          },
+          {
+            path: 'lista', 
+            name: 'ListaGastos',
+            meta: { title: 'Lista de Gastos', },
+            component: () => import('@/views/gasto/ListaView.vue'),
+          },
+          {
+            path: 'importar', 
+            name: 'ImportarGasto',
+            meta: { title: 'Importar Gastos', },
+            component: () => import('@/views/gasto/ImportarView.vue'),
+          },
+        ],
       },
       {// rutas Administracion
         path: '/admin',
@@ -134,7 +210,7 @@ const routes = [
         ],
 
       },
-      {// rutas solicitudes de rendicion de fondos
+      {// rutas solicitudes de fondos
         path: '/srf',
         name: 'SRF',
         component: {
@@ -144,7 +220,7 @@ const routes = [
         children: [
           {
             path: 'menu',// hijo 1
-            name: 'Menu Srf',
+            name: 'MenuSrf',
             meta: { title: 'Menu', },
             component: () => import('@/views/srf/MenuView.vue'),// link crear aprobar solicitudes
           },
@@ -159,14 +235,14 @@ const routes = [
             component: { render() { return h(resolveComponent('router-view')) }, },
             props: true,
             meta: { title: (route) => route.params.solicitud.charAt(0).toUpperCase() + route.params.solicitud.slice(1) + 's' },
-            redirect: to => { return '/srf/autorizar/'+ to.params.solicitud+'/solicitud'},
+            redirect: to => { return '/srf/autorizar/' + to.params.solicitud + '/solicitud' },
             children: [
               {
-                path:'solicitud',
-                name:'',
+                path: 'solicitud',
+                name: '',
                 meta: { title: '' },
                 component: () => import('@/views/srf/SolicitudesView.vue'),
-                props:true,
+                props: true,
               },
               {
                 path: 'revisar/:idSrf',
@@ -203,7 +279,78 @@ const routes = [
           },
         ],
       },
-      {// rutas para Configuracion de formularios
+      {// rutas rendicion de fondos
+        path: '/rdg',
+        name: 'RDG',
+        component: {
+          render() { return h(resolveComponent('router-view')) },
+        },
+        redirect: '/rdg/menu',
+        children: [
+          {
+            path: 'menu',// hijo 1
+            name: 'MenuRdg',
+            meta: { title: 'Menu', },
+            component: () => import('@/views/rdg/MenuView.vue'),// link crear aprobar solicitudes
+          },
+          {
+            path: 'crear/:idRdg', // hijo 2
+            name: 'CrearRDG',
+            meta: { title: 'Crear Rendicion de Fondos', },
+            component: () => import('@/views/rdg/CrearRendicionView.vue'),
+            props:true,
+          },
+          {
+            path: 'autorizar/:solicitud', // hijo 3 
+            name: 'SolicitudDRF',
+            component: { render() { return h(resolveComponent('router-view')) }, },
+            props: true,
+            meta: { title: (route) => route.params.solicitud.charAt(0).toUpperCase() + route.params.solicitud.slice(1) + 's' },
+            redirect: to => { return '/srf/autorizar/' + to.params.solicitud + '/solicitud' },
+            children: [
+              {
+                path: 'solicitud',
+                name: '',
+                meta: { title: '' },
+                component: () => import('@/views/srf/SolicitudesView.vue'),
+                props: true,
+              },
+              {
+                path: 'revisar/:idSrf',
+                name: 'RevisarSrf',
+                meta: { title: 'Revisar Solicitud', },
+                component: () => import('@/views/srf/detalle/SolicitudView.vue'),
+                props: true
+              },
+            ],
+          },
+          {
+            path: 'estadordg/:estado', // hijo 4
+            name: 'ListaRDG',
+            component: { render() { return h(resolveComponent('router-view')) }, },
+            props: true,
+            meta: { title: (route) => route.params.estado.charAt(0).toUpperCase() + route.params.estado.slice(1) + 's' },
+            redirect: to => { return '/rdg/estadordg/' + to.params.estado + '/listas' },
+            children: [
+              {
+                path: 'listas',
+                name: '',
+                meta: { title: ' ' },
+                component: () => import('@/views/rdg/ListaView.vue'),
+                props: true,
+              },
+              {
+                path: 'detalle/:idSrf',
+                name: 'DetalleDrf',
+                component: () => import('@/views/srf/detalle/DetalleView.vue'),
+                props: true,
+                meta: { title: ' Detalle' }
+              },
+            ],
+          },
+        ],
+      },
+      {// rutas para Configuracion
         path: '/settings',
         name: 'Settings',
         component: {
@@ -211,14 +358,22 @@ const routes = [
         },
         children: [
           {
+            path: '/settings/local',
+            name: 'LocalSettings',
+            meta: { title: 'Configuracion Local', },
+            component: () => import('@/views/settings/LocalSettingsView.vue'),
+          },
+          {
             path: '/settings/formulariosolicitud',
-            name: 'Formulario SRF',
+            name: 'FormularioSRF',
+            meta: { title: 'Formulario de Solicitudes', },
             component: () => import('@/views/settings/FormularioSolicitudView.vue'),
           },
           {
             path: '/settings/formulariorendicion',
-            name: 'Formulario RDF',
-            component: () => import('@/views/settings/FormularioSolicitudView.vue'),
+            name: 'FormularioRDG',
+            meta: { title: 'Formulario de Rendicones', },
+            component: () => import('@/views/settings/FormularioRendicionView.vue'),
           },
         ],
 

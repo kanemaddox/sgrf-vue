@@ -122,8 +122,13 @@ export default [
     items: [
       {
         component: 'CNavItem',
+        name: 'Menu',
+        to: '/rdg/menu',
+      },
+      {
+        component: 'CNavItem',
         name: 'Crear Rendicion',
-        to: '/usuarios/importar',
+        to: '/rdg/crear/0',
         key:'crear_repocicion',
       },
       {

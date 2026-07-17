@@ -7,13 +7,22 @@
             </CDropdownToggle>
             <CDropdownMenu class="pt-0">
                 <CDropdownHeader component="h6" class="bg-body-secondary text-body-secondary fw-semibold my-2">
+                    Settings Local
+                </CDropdownHeader>
+                <div v-if="pernicions?.formularios && admin">
+                    <CDropdownItem style="cursor: pointer;" @click="getLocalSettings">
+                        <CIcon icon="cil-settings" /> Settings Local
+                    </CDropdownItem>
+                </div>
+                <CDropdownDivider />
+                <CDropdownHeader component="h6" class="bg-body-secondary text-body-secondary fw-semibold my-2">
                     Settings Forms
                 </CDropdownHeader>
                 <div v-if="pernicions?.formularios && admin">
                     <CDropdownItem style="cursor: pointer;" @click="getFormularioSolicitud">
                         <CIcon icon="cil-description" /> Formulario Solicitud
                     </CDropdownItem>
-                    <CDropdownItem style="cursor: pointer;">
+                    <CDropdownItem style="cursor: pointer;" @click="getFormularioRendicion">
                         <CIcon icon="cil-dollar" /> Formulario Rendicion
                     </CDropdownItem>
                 </div>
@@ -54,11 +63,11 @@
                 </CDropdownItem>
 
                 <CDropdownItem style="cursor: pointer;" @click="getAreas" v-if="pernicions?.areas && admin">
-                    <CIcon icon="cil-factory" /> Areas
+                    <CIcon icon="cil-factory" /> Centros de Costo
                 </CDropdownItem>
 
-                <CDropdownItem style="cursor: pointer;" @click="getSucursales" v-if="pernicions?.sucursales && admin">
-                    <CIcon icon="cil-home" /> Sucursales
+                <CDropdownItem style="cursor: pointer;" @click="getGastos" v-if="pernicions?.sucursales && admin">
+                    <CIcon icon="cil-wallet" /> Gastos
                 </CDropdownItem>
 
             </CDropdownMenu>
@@ -81,13 +90,16 @@ const auth = useAuthStore()
 
 const pernicions = ref(auth.pernicions)
 const rol = ref(auth.rol)
-const admin = ref(rol.value==='ADMIN'?true:false)
+const admin = ref(rol.value === 'ADMIN' ? true : false)
 
 const getFormularioSolicitud = () => {
-    router.push({ name: 'Formulario SRF' })
+    router.push({ name: 'FormularioSRF' })
+}
+const getFormularioRendicion = () => {
+    router.push({ name: 'FormularioRDG' })
 }
 const getMenuUsuario = () => {
-    router.push({ name: 'Usuarios Menu' })
+    router.push({ name: 'Usuarios' })
 }
 const getAdministradores = () => {
     router.push({ name: 'Administradores' })
@@ -99,10 +111,17 @@ const getJefes = () => {
     router.push({ name: 'Lista de Jefes' })
 }
 const getAreas = () => {
-    router.push({ name: 'Lista de Areas' })
+    router.push({ name: 'AREA' })
 }
 const getSucursales = () => {
     router.push({ name: 'Lista de Sucursales' })
+}
+const getLocalSettings = () => {
+    router.push({ name: 'LocalSettings' })
+}
+
+const getGastos = () => {
+    router.push({ name: 'GASTOS' })
 }
 
 </script>

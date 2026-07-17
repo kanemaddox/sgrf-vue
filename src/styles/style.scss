@@ -80,11 +80,24 @@ body {
   //background-color: var(--cui-border-color);
   color:white;
 }
+
+.checkcolor{
+  background-color: #feecc5;
+  //background-color: var(--cui-border-color);
+  color:rgb(0, 0, 0);
+}
+
 .space{
   margin-top: -12px;
   font-size: 12px;
   color: #6e6e6e;
 }
+
+.total{
+  font-size: 25px;
+  font-weight: bold;
+}
+
 .headercolor .btn-close {
   filter: invert(5); /* vuelve blanca la X */
 }

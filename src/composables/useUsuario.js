@@ -1,10 +1,28 @@
-import { ref } from 'vue'
-import {updateUsuarioRolService,findByRolService,updateUsuarioPernicionsService,getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
+import { ref, reactive } from 'vue'
 
+/**Declaraciones para alertas */
+import { useAlert } from '@/composables/useAlert'
+const { confirm, success, error } = useAlert()
+/**End Declaraciones para alertas */
+
+import { useDto } from '@/composables/useDto'
+const { getPerfil, getPersona,getPerfilCuenta } = useDto()
+
+/**Declaraciones para Servicios */
+import {getPerfilService, updateUsuarioRolService, findByRolService, updateUsuarioPernicionsService, getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
+
+
+import { API_URL_IMG100, API_URL_IMG200, API_URL_IMG800 } from "@/env"
+const img200 = API_URL_IMG200
+const img800 = API_URL_IMG800
+const img100 = API_URL_IMG100
 
 export const useUsuario = () => {
     const loading = ref(false)
     const errorUse = ref(null)
+    const personaUsuario = reactive({})
+    const perfilUsuario = reactive({})
+    const perfilCuenta = reactive({})
 
     const updateUsuarioImagenUse = async (id, imagen) => {
         loading.value = true
@@ -18,13 +36,29 @@ export const useUsuario = () => {
             "fechaCreacion": "",
             "fechaActualizacion": ""
         }
-        try {
-            return await updateUsuarioImagenService(usuarioResponse)
-        } catch (err) {
-            errorUse.value = err
-            throw err
-        } finally {
-            loading.value = false
+        const resultAlert = await confirm('Foto de Perfil', 'Desea Subir su foto de perfil ?', '')
+        if (resultAlert.isConfirmed) {
+            try {
+                const resultService = await updateUsuarioImagenService(usuarioResponse)
+                if (resultService.status === 200) {
+                    await success('Operación Exitosa !!!', 'La Foto de Perfil fue guardado correctamente')
+                    return true
+                }
+                else {
+                    await error('Error !!!!!', 'No se pudo guardar la Foto de Perfil, Verifique e Intente Mas tarde', '')
+                    return false
+                }
+            } catch (err) {
+                errorUse.value = err
+                await error('Error !!!!!', 'Servicio de Almacenamiento No Disponible', '')
+                return false
+            } finally {
+                loading.value = false
+            }
+        }
+        else {
+            await error('Datos Cancelados', '', '')
+            return false
         }
     }
 
@@ -37,18 +71,33 @@ export const useUsuario = () => {
             "pass2": pass.pass2,
             "pass3": pass.pass3,
         }
-        try {
-            const { data } = await updatePassService(passRequest)
-            return data
-        } catch (err) {
-            errorUse.value = err
-            throw err
-        } finally {
-            loading.value = false
+        const resultAlert = await confirm('Esta Seguro ???', 'Desea Actualizar la Contrasena ?')
+        if (resultAlert.isConfirmed) {
+            try {
+                const resultService = await updatePassService(passRequest)
+                if (resultService.status === 200) {
+                    await success('Well Done!!!!!', 'Constrasena Actualizada Correctamente, Ingrese nuevamente con sus nuevas credenciales', '')
+                    return true
+                }
+                else {
+                    await error('Error !!!', 'Datos Incorectos Verifique e Intente mas tarde', '')
+                    return false
+                }
+            } catch (errr) {
+                errorUse.value = errr
+                await error('Error !!!!', 'Servicio no Disponible', errr)
+                return false
+            } finally {
+                loading.value = false
+            }
+        }
+        else {
+            await error('Datos Cancelados', '', '')
+            return false
         }
     }
 
-    const updatePasswordUse = async (value) => {
+    const updatePasswordUse = async (value,nombre,paterno) => {
         loading.value = true
         errorUse.value = null
         var passRequest = {
@@ -57,14 +106,28 @@ export const useUsuario = () => {
             "pass2": "",
             "pass3": "",
         }
-        try {
-            const { data } = await updatePasswordService(passRequest)
-            return data
-        } catch (err) {
-            errorUse.value = err
-            throw err
-        } finally {
-            loading.value = false
+        const resultAlert = await confirm('Esta seguro ???', 'Restablecer la contraseña del Usuario ' + nombre + ' ' + paterno, '')
+        if (resultAlert.isConfirmed) {
+            try {
+                const { data } = await updatePasswordService(passRequest)
+                if(data){
+                    await success('Well Done!!!','Constrasena Restablecida Correctamente','')
+                    return true
+                }
+                else{
+                    return false
+                }
+            } catch (errr) {
+                errorUse.value = errr
+                await error('Error !!!!!','Servicio no Disponible',errr)
+                return false
+            } finally {
+                loading.value = false
+            }
+        }
+        else {
+            await error('Error !!!!!','Datos Cancelados','')
+            return false 
         }
     }
 
@@ -77,18 +140,20 @@ export const useUsuario = () => {
             "paterno": datos.paterno,
             "materno": datos.materno,
             "email": datos.email,
+            "foto": '',
             "profesionNombre": datos.profesion,
             "cargoNombre": datos.cargoNombre,
+            "emailEmpleado": datos.emailCor,
+            "bancoNombre": datos.bancoNombre,
             "numero": datos.numero,
             "tipoCuenta": datos.tipoCuenta,
-            "bancoNombre": datos.bancoNombre,
-            "codigoSucursal": datos.codigoSucursal,
-            "nombreSucursal": datos.nombreSucursal,
             "codigoCentroCostos": datos.codigoCentroCostos,
             "nombreCentroCostos": datos.nombreCentroCostos,
-            "nombreArea": datos.nombreArea,
+            "codigoSubCentroCostos": datos.codigoSubCentroCostos,
+            "nombreSubCentroCostos": datos.nombreSubCentroCostos,
             "idpJefe": datos.idpJefe,
-            "tipo": datos.tipo
+            "tipo": datos.tipo,
+            "idpPago": datos.idpPago
         }
         try {
             return await addDatosService(datosRequest)
@@ -131,25 +196,39 @@ export const useUsuario = () => {
         errorUse.value = null
         try {
             const { data } = await getDatosService(value)
-            return data
+            Object.assign(perfilUsuario, getPerfil(data, img200))
+            Object.assign(personaUsuario, getPersona(data))
+            //return data
         } catch (errr) {
             errorUse.value = errr
             throw errr
-
         } finally {
             loading.value = false
         }
     }
+    const getPerfilUse = async (value) => {
+        loading.value = true
+        errorUse.value = null
+        try {
+            const { data } = await getPerfilService(value)
+            Object.assign(perfilCuenta, getPerfilCuenta(data))
+        } catch (errr) {
+            errorUse.value = errr
+            throw errr
+        } finally {
+            loading.value = false
+        }
+    }
+    /* Funcion para devolver el perfil del Usuario*/
     const getDatosUsuarioUse = async (value) => {
         loading.value = true
         errorUse.value = null
         try {
             const { data } = await getDatosUsuarioService(value)
-            return data
+            Object.assign(perfilUsuario, getPerfil(data, img100))
+            Object.assign(personaUsuario, getPersona(data))
         } catch (errr) {
             errorUse.value = errr
-            throw errr
-
         } finally {
             loading.value = false
         }
@@ -184,13 +263,13 @@ export const useUsuario = () => {
     }
 
     const getDatosEmpleadosUse = async () => {
-        loading.value= true
-        errorUse.value=null
+        loading.value = true
+        errorUse.value = null
         try {
-            const {data} = await getDatosEmpleadosService()
+            const { data } = await getDatosEmpleadosService()
             return data
         } catch (errr) {
-            errorUse.value= errr
+            errorUse.value = errr
             throw errr
         } finally {
             loading.value = false
@@ -198,46 +277,46 @@ export const useUsuario = () => {
 
     }
 
-    const getUsuarioValidoUse = async (usuario,email) =>{
-        loading.value= true
+    const getUsuarioValidoUse = async (usuario, email) => {
+        loading.value = true
         errorUse.value = null
-        try{
-            const {data} = await getUsuarioValidoService(usuario,email)
+        try {
+            const { data } = await getUsuarioValidoService(usuario, email)
             return data
-        }catch(errr){
+        } catch (errr) {
             errorUse.value = errr
             throw errr
-        }finally{
+        } finally {
             loading.value = false
         }
     }
-    const updateUsuarioPernicionsUse = async(value)=>{
-        loading.value= true
+    const updateUsuarioPernicionsUse = async (value) => {
+        loading.value = true
         errorUse.value = null
-        try{
+        try {
             return await updateUsuarioPernicionsService(value)
-        }catch(errr){
+        } catch (errr) {
             errorUse.value = errr
             throw errr
-        }finally{
+        } finally {
             loading.value = false
         }
     }
-    const updateUsuarioRolUse = async(idAdmin,pass,idUser,rol)=>{
-        loading.value= true
+    const updateUsuarioRolUse = async (idAdmin, pass, idUser, rol) => {
+        loading.value = true
         errorUse.value = null
-        const user={
-            "idAdmin":idAdmin,
-            "pass":pass,
-            "idUser":idUser,
-            "rol":rol,
+        const user = {
+            "idAdmin": idAdmin,
+            "pass": pass,
+            "idUser": idUser,
+            "rol": rol,
         }
-        try{
+        try {
             return await updateUsuarioRolService(user)
-        }catch(errr){
+        } catch (errr) {
             errorUse.value = errr
             throw errr
-        }finally{
+        } finally {
             loading.value = false
         }
     }
@@ -256,6 +335,10 @@ export const useUsuario = () => {
         getUsuarioValidoUse,
         updateUsuarioPernicionsUse,
         updateUsuarioRolUse,
+        getPerfilUse,
+        perfilUsuario,
+        perfilCuenta,
+        personaUsuario,
         loading,
         errorUse
     }

@@ -10,14 +10,15 @@
                 </CCardHeader>
                 <CCardBody>
                     <CCol :xs="12">
-                        <CWidgetStatsC class="mb-3" :value="perfil?.idp"
-                            :progress="{ color: perfil?.estado ? 'success' : 'danger', value: 100 }" title="Visitors">
+                        <CWidgetStatsC class="mb-3" :value="perfilUsuario.idp"
+                            :progress="{ color: perfilUsuario.estado ? 'success' : 'danger', value: 100 }"
+                            title="Visitors">
                             <template #icon>
-                                <img :src="imagen" class="img-fluid " alt="..."><br>
+                                <img :src="perfilUsuario.imagen" class="img-fluid " alt="..."><br>
                             </template>
                             <template #title>
-                                {{ perfil?.nombre }} {{ perfil?.apellido }}
-                                <CAlert v-if="!perfil?.estado" color="danger">
+                                {{ perfilUsuario.nombre }} {{ perfilUsuario.apellido }}
+                                <CAlert v-if="!perfilUsuario.estado" color="danger">
                                     Usuario Inactivo o Bloqueado, restablesca la contrasena para habilitar al usuario
                                 </CAlert>
                             </template>
@@ -70,12 +71,13 @@
                                     <CTabContent>
                                         <CTabPanel class="py-3" itemKey="datosUno">
                                             <br>
-                                            <ComponenteDatos :persona="persona" />
+                                            <ComponenteDatos :persona="personaUsuario" :idpName="idpName" />
                                             <CWidgetStatsB class="mb-3" :progress="{ color: 'success', value: 100 }">
-                                                <template #value>BANCO {{ perfil?.bancoNombre }}</template>
-                                                <template #title>Numero de Cuenta : {{ perfil?.numero }}</template>
+                                                <template #value>BANCO {{ perfilUsuario.banco }}</template>
+                                                <template #title>Numero de Cuenta : {{ perfilUsuario.numero
+                                                }}</template>
                                                 <template #text>
-                                                    {{ perfil?.tipoCuenta }} | {{ perfil?.numero }}<br><br>
+                                                    {{ perfilUsuario.cuenta }} | {{ perfilUsuario.numero }}<br><br>
                                                     <CButton color="secondary" variant="outline" size="sm"
                                                         @click="clickModalCuenta(true)">
                                                         <CIcon icon="cil-dollar" class="me-2" />
@@ -84,12 +86,13 @@
                                                 </template>
                                             </CWidgetStatsB>
                                         </CTabPanel>
+                                        <!--Tab Archivo-->
                                         <CTabPanel class="py-3" itemKey="datosDos">
                                             <br>
                                             <CInputGroup size="sm" class="mb-3">
-                                                <CInputGroupText class="headercolor" as="label">Profesion
+                                                <CInputGroupText class="headercolor" as="label">Profesion :
                                                 </CInputGroupText>
-                                                <CFormInput type="text" :value="perfil?.profesionNombre" disabled />
+                                                <CFormInput type="text" :value="perfilUsuario.profesion" disabled />
                                                 <CButton type="button" color="success" class="font" size="sm"
                                                     @click="clickModalProfesion(true)">
                                                     <CIcon icon="cil-list" size="sm" class="me-2 text-light" />
@@ -98,8 +101,9 @@
                                             </CInputGroup>
 
                                             <CInputGroup size="sm" class="mb-3">
-                                                <CInputGroupText class="headercolor" as="label">Cargo</CInputGroupText>
-                                                <CFormInput type="text" :value="perfil?.cargoNombre" disabled />
+                                                <CInputGroupText class="headercolor" as="label">Cargo :
+                                                </CInputGroupText>
+                                                <CFormInput type="text" :value="perfilUsuario.cargo" disabled />
                                                 <CButton type="button" color="success" class="font" size="sm"
                                                     @click="clickModalCargo(true)">
                                                     <CIcon icon="cil-list" size="sm" class="me-2 text-light" />
@@ -108,43 +112,53 @@
                                             </CInputGroup>
 
                                             <CInputGroup size="sm" class="mb-3">
-                                                <CInputGroupText class="headercolor" as="label">Jefe</CInputGroupText>
-                                                <CFormInput type="text" :value="perfil?.nombreJefe" disabled />
-                                                <CInputGroupText class="headercolor" as="label">IDP</CInputGroupText>
-                                                <CFormInput type="text" :value="perfil?.idpJefe" disabled />
+                                                <CInputGroupText class="headercolor" as="label">Email Corporativo :
+                                                </CInputGroupText>
+                                                <CFormInput type="text" :value="perfilUsuario.corporativo" disabled />
+                                            </CInputGroup>
+
+                                            <CInputGroup size="sm" class="mb-3">
+                                                <CInputGroupText class="headercolor" as="label">Jefe :
+                                                </CInputGroupText>
+                                                <CFormInput type="text" :value="perfilUsuario.jefe" disabled />
+                                                <CInputGroupText class="headercolor" as="label">{{ idpName }} :
+                                                </CInputGroupText>
+                                                <CFormInput type="text" :value="perfilUsuario.idpJefe" disabled />
                                             </CInputGroup>
 
                                             <CWidgetStatsB class="mb-3"
-                                                :progress="{ color: perfil?.estado ? 'success' : 'danger', value: 100 }">
-                                                <template #value>{{ perfil?.prefijoSucursal }}</template>
-                                                <template #title>{{ perfil?.nombreArea }}</template>
+                                                :progress="{ color: perfilUsuario.estado ? 'success' : 'danger', value: 100 }">
+                                                <template #value></template>
+                                                <template #title>{{ perfilUsuario.nombreArea }}</template>
                                                 <template #text>
                                                     <ul>
-                                                        <li>{{ perfil?.codigoSucursal }} | {{ perfil?.nombreSucursal }}
+                                                        <li>{{ perfilUsuario.codigoArea }} | {{ perfilUsuario.nombreArea
+                                                        }}
                                                         </li>
-                                                        <li>{{ perfil?.codigoCentroCostos }} | {{
-                                                            perfil?.nombreCentroCostos
-                                                        }}</li>
                                                     </ul>
                                                 </template>
                                             </CWidgetStatsB>
                                         </CTabPanel>
+
+                                        <!--Tab Actualizar-->
                                         <CTabPanel class="py-3" itemKey="datosTres">
                                             <br>
                                             <CInputGroup size="sm" class="mb-3">
-                                                <CInputGroupText class="headercolor" as="label">IPD</CInputGroupText>
-                                                <CFormInput type="text" :value="persona.idp" disabled />
-                                                <CInputGroupText class="headercolor" as="label">ID Usuario
+                                                <CInputGroupText class="headercolor" as="label">{{ idpName }} :
                                                 </CInputGroupText>
-                                                <CFormInput type="text" :value="idUsuario" disabled />
+                                                <CFormInput type="text" :value="perfilUsuario.idp" disabled />
+                                                <CInputGroupText class="headercolor" as="label">ID Usuario :
+                                                </CInputGroupText>
+                                                <CFormInput type="text" :value="perfilUsuario.idUsuario" disabled />
                                             </CInputGroup>
 
                                             <CInputGroup size="sm" class="mb-3">
-                                                <CInputGroupText class="headercolor" as="label">Email</CInputGroupText>
-                                                <CFormInput type="text" :value="persona.email" disabled />
-                                                <CInputGroupText class="headercolor" as="label">Celular
+                                                <CInputGroupText class="headercolor" as="label">Email :
                                                 </CInputGroupText>
-                                                <CFormInput type="text" :value="persona.celular" disabled />
+                                                <CFormInput type="text" :value="perfilUsuario.email" disabled />
+                                                <CInputGroupText class="headercolor" as="label">Celular :
+                                                </CInputGroupText>
+                                                <CFormInput type="text" :value="perfilUsuario.celular" disabled />
                                                 <CButton type="button" color="success" class="font" size="sm"
                                                     @click="clickModalCelular(true)">
                                                     Actualizar</CButton>
@@ -174,7 +188,7 @@
         <!--Datos De Usuario -->
     </CRow>
 
-    <!-- Modal  Cuenatas Bancarias-->
+    <!-- Modal  Cuentas Bancarias-->
     <CModal backdrop="static" size="lg" :visible="modalCuenta" @close="clickModalCuenta(false)">
         <CModalHeader class="headercolor" dismiss @close="clickModalCuenta(false)">
             <CModalTitle>
@@ -196,7 +210,7 @@
                         </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                        <CTableRow v-for="(item, index) in lista" :key="index">
+                        <CTableRow v-for="(item, index) in listaBancaria" :key="index">
                             <CTableDataCell>{{ item.id }}</CTableDataCell>
                             <CTableDataCell>{{ item.banco }}</CTableDataCell>
                             <CTableDataCell>{{ item.tipo }}</CTableDataCell>
@@ -345,11 +359,10 @@
                 </CModalTitle>
             </CModalHeader>
             <CModalBody>
-
-                <br>
+                <ComponenteNombres :datos="datos" />
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label">Nuevo Numero de Celular</CInputGroupText>
-                    <CFormInput type="text" v-model="persona.celular" required />
+                    <CInputGroupText as="label" class="headercolor">Nuevo Numero de Celular : </CInputGroupText>
+                    <CFormInput type="text" v-model="celular.celular" required />
                 </CInputGroup>
             </CModalBody>
             <CModalFooter>
@@ -378,172 +391,81 @@ const usuario = defineProps({
 
 import ComponenteDatos from '@/components/usuario/ComponenteDatos.vue'
 import ComponentePermisos from '@/components/usuario/ComponentePermisos.vue'
+import ComponenteNombres from '@/components/usuario/ComponenteNombres.vue'
 
 import { CCol, CRow, CTabContent, CTabList, CTabPanel } from '@coreui/vue'
 import { onMounted, ref, reactive } from 'vue'
 
 import { useUsuario } from '@/composables/useUsuario'
-const { updatePasswordUse, getDatosUsuarioUse, loading, errorUse } = useUsuario()
+const { perfilUsuario, personaUsuario, updatePasswordUse, getDatosUsuarioUse, loading, errorUse } = useUsuario()
 
-import { API_URL_IMG100, API_URL_IMG200, API_URL_IMG800 } from "@/env"
-const img200 = API_URL_IMG200
-const img800 = API_URL_IMG800
-const img100 = API_URL_IMG100
-
-/**Declaraciones para alertas */
-import { useAlert } from '@/composables/useAlert'
-const { confirm, success, error } = useAlert()
-
-/**End Declaraciones para alertas */
-
-var nombre100 = "/public/usuario.png"
-var nombre200 = nombre100
-var nombre800 = nombre200
-const imagen = ref(nombre100)
+import { useAuthStore } from '@/stores/authStores'
+const auth = useAuthStore()
+const idpName = ref(auth.idpName)
 
 /**DEclataciones para los modales */
 const modalCuenta = ref(false)
 const modalCargo = ref(false)
 const modalProfesion = ref(false)
+const modalCelular = ref(false)
 
-const perfil = ref(null)
-const pernicions = reactive({
+const pernicions = ref({
     id: null,
     rol: null,
     pernicions: {}
 })
-const persona = reactive({
-    id: null,
-    idp: null,
-    nombre: null,
-    paterno: null,
-    materno: null,
-    celular: null,
-    email: null
+
+const datos = ref({
+    idp: '',
+    nombre: '',
+    apellidos: '',
+    idpName: ''
+})
+const celular = reactive({
+    id:'',
+    celular:''
 })
 
 /**Paralas Cuentas Bancarias  */
 import { useCuentasBancarias } from '@/composables/useCuentaBancaria'
-const { getCuentasBancariasUse } = useCuentasBancarias()
-const lista = ref([])
+const { listaBancaria, getCuentasBancariasUse } = useCuentasBancarias()
 /**End Cuentas Bancarias  */
 
 /**End Cargos del Usuario  */
 import { useEmpleado } from '@/composables/useEmpleado'
-const { getEmpleadoCargoUsuarioUse } = useEmpleado()
-const listaCargos = ref([])
+const { listaCargos, getEmpleadoCargoUsuarioUse } = useEmpleado()
 /**End Cargos del Usuario  */
 
 /**End Profesiones del Usuario  */
 import { usePersona } from '@/composables/usePersona'
-const { getPersonaProfesionUsuarioUse, updateCelularUse } = usePersona()
-const listaProfesiones = ref([])
+const { listaProfesiones,getPersonaProfesionUsuarioUse, updateCelularUse } = usePersona()
 /**End Profesiones del Usuario  */
 
 /**Funcniones */
-
-const getDatosUsuario = async (value) => {
-    try {
-        perfil.value = await getDatosUsuarioUse(value)
-        if (perfil.value.imagen != "usuario.png") {
-            imagen.value = img100 + perfil.value.imagen
-        }
-        persona.id = perfil.value.idPersona
-        persona.idp = perfil.value.idp
-        persona.nombre = perfil.value.nombre
-        persona.paterno = perfil.value.apellido
-        persona.materno = ''
-        persona.email = perfil.value.email
-        persona.celular = perfil.value.celular
-        pernicions.id = perfil.value.idUsuario
-        pernicions.rol = perfil.value.rol
-        pernicions.pernicions = perfil.value.pernicions
-    } catch (errr) {
-        console.log(errr)
-
-    }
-}
-
 const clickModalCuenta = async (value) => {
     if (value) {
-        try {
-            const cuentas = await getCuentasBancariasUse(perfil.value.idPersona)
-            lista.value = cuentas.map(item => ({
-                id: item.id,
-                banco: item.banco.nombre,
-                tipo: item.tipoCuenta,
-                numero: item.numero,
-                estado: item.estado
-            }))
-        } catch (errr) {
-            console.log(errr)
-        }
+        await getCuentasBancariasUse(perfilUsuario.idPersona)
     }
     modalCuenta.value = value
 }
 
 const clickModalCargo = async (value) => {
     if (value) {
-        try {
-            const cargos = await getEmpleadoCargoUsuarioUse(usuario.idUsuario)
-            listaCargos.value = cargos.map(item => ({
-                id: item.id,
-                cargo: item.cargo,
-                estado: item.estado,
-                idpJefe: item.idpJefe,
-                jefe: item.jefe,
-                del: item.fechaCreacion,
-                al: item.fechaActualizacion
-            }))
-            console.log(listaCargos.value)
-        } catch (errr) {
-            console.log(errr)
-        }
+        await getEmpleadoCargoUsuarioUse(usuario.idUsuario)
     }
     modalCargo.value = value
 }
 
 const clickModalProfesion = async (value) => {
     if (value) {
-        try {
-            const profesiones = await getPersonaProfesionUsuarioUse(usuario.idUsuario)
-            listaProfesiones.value = profesiones.map(item => ({
-                id: item.id,
-                profesion: item.profesion,
-                estado: item.estado,
-                del: item.fechaCreacion,
-                al: item.fechaActualizacion
-            }))
-            console.log(listaProfesiones.value)
-        } catch (errr) {
-            console.log(errr)
-        }
+        await getPersonaProfesionUsuarioUse(usuario.idUsuario)
     }
     modalProfesion.value = value
 }
 
 const restablecerPassword = async () => {
-    try {
-        const resultAlert = await confirm('Esta seguro ???', 'Restablecer la contraseña del Usuario ' + persona?.nombre + ' ' + persona?.paterno, '')
-        if (resultAlert.isConfirmed) {
-            const resultService = await updatePasswordUse(usuario.idUsuario)
-            if (resultService === true) {
-                await success('Constrasena Restablecida Correctamente')
-                location.reload()
-            }
-            else {
-                await error('ERROR !!!!!', 'La contrasena no pudo restablecerse, verifique e intente nuevamente')
-            }
-        }
-
-    } catch (errr) {
-        await error('ERROR !!!!', 'Servicio no disponible')
-        console.log(errr)
-
-    }
+    await updatePasswordUse(usuario.idUsuario,perfilUsuario.nombre,perfilUsuario.apellido)
 }
-
-const modalCelular = ref(false)
 
 const clickModalCelular = (value) => {
     modalCelular.value = value
@@ -551,31 +473,34 @@ const clickModalCelular = (value) => {
 
 const updateCelular = async () => {
     clickModalCelular(false)
-    const resultAlert = await confirm('Desea Actualizar el numero de Celular ?')
-    if (resultAlert.isConfirmed) {
-        try {
-            const resultService = await updateCelularUse(persona)
-            if (resultService.status == 200) {
-                await success('Numero de Celular Actualizado Correctamente')
-                location.reload()
-            }
-            else {
-                await error('No se pudo Actualizar el nuevo Numero de celular, intente nuevamente')
-            }
-        } catch (err) {
-            await error('Error al Actualizar los datos intente mas tarde ' + err)
-        }
+    const resultService = await updateCelularUse(celular)
+    if (resultService) {
+        location.reload()
     }
-    else {
-        await error('Datos Cancelados')
+    else{
+        celular.value.celular = perfilUsuario.celular
     }
+}
+
+const getLoadData = () => {
+    pernicions.value = { ...perfilUsuario.pernicions }
+
+    datos.value.idp = personaUsuario.idp
+    datos.value.nombre = personaUsuario.nombre
+    datos.value.apellidos = personaUsuario.paterno
+    datos.value.idpName = idpName
+    
+    celular.id = perfilUsuario.idPersona
+    celular.celular = perfilUsuario.celular
 }
 
 onMounted(async () => {
     const tooltips = document.querySelectorAll('.tooltip');
     tooltips.forEach(tooltip => tooltip.remove());
-    if (usuario.idUsuario !== null && usuario.idUsuario !== undefined)
-        getDatosUsuario(usuario.idUsuario)
+    if (usuario.idUsuario !== null && usuario.idUsuario !== undefined) {
+        await getDatosUsuarioUse(usuario.idUsuario)
+        getLoadData()
+    }
 })
 
 </script>

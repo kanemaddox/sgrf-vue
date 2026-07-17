@@ -1,6 +1,11 @@
+import { left } from "@popperjs/core"
+
 export function useFunction() {
     const len = (value) => {
         return value.length > 40 ? value.slice(0, 40) + "..." : value
+    }
+    const lenPdf = (value) => {
+        return value.length > 20 ? value.slice(0, 20) + "..." : value
     }
     const minuscula = (value) => {
         return value.toLowerCase()
@@ -115,7 +120,8 @@ export function useFunction() {
             'APROBADO': 'success',
             'RECHAZADO': 'danger',
             'ESPERA': 'dark',
-            'DEVUELTO':'info',
+            'DEVUELTO': 'info',
+            'TRAMITE': 'warning',
         }
         return colores[value]
     }
@@ -124,8 +130,9 @@ export function useFunction() {
             'PENDIENTE': 'bi bi-exclamation-triangle',
             'APROBADO': 'bi bi-check-circle',
             'RECHAZADO': 'bi bi-x-circle',
-            'ESPERA':'bi bi-clock',
-            'DEVUELTO':'bi bi-send-arrow-down'
+            'ESPERA': 'bi bi-clock',
+            'DEVUELTO': 'bi bi-send-arrow-down',
+            'TRAMITE': 'bi bi-clock-history',
         }
         return icono[value]
     }
@@ -134,12 +141,47 @@ export function useFunction() {
             'PENDIENTE': 'Pendientes',
             'APROBADO': 'Aprobadas',
             'RECHAZADO': 'Rechazadas',
+            'TRAMITE': 'Solicitud en Tramite',
         }
         return estado[value]
+    }
+    const getImagen = async (url) => {
+        const respuesta = await fetch(url)
+        const blob = await respuesta.blob()
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+        })
+    }
+    const getCantidadCaracteres = (maximo, total) => {
+        let size = total || 0
+        return "Quedan : " + (maximo - size) + " Caracteres ."
+    }
+    const getDias = (del, al) => {
+        const inicio = new Date(del)
+        const fin = new Date(al)
+
+        if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+            return 0
+        }
+        const d = inicio - fin
+        const milisegundosPorDia = 1000 * 60 * 60 * 24
+        const diasTranscurridos = Math.round(d / milisegundosPorDia)
+        return Math.abs(diasTranscurridos-1)
+
+    }
+    const getGasto = (gasto, importe) => {
+        return Number(Number(gasto) + Number(importe)).toFixed(2)
+    }
+    const getSaldo = (importe, gasto) => {
+        return Number(Number(importe) - Number(gasto)).toFixed(2)
     }
 
     return {
         len,
+        lenPdf,
         minuscula,
         jerarquia,
         updateUser,
@@ -147,7 +189,11 @@ export function useFunction() {
         esDigito,
         getColor,
         getIcono,
-        getEstado
+        getEstado,
+        getImagen,
+        getCantidadCaracteres,
+        getDias,
+        getGasto
     }
 
 }

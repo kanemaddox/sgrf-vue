@@ -14,6 +14,19 @@ export function useAlert() {
     })
   }
 
+  const preguntar = async (title = '¿Estás seguro?', text = 'esta seguro', footer = '') => {
+    return await Swal.fire({
+      title,
+      text,
+      footer,
+      icon: 'question',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: '<i class="bi bi-camera me-2"></i> Si',
+      denyButtonText: '<i class="bi bi-file-earmark-text me-2"></i> No'
+    })
+  }
+
   const success = async (title = 'Operación exitosa', text = 'Operación exitosa') => {
     return await Swal.fire({
       title,
@@ -52,7 +65,7 @@ export function useAlert() {
   const input = async (title = 'verificar') => {
     return await Swal.fire({
       title,
-      input: "password", 
+      input: "password",
       inputLabel: "Password",
       inputPlaceholder: "Ingresa tu contraseña",
       inputAttributes: {
@@ -72,6 +85,7 @@ export function useAlert() {
     error,
     info,
     custom,
-    input
+    input,
+    preguntar
   }
 }
