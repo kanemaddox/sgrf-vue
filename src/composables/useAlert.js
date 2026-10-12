@@ -2,6 +2,10 @@ import Swal from 'sweetalert2'
 
 export function useAlert() {
 
+  let loadingStartTime = null
+
+  const MIN_LOADING_TIME = 2000
+
   const confirm = async (title = '¿Estás seguro?', text = 'esta seguro', footer = '') => {
     return await Swal.fire({
       title,
@@ -46,9 +50,10 @@ export function useAlert() {
     })
   }
 
-  const info = async (title = 'Información') => {
+  const info = async (title = 'Información', text = '') => {
     return await Swal.fire({
       title,
+      text,
       icon: 'info',
       confirmButtonText: 'Aceptar'
     })
@@ -62,6 +67,7 @@ export function useAlert() {
       ...options
     })
   }
+
   const input = async (title = 'verificar') => {
     return await Swal.fire({
       title,
@@ -79,6 +85,41 @@ export function useAlert() {
     })
   }
 
+  const dataLoading = (title = 'Cargando datos', text = 'Por favor espere...') => {
+    loadingStartTime = Date.now()
+    Swal.fire({
+      title,
+      text,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading()
+      }
+    })
+  }
+
+  const updateLoading = (text) => {
+    Swal.update({ text })
+  }
+
+  const close = async () => {
+    if (!loadingStartTime) {
+      Swal.close()
+      return
+    }
+
+    const elapsed = Date.now() - loadingStartTime
+    const remaining = MIN_LOADING_TIME - elapsed
+
+    if (remaining > 0) {
+      await new Promise(resolve => setTimeout(resolve, remaining))
+    }
+
+    Swal.close()
+    loadingStartTime = null
+  }
+
   return {
     confirm,
     success,
@@ -86,6 +127,9 @@ export function useAlert() {
     info,
     custom,
     input,
-    preguntar
+    preguntar,
+    dataLoading,
+    close,
+    updateLoading
   }
 }

@@ -6,8 +6,8 @@ export const createCuentaService = (value) => {
     return axiosService.post(sgrf + 'create', value)
 }
 
-export const getCuentasService = () => {
-    return axiosService.get(sgrf + 'getCuentas')
+export const getCuentasService = (value) => {
+    return axiosService.get(sgrf + 'getCuentas',{ params: { categoria: value } })
 }
 
 export const updateCuentaService = (value) => {

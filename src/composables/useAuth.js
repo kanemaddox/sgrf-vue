@@ -15,6 +15,6 @@ export function useAuth() {
     login: store.login,
     logout: store.logout,
     //fetchUser: store.fetchUser,
-    refresh: store.refresh,
+    //refresh: store.refresh,
   }
 }

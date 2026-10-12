@@ -14,4 +14,20 @@ axiosService.interceptors.request.use((config) => {
   return config
 })
 
+axiosService.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    async (error) => {
+        if (error.response?.status === 401) {
+            const { useAuthStore } = await import('@/stores/authStores')
+            const authStore = useAuthStore()
+            if (authStore.token) {
+                authStore.logout()
+            }
+        }
+        return Promise.reject(error)
+    }
+)
+
 export default axiosService

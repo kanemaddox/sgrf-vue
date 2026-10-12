@@ -8,5 +8,6 @@ export const login = (credentials) => {
     "user":credentials.username,
     "pass":credentials.password
   }
-  return axios.post(usuario_api+'login', request)
+  //return axios.post(usuario_api+'sgrf/login', request)
+  return axios.post(usuario_api+'publico/login', request)
 }

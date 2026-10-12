@@ -1,3 +1,5 @@
+import { tokens } from "maska"
+
 export function useDto() {
     const persona = {
         id: 0,
@@ -48,7 +50,7 @@ export function useDto() {
         categoria: '',
         nombre: '',
         value: {
-            cantidad:0,
+            cantidad: '0',
             titulo: '',
             seccionUno: '',
             seccionDos: '',
@@ -106,6 +108,7 @@ export function useDto() {
         editar: false,
         pdf: false,
         obs: '',
+        token:'',
         formato: {
             titulo: '',
             seccionUno: '',
@@ -122,6 +125,7 @@ export function useDto() {
             estadoTres: false
         }
     }
+    
 
     const rdg = {
         idRdg: 0,
@@ -175,9 +179,48 @@ export function useDto() {
         banco: '',
         centrocostos: '',
         codigo: '',
-        cuentaGasto:[],
-        numeroSrf:'',
-        gestionSrf:0
+        cuentaGasto: [],
+        numeroSrf: '',
+        gestionSrf: 0
+    }
+    const rdgDetalle = {
+        idRdg: 0,
+        idSrf: 0,
+        numero: '',
+        gestion: 0,
+        actividad: '',
+        fecha: '',
+        al: '',
+        del: '',
+        detalle: '',
+        area: '',
+        cargo: '',
+        centrocostos: '',
+        codigo: '',
+        estado: '',
+        formato: '',
+        devolver: 0,
+        gasto: 0,
+        importe: 0,
+        rembolso: 0,
+        saldo: 0,
+        tc: 0,
+        moneda: '',
+        participantes: '',
+        tipoCuenta: '',
+        cuenta: '',
+        banco: '',
+        factura: [],
+        aprobadores: [],
+        pdf: false,
+        editar: false,
+        devuelto:false,
+        nombre: '',
+        idp: '',
+        estadoAprobacion: false,
+        idAprobacion: 0,
+        destinoAprobacion: 0,
+        boton:true
     }
     // funciones 
     const getPerfil = (data, url) => {
@@ -256,34 +299,7 @@ export function useDto() {
         formatoSRF.value.estadoTres = data.value.estadoTres
         return formatoSRF
     }
-    const getSRFAprobacion = (data) => {
-        srf.id = data.srf.id
-        srf.numero = data.srf.numero
-        srf.gestion = data.srf.gestion
-        srf.fechaInicio = data.srf.fechaSolicitud
-        srf.fechaFin = data.srf.fechaEstimada.split('T')[0]
-        srf.monto = data.srf.monto + ' ' + data.srf.moneda
-        srf.moneda = data.srf.moneda
-        srf.detalle = data.srf.detalle
-        srf.numerico = data.srf.campoNumerico
-        srf.texto = data.srf.campoTexto
-        srf.tipo = data.srf.tipo
-        srf.estado = data.srf.estado
-        srf.lista = data.srf.autorizador
-        srf.nombre = data.srf.empleado.persona.nombre + ' ' + data.srf.empleado.persona.paterno + ' ' + data.srf.empleado.persona.materno
-        srf.idp = data.srf.empleado.persona.idp
-        srf.cargo = data.srf.cargo
-        srf.centrocosto = data.srf.centrocosto
-        srf.codigo = data.srf.codigo
-        srf.idApr = data.id
-        srf.destino = data.destino
-        srf.estado = data.estado
-        srf.obs = data.obs
-        srf.formato = data.srf.formato
-
-        return srf
-
-    }
+    
     const getSRF = (data) => {
         srf.id = data.id
         srf.numero = data.numero
@@ -303,6 +319,7 @@ export function useDto() {
         srf.codigo = data.codigo
         srf.editar = data.edit
         srf.pdf = data.pdf
+        srf.token = data.token
         srf.formato = data.formato
         return srf
 
@@ -351,8 +368,8 @@ export function useDto() {
     const getRdgCreate = (data) => {
         rdgCreate.idRdg = data.idRdg
         rdgCreate.actividad = data.actividad
-        rdgCreate.al = data.al !== null? data.al.split('T')[0] : ''
-        rdgCreate.del = data.del !== null ?  data.del.split('T')[0] : ''
+        rdgCreate.al = data.al !== null ? data.al.split('T')[0] : ''
+        rdgCreate.del = data.del !== null ? data.del.split('T')[0] : ''
         rdgCreate.detalle = data.detalle
         rdgCreate.devolver = data.devolver
         rdgCreate.estado = data.estado
@@ -382,11 +399,11 @@ export function useDto() {
         rdgCreate.gestionSrf = data.gestionSrf
         return rdgCreate
     }
+
     return {
         getPerfil,
         getPersona,
         getFormatoSRF,
-        getSRFAprobacion,
         getSRF,
         getRDG,
         getPerfilCuenta,

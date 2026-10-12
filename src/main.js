@@ -31,11 +31,14 @@ import DocsComponents from '@/components/DocsComponents'
 import DocsExample from '@/components/DocsExample'
 import DocsIcons from '@/components/DocsIcons'
 
+import { useAuthStore } from '@/stores/authStores'
+
 // Create Vue application instance
 const app = createApp(App)
+const pinia = createPinia()
 
 // Install plugins
-app.use(createPinia()) // State management
+app.use(pinia) // State management
 app.use(router) // Router for SPA navigation
 app.use(CoreuiVue) // CoreUI component library
 
@@ -47,6 +50,9 @@ app.component('CIcon', CIcon)
 app.component('DocsComponents', DocsComponents)
 app.component('DocsExample', DocsExample)
 app.component('DocsIcons', DocsIcons)
+
+const authStore = useAuthStore(pinia)
+authStore.initSession()
 
 // Mount application to DOM
 app.mount('#app')

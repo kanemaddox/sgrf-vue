@@ -47,13 +47,12 @@
                         <CButton type="submit" color="secondary" size="sm" variant="outline"">
                             <i class=" bi bi-check-lg me-2"></i> Guardar
                         </CButton>
-
                     </CForm>
                 </CCardBody>
             </CCard>
         </CCol>
         <CCol :xs="12" :sm="6" :md="6" :lg="6">
-            <br>
+            <div class="d-md-none mb-3"></div>
             <CCard>
                 <CCardHeader class="headercolor">
                     <h6>
@@ -126,10 +125,17 @@
     </CRow>
 </template>
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref ,onUnmounted} from 'vue';
 import { useSettings } from '@/composables/useSettings'
-import { CForm } from '@coreui/vue';
 import 'bootstrap-icons/font/bootstrap-icons.css'
+
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
 
 const { getSettingsLocalUse, config, updateSettingsUse } = useSettings()
 
@@ -144,6 +150,15 @@ const valores = ref({
     dominio: '',
     idioma: 'Spanish'
 })
+
+/**Funciones */
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({name: 'Home'})
+}
 
 const updateSettings = async () => {
     const setting = {
@@ -160,11 +175,35 @@ const updateSettings = async () => {
         valores.value = { ...config.value }
     }
 }
+
 const getLoadData = () => {
     valores.value = { ...config.value }
 }
+
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
 onMounted(async () => {
-    await getSettingsLocalUse()
-    getLoadData()
+    dataLoading()
+    try {
+        await getSettingsLocalUse()
+        getLoadData()
+    } finally {
+        close()
+    }
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
 })
 </script>

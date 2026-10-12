@@ -1,8 +1,8 @@
 import { ref, reactive } from 'vue'
 import { updateSettingService, getSettingService } from '@/services/settingsService'
 
-import { useDto } from '@/composables/useDto'
-const { getFormatoSRF } = useDto()
+import { dtoFormato } from '@/composables/Dto/dtoFormato'
+const { getFormatoSRF } = dtoFormato()
 
 import router from '@/router'
 
@@ -106,17 +106,21 @@ export const useSettings = () => {
             loadingSetting.value = false
         }
     }
-    const getFormatoSrfUse = async (value) => {
+    const getFormatoSrfUse = async () => {
+        loadingSetting.value = true
+        errorSetting.value = null
         try {
+            
             const { data } = await getSettingService(2)
             Object.assign(formatoSRF, getFormatoSRF(data))
-            if (Number(data.value.cantidad) === Number(value)) {
+            
+            /*if (Number(data.value.cantidad) === Number(value)) {
                 await error('Error !!!!!!!', 'Has alcanzado el límite de solicitudes. Debes esperar la aprobación de tus solicitudes pendientes antes de crear una nueva.', '')
                 router.push({
                     name: 'ListaSRF',
                     params: { estado: 'pendiente' }
                 })
-            }
+            }*/
         } catch (errr) {
             errorSetting.value = errr
         } finally {

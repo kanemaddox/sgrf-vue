@@ -20,7 +20,7 @@
                             </template>
 
                             <template #title>
-                                {{perfilCuenta.nombre}}
+                                {{ perfilCuenta.nombre }}
                             </template>
                         </CWidgetStatsC>
 
@@ -64,24 +64,30 @@
                             <CTabPanel class="p-3" :itemKey="2">
                                 <br>
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText as="label" class="headercolor">Profesion : </CInputGroupText>
+                                    <CInputGroupText as="label" class="headercolor">
+                                        <i class="bi bi-pencil-square me-2"></i>Profesion : 
+                                    </CInputGroupText>
                                     <CFormInput type="text" :value="perfilCuenta.profesion" disabled />
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText as="label" class="headercolor">Cargo : </CInputGroupText>
+                                    <CInputGroupText as="label" class="headercolor">
+                                        <i class="bi bi-person-badge-fill me-2"></i>Cargo : 
+                                    </CInputGroupText>
                                     <CFormInput type="text" :value="perfilCuenta.cargo" disabled />
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText class="headercolor" as="label">Email Corporativo :
+                                    <CInputGroupText class="headercolor" as="label">
+                                        <i class="bi bi-envelope-check-fill me-2"></i>Email Corporativo :
                                     </CInputGroupText>
                                     <CFormInput type="text" :value="perfilCuenta.corporativo" disabled />
                                 </CInputGroup>
 
                                 <CWidgetStatsB class="mb-3" :progress="{ color: 'success', value: 100 }">
                                     <template #value>{{ perfilCuenta.centroCostos }}</template>
-                                    <template #title>{{ perfilCuenta.subCentroCostos }} | {{ perfilCuenta.codigo }}</template>
+                                    <template #title>{{ perfilCuenta.subCentroCostos }} | {{ perfilCuenta.codigo
+                                    }}</template>
                                     <template #text>
                                         {{ perfilCuenta.idpJefe }} | {{ perfilCuenta.jefe }}
                                     </template>
@@ -96,29 +102,41 @@
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText as="label" class="headercolor">{{ idpName }} : </CInputGroupText>
+                                    <CInputGroupText as="label" class="headercolor">
+                                        <i class="bi bi-person-vcard me-2"></i>{{ idpName }} : 
+                                    </CInputGroupText>
                                     <CFormInput type="text" :value="perfilCuenta.idp" disabled />
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText as="label" class="headercolor">Email : </CInputGroupText>
+                                    <CInputGroupText as="label" class="headercolor">
+                                        <i class="bi bi-envelope-at me-2"></i>Email : 
+                                    </CInputGroupText>
                                     <CFormInput type="text" :value="perfilCuenta.email" disabled />
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText as="label" class="headercolor">Celular : </CInputGroupText>
+                                    <CInputGroupText as="label" class="headercolor">
+                                        <i class="bi bi-phone me-2"></i>Celular : 
+                                    </CInputGroupText>
                                     <CFormInput type="text" :value="perfilCuenta.celular" disabled />
                                     <CButton type="button" color="success" class="font" size="sm"
                                         @click="clickModalCelular(true)">
-                                        Actualizar</CButton>
+                                        <i class="bi bi-arrow-clockwise me-2"></i>
+                                        <span class="d-none d-md-inline">Actualizar</span>
+                                    </CButton>
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
-                                    <CInputGroupText as="label" class="headercolor">Password : </CInputGroupText>
+                                    <CInputGroupText as="label" class="headercolor">
+                                        <i class="bi bi-key me-2"></i>Password : 
+                                    </CInputGroupText>
                                     <CFormInput type="text" value="***************" disabled />
                                     <CButton type="button" color="success" class="font" size="sm"
                                         @click="clickModalPass(true)">
-                                        Actualizar Contraseña</CButton>
+                                        <i class="bi bi-arrow-clockwise me-2"></i>
+                                        <span class="d-none d-md-inline">Actualizar Contraseña</span>
+                                    </CButton>
                                 </CInputGroup>
                             </CTabPanel>
                         </CTabContent>
@@ -143,7 +161,9 @@
                 <ComponenteNombres :datos="datos" />
                 <br>
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label" class="headercolor">Nuevo Numero de Celular : </CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">
+                        <i class="bi bi-phone me-2"></i>Nuevo Numero de Celular : 
+                    </CInputGroupText>
                     <CFormInput type="text" v-model="persona.celular" required />
                 </CInputGroup>
             </CModalBody>
@@ -176,17 +196,23 @@
                 <br>
 
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label" class="headercolor">Contraseña Actual : </CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">
+                        <i class="bi bi-key me-2"></i>Contraseña Actual : 
+                    </CInputGroupText>
                     <CFormInput type="password" v-model="pass.pass1" />
                 </CInputGroup>
 
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label" class="headercolor">Nueva Contraseña : </CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">
+                        <i class="bi bi-key me-2"></i>Nueva Contraseña : 
+                    </CInputGroupText>
                     <CFormInput type="password" v-model="pass.pass2" />
                 </CInputGroup>
 
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label" class="headercolor">Confirmar Nueva Contraseña : </CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">
+                        <i class="bi bi-key me-2"></i>Confirmar Nueva Contraseña : 
+                    </CInputGroupText>
                     <CFormInput type="password" v-model="pass.pass3" />
                 </CInputGroup>
 
@@ -279,9 +305,11 @@
 <script setup>
 
 /**Imports de librerias  y Propos*/
-import { nextTick, ref, reactive, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
-const router = useRouter()
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import { ref, reactive, computed, onMounted } from 'vue'
+
+import { useAlert } from '@/composables/useAlert'
+const { error, dataLoading, close ,updateLoading} = useAlert()
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
@@ -292,27 +320,21 @@ import { uploadProfile } from '@/services/uploadService'
 import ComponenteNombres from '@/components/usuario/ComponenteNombres.vue'
 import ComponenteDatos from '@/components/usuario/ComponenteDatos.vue'
 
-import { CRow } from '@coreui/vue'
-
 import { useAuth } from '@/composables/useAuth'
 const { logout } = useAuth()
 
 import { useUsuario } from '@/composables/useUsuario'
-const { perfilCuenta, updateUsuarioImagenUse, updatePassUse, getPerfilUse, loading, errorUse } = useUsuario()
+const { perfilCuenta, updateUsuarioImagenUse, updatePassUse, getPerfilUse } = useUsuario()
 
 import { usePersona } from '@/composables/usePersona'
-const { updateCelularUse, loadingPersona, errorPersona } = usePersona()
+const { updateCelularUse } = usePersona()
 
 import { API_URL_IMG100, API_URL_IMG200, API_URL_IMG800 } from "@/env"
 const img200 = API_URL_IMG200
 const img800 = API_URL_IMG800
 const img100 = API_URL_IMG100
-import { useAlert } from '@/composables/useAlert'
-const { confirm, success, error } = useAlert()
 
 /** Declaraciones de VAriables reactibas */
-
-const perfil = ref(null)
 
 const archivo = ref(null)
 const uploadProgress = ref(0)
@@ -323,7 +345,7 @@ const fileValid = ref(false)
 const nombre = ref(auth.nombre)
 const idUsuario = ref(auth.idUsuario)
 
-var nombre100 = "/public/usuario.png"
+var nombre100 = "/usuario.png"
 var nombre200 = nombre100
 var nombre800 = nombre200
 if (auth.imagen != "usuario.png") {
@@ -334,15 +356,15 @@ if (auth.imagen != "usuario.png") {
 const imagen = ref(nombre200)
 const nuevafoto = ref(nombre800)
 
-const persona = auth.persona
-const celularAnt = persona.celular
+const persona = ref(auth.persona)
+const celularAnt = persona.value.celular
 const idpName = ref(auth.idpName)
 
 /**Declaracion de objetos */
 const datos = {
-    idp: persona.idp,
-    nombre: persona.nombre,
-    apellidos: persona.paterno + " " + persona.materno,
+    idp: persona.value.idp,
+    nombre: persona.value.nombre,
+    apellidos: persona.value.paterno + " " + persona.value.materno,
     idpName: idpName.value
 }
 
@@ -389,47 +411,66 @@ const selectFile = (e) => {
     nuevafoto.value = URL.createObjectURL(file)
 }
 
-const uploadFile = () => {
+const uploadFile = async () => {
     if (!archivo.value) return
 
     uploading.value = true
     uploadProgress.value = 0
     errorMsg.value = null
 
-    uploadProfile({
-        file: archivo.value,
+    dataLoading('Subiendo imagen', 'Preparando archivo...')
+    try {
+        await uploadProfile({
+            file: archivo.value,
 
-        onProgress: (progress) => {
-            uploadProgress.value = progress
-        },
+            onProgress: (progress) => {
+                uploadProgress.value = progress
+                updateLoading(`Subiendo imagen: ${progress}%`)
+            },
 
-        onSuccess: async (data) => {
-            clickModalFoto(false)
-            nuevafoto.value = img800 + data
-            const resultService = await updateUsuarioImagenUse(idUsuario.value, data)
-            if (resultService) {
-                localStorage.setItem('imagen', data)
-                location.reload()
+            onSuccess: async (data) => {
+                try {
+                    updateLoading('Actualizando perfil...')
+                    clickModalFoto(false)
+                    nuevafoto.value = img800 + data
+                    const resultService = await updateUsuarioImagenUse(idUsuario.value, data)
+                    if (resultService) {
+                        localStorage.setItem('imagen', data)
+                        location.reload()
+                    }
+                    else {
+                        close()
+                    }
+                } catch (err) {
+                    close()
+                    errorMsg.value = 'Error al actualizar la imagen: ' + err
+                    await error(errorMsg.value)
+                }
+            },
+
+            onError: async (errr) => {
+                errorMsg.value = 'Error al subir archivo' + errr
+                await error(errorMsg.value)
             }
-        },
-
-        onError: async (err) => {
-            errorMsg.value = 'Error al subir archivo'
-            await error(errorMsg.value)
-        }
-    })
-        .finally(() => {
-            uploading.value = false
         })
+    } catch (err) {
+        close()
+        errorMsg.value = 'Error al subir archivo: ' + err
+        await error(errorMsg.value)
+    } finally {
+        uploading.value = false
+    }
 }
+
 const updateCelular = async () => {
     clickModalCelular(false)
-    const resultService = await updateCelularUse(persona)
+    const resultService = await updateCelularUse(persona.value)
     if (resultService) {
+        localStorage.setItem('persona', JSON.stringify(persona.value))
         location.reload()
     }
     else {
-        persona.celular = celularAnt
+        persona.value.celular = celularAnt
     }
 }
 const updatePass = async () => {
@@ -442,7 +483,13 @@ const updatePass = async () => {
 }
 
 onMounted(async () => {
-    await getPerfilUse(persona.id)
+    dataLoading()
+    try {
+        await getPerfilUse(persona.value.id)
+    } finally {
+        close()
+    }
+
 })
 
 </script>

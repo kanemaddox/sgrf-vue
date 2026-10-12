@@ -3,39 +3,13 @@
         <CCol :xs="12">
             <CCard>
                 <CCardHeader class="headercolor justify-content-between align-items-center">
-                    <CRow>
-                        <CCol :xs="7" :sm="6" :md="6" :lg="6">
-                            <div class="align-items-center">
-                                <CIcon icon="cil-data-transfer-down" size="lg" class="me-2 text-light" />
-                                <label class="mb-0 fs-6 text-white">Importar Usuarios</label>
-                            </div>
-                        </CCol>
-                        <CCol :xs="5" :sm="6" :md="6" :lg="6" class="text-end">
-                            <CDropdown variant="btn-group">
-                                <CDropdownToggle class="font border-0" size="sm">
-                                    <CIcon icon="cil-menu" color="dark" class="me-2 text-success" />Opciones
-                                </CDropdownToggle>
-                                <CDropdownMenu class="pt-0">
-                                    <CDropdownHeader component="h6"
-                                        class="bg-body-secondary text-body-secondary fw-semibold mb-2 rounded-top">
-                                        Opciones
-                                    </CDropdownHeader>
-                                    <CDropdownItem style="cursor: pointer;" @click="clickModalImportar(true)">
-                                        <CIcon icon="cil-data-transfer-down" /> Importar Usuarios
-                                    </CDropdownItem>
-                                    <CDropdownDivider />
-                                    <CDropdownItem style="cursor: pointer;" @click="clickModalExportar(true)">
-                                        <CIcon icon="cil-cloud-upload" /> Cargar Usuarios DB
-                                    </CDropdownItem>
-                                </CDropdownMenu>
-                            </CDropdown>
-                        </CCol>
-                    </CRow>
+                    <CIcon icon="cil-data-transfer-down" size="lg" class="me-2 text-light" />
+                    <label class="mb-0 fs-6 text-white">Importar Usuarios</label>
                 </CCardHeader>
                 <CCardBody>
                     <div class="table-responsive">
                         <CTable hover responsive>
-                            <CTableHead color="dark">
+                            <CTableHead>
                                 <CTableRow>
                                     <CTableHeaderCell>#</CTableHeaderCell>
                                     <CTableHeaderCell>{{ idpName }}</CTableHeaderCell>
@@ -103,11 +77,12 @@
                     </div>
                 </CCardBody>
             </CCard>
+            <br>
         </CCol>
     </CRow>
 
     <!-- Modal  Importar datos-->
-    <CModal backdrop="static" :visible="modalImportar" @close="clickModalImportar(false)">
+    <CModal backdrop="static" alignment="center" size="lg" :visible="modalImportar" @close="clickModalImportar(false)">
         <CForm @submit.prevent="uploadTable">
             <CModalHeader class="headercolor" dismiss @close="clickModalImportar(false)">
                 <CModalTitle>
@@ -120,7 +95,9 @@
             <CModalBody>
                 <!-- INPUT -->
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label" class="headercolor">Archivo</CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">
+                        <i class="bi bi-file-earmark-excel me-2"></i>Archivo :
+                    </CInputGroupText>
                     <CFormInput type="file" ref="fileInput" id="filedoc" accept=".xls,.xlsx" @change="selectFile"
                         :valid="fileValid" :disabled="uploading" required />
                     <CInputGroupText v-if="fileValid">
@@ -185,7 +162,7 @@
     <!-- End Modal Importar Datos-->
 
     <!-- Modal  Exportar datos-->
-    <CModal backdrop="static" :visible="modalExportar" @close="clickModalExportar(false)">
+    <CModal backdrop="static" alignment="center" size="lg" :visible="modalExportar" @close="clickModalExportar(false)">
         <CForm @submit.prevent="uploadDatos">
             <CModalHeader class="headercolor" dismiss @close="clickModalExportar(false)">
                 <CModalTitle>
@@ -262,8 +239,7 @@
                     <span>Exportar</span>
                 </CButton>
 
-                <CButton v-if="fileValid || errorMsg" @click="clickModalExportar(false)" class="font" color="success"
-                    size="sm">
+                <CButton v-if="fileValid || errorMsg" @click="getUsuariosView" class="font" color="success" size="sm">
                     <CIcon icon="cil-check-alt" class="me-2" />
                     <span>Aceptar</span>
                 </CButton>
@@ -276,17 +252,23 @@
 
 <script setup>
 /**Import de librerias */
-import { reactive, ref, onMounted } from 'vue'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import { ref, onMounted, onUnmounted } from 'vue'
 import readSheet from 'read-excel-file/browser'
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+
 import { useFunction } from '@/composables/useFunction'
-const { len, minuscula, jerarquia, updateUser } = useFunction()
+const { len, minuscula, jerarquia } = useFunction()
 
 import { useAlert } from '@/composables/useAlert'
 const { success, confirm, error } = useAlert()
 
 import { useUsuario } from '@/composables/useUsuario'
-const { addDatosUse, setEstadoUse, getEmpleadosFileUse, loading, errorUse } = useUsuario()
+const { addDatosUse, setEstadoUse } = useUsuario()
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
@@ -305,13 +287,12 @@ const rows = ref([])
 const registros = ref(0)
 
 const usuarios = ref([])
-const usuariosDb = ref([])
-const nuevaLista = ref([])
 let listaJefe = ref([])
 
 /**Variables para Modales */
 const modalImportar = ref(false)
 const modalExportar = ref(false)
+const exportar = ref(false)
 
 /** Funciones  */
 
@@ -403,7 +384,11 @@ const uploadTable = () => {
 
     usuarios.value = jerarquia(usuario, listaJefe)
     registros.value = usuarios.value.length
-    success('Registros subidos', 'Se subieron ' + usuarios.value.length + ' registros.')
+    if (Number(registros.value) > 0) {
+        exportar.value = true
+        getAction()
+    }
+    success('Registros Importados', 'Se Importaron ' + usuarios.value.length + ' registros.')
 }
 
 const uploadDatos = async () => {
@@ -450,18 +435,95 @@ const uploadDatos = async () => {
     }
 }
 
+const importar = () => {
+    clickModalImportar(true)
+}
 const clickModalImportar = (value) => {
     modalImportar.value = value
     fileValid.value = false
+}
+const getExportar = () => {
+    clickModalExportar(true)
 }
 const clickModalExportar = (value) => {
     modalExportar.value = value
     preparing.value = true
     fileValid.value = false
 }
+const cancelar = () => {
+    getCancelar()
+}
+const getCancelar = async () => {
+    const resultAlert = await confirm('Cancelar de Datos', 'Desea Salir de Importacion de Datos ?', '')
+    if (resultAlert.isConfirmed) {
+        getSalir()
+    }
+}
+
+const getUsuariosView = () => {
+    clickModalExportar(false)
+    router.push({ name: 'ListaUsuarios' })
+}
+
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({ name: 'UsuariosMenu' })
+}
+
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Importar ',
+            icon: 'cil-data-transfer-down',
+            color: 'success',
+            variant: 'ghost',
+            disabled: false,
+            movile: 'd-none d-md-inline',
+            onClick: importar
+        },
+        {
+            visible: true,
+            label: 'Cargar Datos',
+            icon: 'cil-cloud-upload',
+            color: exportar.value ? 'success' : 'secondary',
+            variant: 'ghost',
+            disabled: !exportar.value,
+            movile: 'd-none d-md-inline',
+            onClick: getExportar
+        },
+        {
+            visible: true,
+            label: 'Cancelar',
+            icon: 'cil-x',
+            color: 'danger',
+            variant: 'ghost',
+            disabled: false,
+            movile: 'd-none d-md-inline',
+            onClick: cancelar
+        },
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
 
 onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
+    const tooltips = document.querySelectorAll('.tooltip')
+    tooltips.forEach(tooltip => tooltip.remove())
+    getAction()
+})
+
+onUnmounted(() => {
+    clearActions()
 })
 </script>

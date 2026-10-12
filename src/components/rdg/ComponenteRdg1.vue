@@ -1,9 +1,10 @@
 <template>
-    <CAlert color="secondary">I. {{ valores.seccionUno }}</CAlert>
+    <CAlert color="success">I. {{ valores.seccionUno }}</CAlert>
     <!--Movile-->
     <div class="d-md-none mb-3">
         <CInputGroup size="sm" class="mb-3">
-            <CInputGroupText class="headercolor" as="label">{{ datos.idpName }} :
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person-vcard me-2"></i>{{ datos.idpName }} :
             </CInputGroupText>
             <CFormInput type="text" :value="datos.idp" disabled />
         </CInputGroup>
@@ -14,11 +15,15 @@
         </CInputGroup>
 
         <CInputGroup size="sm" class="mb-3">
-            <CInputGroupText class="headercolor" as="label">Cargo : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person-badge-fill me-2"></i>Cargo : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.cargo" disabled />
         </CInputGroup>
         <CInputGroup size="sm" class="mb-3">
-            <CInputGroupText class="headercolor" as="label">Area : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-building me-2"></i>Area : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.area" disabled />
         </CInputGroup>
 
@@ -34,18 +39,23 @@
             <CFormInput type="text" :value="datos.cuenta" disabled />
         </CInputGroup>
         <CInputGroup size="sm" class="mb-3">
-            <CInputGroupText class="headercolor" as="label">BANCO : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-bank me-2"></i>BANCO : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.banco" disabled />
         </CInputGroup>
 
         <CInputGroup size="sm" class="mb-3">
-            <CInputGroupText class="headercolor" as="label">Centro de Costos :
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person-rolodex me-2"></i>Centro de Costos :
             </CInputGroupText>
             <CFormInput type="text" :value="datos.centrocostos" disabled />
         </CInputGroup>
 
         <CInputGroup size="sm" class="mb-3">
-            <CInputGroupText class="headercolor" as="label">CC : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-braces me-2"></i>CC : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.codigo" disabled />
         </CInputGroup>
 
@@ -53,18 +63,24 @@
     <!--PC-->
     <div>
         <CInputGroup size="sm" class="mb-3 d-none d-md-flex">
-            <CInputGroupText class="headercolor" as="label">Nombre Completo :
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person me-2"></i>Nombre Completo :
             </CInputGroupText>
             <CFormInput type="text" :value="datos.nombre" disabled />
-            <CInputGroupText class="headercolor" as="label">{{ datos.idpName }} :
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person-vcard me-2"></i>{{ datos.idpName }} :
             </CInputGroupText>
             <CFormInput type="text" :value="datos.idp" disabled />
         </CInputGroup>
 
         <CInputGroup size="sm" class="mb-3 d-none d-md-flex">
-            <CInputGroupText class="headercolor" as="label">Cargo : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person-badge-fill me-2"></i>Cargo : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.cargo" disabled />
-            <CInputGroupText class="headercolor" as="label">Area : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-building me-2"></i>Area : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.area" disabled />
         </CInputGroup>
 
@@ -75,15 +91,20 @@
             <CInputGroupText class="headercolor" as="label">No. CTA. :
             </CInputGroupText>
             <CFormInput type="text" :value="datos.cuenta" disabled />
-            <CInputGroupText class="headercolor" as="label">BANCO : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-bank me-2"></i>BANCO : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.banco" disabled />
         </CInputGroup>
 
         <CInputGroup size="sm" class="mb-3 d-none d-md-flex">
-            <CInputGroupText class="headercolor" as="label">Centro de Costos :
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-person-rolodex me-2"></i>Centro de Costos :
             </CInputGroupText>
             <CFormInput type="text" :value="datos.centrocostos" disabled />
-            <CInputGroupText class="headercolor" as="label">CC : </CInputGroupText>
+            <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-braces me-2"></i>CC : 
+            </CInputGroupText>
             <CFormInput type="text" :value="datos.codigo" disabled />
         </CInputGroup>
     </div>
@@ -100,4 +121,5 @@ const props = defineProps({
         required:true
     }
 })
+import 'bootstrap-icons/font/bootstrap-icons.css'
 </script>

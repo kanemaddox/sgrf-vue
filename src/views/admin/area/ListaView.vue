@@ -13,7 +13,7 @@
                     <ul v-for="(item, id) in value.costo" :key="id">
                         <li>{{ item.codigo }} | {{ item.departamento }} </li>
                         <ul v-for="(sub, idsub) in item.sub" :key="idsub">
-                            <li class="small text-body-secondary">{{sub.codigo}} | {{ sub.departamento }}</li>
+                            <li class="small text-body-secondary">{{ sub.codigo }} | {{ sub.departamento }}</li>
                         </ul>
                     </ul>
                 </CCardBody>
@@ -31,15 +31,50 @@
 
 <script setup>
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { reactive, ref, onMounted, watch } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 import { useArea } from '@/composables/useArea'
 const { getEstructuraUse, listaEstructura } = useArea()
 
-onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
-    await getEstructuraUse()
-})
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
 
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({ name: 'MenuArea' })
+}
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+onMounted(async () => {
+    const tooltips = document.querySelectorAll('.tooltip')
+    tooltips.forEach(tooltip => tooltip.remove())
+    dataLoading()
+    try {
+        await getEstructuraUse()
+    } finally {
+        close()
+    }
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
+})
 </script>

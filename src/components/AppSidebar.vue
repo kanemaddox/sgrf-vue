@@ -10,7 +10,11 @@
         </CSidebarBrand>
       </RouterLink>
       <CCloseButton class="d-lg-none" dark @click="sidebar.toggleVisible()" />
+
     </CSidebarHeader>
+    <ul class="small text-nowrap">
+      <li>Sesión : {{ tiempoSesion }}</li>
+    </ul>
     <AppSidebarNav :menu=menu />
     <CSidebarFooter class="border-top d-none d-lg-flex">
       <CSidebarToggler @click="sidebar.toggleUnfoldable()" />
@@ -34,6 +38,15 @@ const sidebar = useSidebarStore()
 // 2. Estado de Permisos (Mantenemos la reactividad del store)
 const permissions = ref(auth.pernicions)
 
+const tiempoSesion = computed(() => {
+  const totalSegundos = Math.ceil(
+    auth.tiempoRestante / 1000
+  )
+  const minutos = Math.floor(totalSegundos / 60)
+  const segundos = totalSegundos % 60
+  return `${String(minutos).padStart(2, '0')}:${String(segundos).padStart(2, '0')}`
+})
+
 // 3. Filtrado de menú optimizado y reactivo mediante un computed
 const menu = computed(() => {
   const filterMenu = (items) => {
@@ -53,7 +66,7 @@ const menu = computed(() => {
         return !!permissions.value?.[item.key]
       })
   }
-  
+
   return filterMenu(nav)
 })
 </script>

@@ -18,17 +18,22 @@
                             :options="{ responsive: true }">
 
                             <template #column-datos="{ cellData }">
-                                <span><strong>Numero : </strong>{{ cellData.numero }}</span><br>
+                                <span><strong>Formulario : </strong>{{ cellData.numero }}</span><br>
                                 <div class="small text-body-secondary text-nowrap">
-                                    <span><strong>Importe : </strong>{{ cellData.importe }} {{ cellData.moneda }}</span>
+                                    <span>{{ persona.idp }} | {{ cellData.gestion }}</span><br>
+                                    <span><strong>Importe : </strong>{{ cellData.importe }} {{ cellData.moneda
+                                        }}</span><br>
+                                    <span><strong>Fecha : </strong>{{ cellData.fecha }} </span>
                                 </div>
                             </template>
 
                             <template #column-detalle="{ cellData }">
-                                <span>{{ cellData.actividad }}</span>
+                                <span>{{ cellData.detalle }}</span>
                                 <div class="small text-body-secondary text-nowrap">
-                                    <span><strong>Creado : </strong> </span><br>
-                                    <span><strong>Estimado : </strong></span>
+                                    <span><strong>Actividad : </strong> {{ lenFirma(cellData.actividad) }} </span><br>
+                                    <span><strong>Gasto : </strong> {{ cellData.gasto }} {{ cellData.moneda
+                                    }}</span><br>
+                                    <span><strong>Saldo : </strong>{{ cellData.saldo }} {{ cellData.moneda }}</span>
                                 </div>
                             </template>
 
@@ -43,8 +48,8 @@
                             <template #column-acciones="{ cellData }">
                                 <CButtonGroup role="group" size="sm">
                                     <CButton color="secondary" variant="outline" @click="getRdg(cellData.id)"
-                                        v-c-tooltip="{ content: 'Detalle de la Solicitud', placement: 'top' }">
-                                        <i class="bi bi-clipboard me-2"></i>
+                                        v-c-tooltip="{ content: 'Detalle Rendicion de Cuentas', placement: 'top' }">
+                                        <i class="bi bi-file-earmark-font me-2"></i>
                                     </CButton>
 
                                     <CButton v-if="cellData.estado === 'APROBADO'" color="secondary" variant="outline"
@@ -84,25 +89,30 @@ DataTable.use(DataTablesCore)
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
-const idUsuario = ref(auth.idUsuario)
+const persona = ref(auth.persona)
 
 import { useRdg } from '@/composables/useRdg'
-const { getRdgUsuarioEstadoUse, listaRdg } = useRdg()
+const { getRdgListaUse, listaRdg } = useRdg()
 
 import { useFunction } from '@/composables/useFunction'
-const { getEstado } = useFunction()
+const { getEstado, lenFirma } = useFunction()
 const titulo = ref('')
 
 const columns = [
     { data: 'id', title: 'ID' },
-    { data: 'datos', title: 'Datos', name: 'datos' },
+    { data: 'datos', title: 'Formulario', name: 'datos' },
     { data: 'detalle', title: 'Detalle', name: 'detalle', width: '40%' },
     { data: 'estado', title: 'Estado', name: 'estado' },
     {
@@ -114,20 +124,50 @@ const columns = [
     }
 ]
 
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({ name: 'MenuRdg' })
+}
+
 const getRdg = (value) => {
     router.push({
-        name: 'CrearRDG',
+        name: 'DetalleDrf',
         params: { idRdg: value }
     })
 }
 const getLoadData = (value) => {
     titulo.value = getEstado(value)
 }
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
 
 onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
-    await getRdgUsuarioEstadoUse(idUsuario.value, lista.estado.toUpperCase())
-    getLoadData(lista.estado.toUpperCase())
+    const tooltips = document.querySelectorAll('.tooltip')
+    tooltips.forEach(tooltip => tooltip.remove())
+    dataLoading()
+    try {
+        await getRdgListaUse(persona.value.id, lista.estado.toUpperCase())
+        getLoadData(lista.estado.toUpperCase())
+    } finally {
+        close()
+    }
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
 })
 </script>

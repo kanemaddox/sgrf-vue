@@ -1,7 +1,6 @@
 <template>
     <CRow>
         <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.jefes && admin">
-            <br />
             <CCard>
                 <CCardHeader class="headercolor text-center">
                     <div class="align-items-center">
@@ -22,7 +21,7 @@
         </CCol>
 
         <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.areas && admin">
-            <br />
+            <div class="d-md-none mb-3"></div>
             <CCard>
                 <CCardHeader class="headercolor text-center">
                     <div class="align-items-center">
@@ -42,9 +41,8 @@
             </CCard>
         </CCol>
 
-
         <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.sucursales && admin">
-            <br />
+            <div class="d-md-none mb-3"></div>
             <CCard>
                 <CCardHeader class="headercolor text-center">
                     <div class="align-items-center">
@@ -69,7 +67,9 @@
 
 <script setup>
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { ref } from 'vue'
+import {onMounted, ref,onUnmounted } from 'vue'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -80,11 +80,13 @@ const pernicions = ref(auth.pernicions)
 const rol = ref(auth.rol)
 const admin = ref(rol.value==='ADMIN'?true:false)
 
-const getFormularioSolicitud = () => {
-    router.push({ name: 'Formulario SRF' })
+/**Funciones */
+const salir = () => {
+    getSalir()
 }
-const getMenuUsuario = () => {
-    router.push({ name: 'Usuarios Menu' })
+
+const getSalir = () => {
+    router.push({name: 'Home'})
 }
 const getJefes = () => {
     router.push({ name: 'Lista de Jefes' })
@@ -92,12 +94,28 @@ const getJefes = () => {
 const getAreas = () => {
     router.push({ name: 'AREA' })
 }
-const getSucursales = () => {
-    router.push({ name: 'Lista de Sucursales' })
-}
 
 const getGastos = () => {
     router.push({ name: 'GASTOS' })
 }
 
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+onMounted(async () => {
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
+})
 </script>

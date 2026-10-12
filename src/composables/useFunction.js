@@ -7,6 +7,9 @@ export function useFunction() {
     const lenPdf = (value) => {
         return value.length > 20 ? value.slice(0, 20) + "..." : value
     }
+    const lenFirma = (value) => {
+        return value.length > 20 ? value.slice(0, 25) + "..." : value
+    }
     const minuscula = (value) => {
         return value.toLowerCase()
     }
@@ -132,7 +135,7 @@ export function useFunction() {
             'RECHAZADO': 'bi bi-x-circle',
             'ESPERA': 'bi bi-clock',
             'DEVUELTO': 'bi bi-send-arrow-down',
-            'TRAMITE': 'bi bi-clock-history',
+            'TRAMITE': 'bi-hourglass-split',
         }
         return icono[value]
     }
@@ -155,6 +158,70 @@ export function useFunction() {
             reader.readAsDataURL(blob)
         })
     }
+    const getFactura = async (url) => {
+        const respuesta = await fetch(url)
+        const blob = await respuesta.blob()
+
+        return new Promise((resolve, reject) => {
+
+            const reader = new FileReader()
+
+            reader.onload = () => {
+
+                const img = new Image()
+
+                img.onload = () => {
+
+                    // Tamaño estándar
+                    const ancho = 800
+                    const alto = 600
+
+                    const canvas = document.createElement('canvas')
+                    canvas.width = ancho
+                    canvas.height = alto
+
+                    const ctx = canvas.getContext('2d')
+
+                    // Fondo blanco
+                    ctx.fillStyle = '#FFFFFF'
+                    ctx.fillRect(0, 0, ancho, alto)
+
+                    // Mantener proporción
+                    const escala = Math.min(
+                        ancho / img.width,
+                        alto / img.height
+                    )
+
+                    const nuevoAncho = img.width * escala
+                    const nuevoAlto = img.height * escala
+
+                    // Centrar imagen
+                    const x = (ancho - nuevoAncho) / 2
+                    const y = (alto - nuevoAlto) / 2
+
+                    ctx.drawImage(
+                        img,
+                        x,
+                        y,
+                        nuevoAncho,
+                        nuevoAlto
+                    )
+
+                    // Convertir nuevamente a Base64
+                    resolve(
+                        canvas.toDataURL('image/jpeg', 0.90)
+                    )
+                }
+
+                img.onerror = reject
+                img.src = reader.result
+            }
+
+            reader.onerror = reject
+
+            reader.readAsDataURL(blob)
+        })
+    }
     const getCantidadCaracteres = (maximo, total) => {
         let size = total || 0
         return "Quedan : " + (maximo - size) + " Caracteres ."
@@ -169,7 +236,7 @@ export function useFunction() {
         const d = inicio - fin
         const milisegundosPorDia = 1000 * 60 * 60 * 24
         const diasTranscurridos = Math.round(d / milisegundosPorDia)
-        return Math.abs(diasTranscurridos-1)
+        return Math.abs(diasTranscurridos - 1)
 
     }
     const getGasto = (gasto, importe) => {
@@ -178,7 +245,39 @@ export function useFunction() {
     const getSaldo = (importe, gasto) => {
         return Number(Number(importe) - Number(gasto)).toFixed(2)
     }
+    const formatearNumero = (valor) => {
+        if (valor === null || valor === undefined || isNaN(valor)) return '0'
 
+        return new Intl.NumberFormat('es-ES', {
+            useGrouping: 'always',
+            minimumFractionDigits: 0, // Mínimo de decimales a mostrar
+            maximumFractionDigits: 2, // Máximo de decimales a mostrar
+        }).format(valor)
+    }
+    const getImg = (value, publico, uri) => {
+        return value === 'ninguno' ? publico : uri + value + '.jpg'
+    }
+    const getFoto = (value,publico,uri) => {
+        return value === 'usuario.png' ? publico : uri + value
+    }
+    const fecha = (value) => {
+        return value.split('T')[0]
+    }
+    const getProgreso = (value)=>{
+        let nivel = '1'
+        if(Number(value)>=30 && Number(value)<=70){
+            nivel ='2'
+        }
+        if(Number(value)>70){
+            nivel='3'
+        }
+        const colores = {
+            '1': 'danger',
+            '2': 'warning',
+            '3': 'success',
+        }
+        return colores[nivel]
+    }
     return {
         len,
         lenPdf,
@@ -191,9 +290,16 @@ export function useFunction() {
         getIcono,
         getEstado,
         getImagen,
+        getFactura,
         getCantidadCaracteres,
         getDias,
-        getGasto
+        getGasto,
+        lenFirma,
+        formatearNumero,
+        getImg,
+        getFoto,
+        fecha,
+        getProgreso
     }
 
 }

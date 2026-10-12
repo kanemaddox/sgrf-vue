@@ -14,8 +14,7 @@
         </CCardHeader>
         <CCardBody>
           <CRow class="table-responsive">
-            <DataTable :data="listaPendiente" :columns="columns" class="table table-striped"
-              :options="{ responsive: true }">
+            <DataTable :data="listaSrf" :columns="columns" class="table table-striped" :options="{ responsive: true }">
 
               <template #column-imagen="{ cellData }">
                 <CAvatar size="lg" :src="cellData.foto" />
@@ -28,18 +27,21 @@
                 </div>
               </template>
 
-              <template #column-srf="{ cellData }">
-                <span>No. : {{ cellData.numero }}</span><br>
+              <template #column-formulario="{ cellData }">
+                <span><strong>No. : </strong>{{ cellData.numero }}</span><br>
                 <div class="small text-body-secondary text-nowrap">
-                  <span>Monto : {{ cellData.monto }} {{ cellData.moneda }}</span><br>
+                  <span> {{ cellData.idp }} | {{ cellData.gestion }}</span><br>
+                  <span>{{ cellData.fechaInicio }}</span><br>
                 </div>
-                <div class="d-flex justify-content-between align-items-baseline">
-                  <div class="fw-semibold"></div>
-                  <div class="text-nowrap text-body-secondary small ms-3">
-                    {{ cellData.fecha }}
-                  </div>
+              </template>
+
+              <template #column-detalle="{ cellData }">
+                <span>{{ cellData.detalle }}</span>
+                <div class="small text-body-secondary text-nowrap">
+                  <span><strong>{{ cellData.montoTitulo }} : </strong>{{ formatearNumero(cellData.monto) }} {{
+                    cellData.moneda }}</span><br>
+                  <span><strong>{{ cellData.fechaTitulo }} : </strong>{{ cellData.fechaFin }}</span>
                 </div>
-                <CProgress thin :color="color" :value="70" />
               </template>
 
               <template #column-estado="{ cellData }">
@@ -52,19 +54,12 @@
 
               <template #column-acciones="{ cellData }">
                 <CButtonGroup role="group" size="sm">
-                  <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
-                    v-c-tooltip="{ content: 'Detalle de la Solicitud', placement: 'top' }">
-                    <i class="bi bi-clipboard me-2"></i>
+                  <CButton v-if="cellData.estado ==='PENDIENTE'" color="secondary" variant="ghost" @click="getRevisar(cellData.token)">
+                    <i class="bi bi-clipboard me-2"></i> Revisar
                   </CButton>
 
-                  <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
-                    v-c-tooltip="{ content: 'Ver Perfil Usuario', placement: 'top' }">
-                    <i class="bi bi-person me-2"></i>
-                  </CButton>
-
-                  <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
-                    v-c-tooltip="{ content: 'Rendiciones de Gastos', placement: 'top' }">
-                    <i class="bi bi-file-earmark-text me-2"></i>
+                  <CButton v-else color="secondary" variant="ghost"  @click="getRevisar(cellData.token)">
+                    <i class="bi bi-file-earmark-minus me-2"></i>Detalle
                   </CButton>
                 </CButtonGroup>
               </template>
@@ -92,35 +87,35 @@ DataTable.use(DataTablesCore)
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { onMounted, ref } from 'vue';
-import { useAprobacion } from '@/composables/useAprobacion'
-const { getPendientesUse } = useAprobacion()
+import { onMounted,onUnmounted, ref } from 'vue'
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
+import { useApSrf } from '@/composables/Aprobacion/useSrf'
+const { getSrfEstadoUse, listaSrf } = useApSrf()
+
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
 
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-import { API_URL_IMG100 } from "@/env"
-const img100 = API_URL_IMG100
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
-const idUsuario = ref(auth.idUsuario)
+const persona = ref(auth.persona)
 
 import { useFunction } from '@/composables/useFunction'
-const{getColor,getIcono,getEstado} = useFunction()
+const { formatearNumero, getColor, getIcono, getEstado } = useFunction()
 const color = ref('')
 const titulo = ref('')
 const icon = ref('')
-
-
-const listaPendiente = ref([])
 
 const columns = [
   { data: 'id', title: 'ID' },
   { data: 'imagen', title: '', name: 'imagen' },
   { data: 'datos', title: 'Solicitante', name: 'datos' },
+  { data: 'formulario', title: 'Formulario', name: 'formulario' },
   { data: 'detalle', title: 'Solicitud', name: 'detalle', width: '40%' },
-  { data: 'srf', title: 'Detalle', name: 'srf' },
   { data: 'estado', title: 'Estado', name: 'estado' },
   {
     data: 'acciones',
@@ -131,49 +126,52 @@ const columns = [
   }
 ]
 
-
-const getAprobacion = async (value) => {
-  titulo.value = getEstado(value)
-  icon.value = getIcono(value)
-  color.value = getColor(value)
-  try {
-    const resultLista = await getPendientesUse(idUsuario.value, value)
-    listaPendiente.value = resultLista.map(item => ({
-      id: item.id,
-      srf: {
-        numero: item.srf.numero,
-        gestion: item.srf.gestion,
-        monto: item.srf.monto,
-        moneda: item.srf.moneda,
-        fecha: item.srf.fechaSolicitud,
-      },
-      datos: {
-        idp: item.srf.empleado.persona.idp,
-        nombre: item.srf.empleado.persona.nombre,
-      },
-      imagen: {
-        foto: item.srf.empleado.persona.foto === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + item.srf.empleado.persona.foto
-      },
-      detalle: item.srf.detalle,
-      estado: item.estado,
-      acciones: item.id,
-    }))
-
-  } catch (errr) {
-    console.log(errr)
-  }
+const salir = () => {
+    getSalir()
 }
 
-const getSrf = (value) => {
+const getSalir = () => {
+    router.push({name: 'MenuSrf'})
+}
+const getRevisar = (value) => {
   router.push({
     name: 'RevisarSrf',
     params: { idSrf: value }
   })
 }
 
-onMounted(() => {
-  const tooltips = document.querySelectorAll('.tooltip');
-  tooltips.forEach(tooltip => tooltip.remove());
-  getAprobacion(lista.solicitud.toUpperCase())
+const getLoadData = (value) => {
+  titulo.value = getEstado(value)
+  icon.value = getIcono(value)
+  color.value = getColor(value)
+}
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+
+onMounted(async () => {
+  const tooltips = document.querySelectorAll('.tooltip')
+  tooltips.forEach(tooltip => tooltip.remove())
+  getLoadData(lista.solicitud.toUpperCase())
+  dataLoading()
+  try {
+    await getSrfEstadoUse(persona.value.id, lista.solicitud.toUpperCase())
+  } finally {
+    close()
+  }
+  getAction()
+})
+onUnmounted(() => {
+    clearActions()
 })
 </script>

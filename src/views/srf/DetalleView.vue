@@ -1,6 +1,6 @@
 <template>
     <CRow>
-        <CCol :xs="4" class="align-self-start">
+        <CCol :xs="12" :sm="4" :md="4" :lg="4" class="align-self-start">
             <CTable align="middle" class="mb-0 border" hover responsive>
                 <CTableHead class="text-nowrap">
                     <CTableRow>
@@ -13,7 +13,8 @@
                 <CTableBody>
                     <CTableRow v-for="item in srf.lista" :key="item.name">
                         <CTableDataCell class="text-center">
-                            <CAvatar size="md" :src="getFoto(item.jefe.foto)" :status="getColor(item.estado)" />
+                            <CAvatar size="md" :src="getFoto(item.jefe.foto, '/usuario.png', img100)"
+                                :status="getColor(item.estado)" />
                         </CTableDataCell>
                         <CTableDataCell>
                             <div>{{ item.jefe.nombre }}</div>
@@ -29,27 +30,10 @@
                     </CTableRow>
                 </CTableBody>
             </CTable>
-            <CCard>
-                <CCardBody>
-                    <CRow>
-                        <CCol :xs="12" :sm="6" class="d-grid gap-2">
-                            <CButton v-if="srf?.estado === 'PENDIENTE'" :disabled="!srf.editar"
-                                @click="clickModalSrf(true)" color="warning" size="sm">
-                                <CIcon icon="cil-pencil" class="me-2" />
-                                Editar
-                            </CButton>
-                        </CCol>
-                        <CCol :xs="12" :sm="6" class="d-grid gap-2">
-                            <CButton :disabled="srf.pdf" @click="generarPDF" class="font" color="success" size="sm">
-                                <CIcon icon="cil-data-transfer-down" class="me-2" />
-                                PDF
-                            </CButton>
-                        </CCol>
-                    </CRow>
-                </CCardBody>
-            </CCard>
         </CCol>
-        <CCol :xs="8" class="align-self-center">
+
+        <CCol :xs="12" :sm="8" :md="8" :lg="8" class="align-self-center">
+            <br>
             <CCard>
                 <CCardHeader class="headercolor justify-content-between align-items-center">
                     <div class="align-items-center">
@@ -63,10 +47,10 @@
                 </CCardHeader>
                 <CCardBody>
                     <CRow>
-                        <CCol :xs="8">
+                        <CCol :xs="12" :sm="8" :md="8" :lg="8">
                             <h5><strong>{{ srf.formato?.titulo }}</strong></h5>
                         </CCol>
-                        <CCol :xs="4" class="text-end">
+                        <CCol :xs="12" :sm="4" :md="4" :lg="4" class="text-end">
                             <h3><strong>No.: {{ srf.numero }}</strong> </h3>
                             <div class="space">{{ persona.idp }} | {{ srf.gestion }}</div>
                         </CCol>
@@ -78,38 +62,78 @@
                                 I. {{ srf.formato?.seccionUno }}
                             </CAccordionHeader>
                             <CAccordionBody>
-
                                 <ComponenteDatos :datos="datos" />
-
                             </CAccordionBody>
                         </CAccordionItem>
                     </CAccordion>
                     <br>
                     <CAlert color="secondary">II. {{ srf.formato?.seccionDos }}</CAlert>
 
-                    <CInputGroup size="sm" class="mb-3">
-                        <CInputGroupText class="headercolor" as="label">{{ srf.formato?.fecha }} :
-                        </CInputGroupText>
-                        <CFormInput type="text" :value="srf.fechaFin" disabled />
-                        <CInputGroupText class="headercolor" as="label">{{ srf.formato?.monto }} :
-                        </CInputGroupText>
-                        <CFormInput type="text" :value="`${srf.monto} ${srf.moneda}`" disabled />
-                    </CInputGroup>
+                    <!--PC-->
+                    <div class="mb-3 d-none d-md-flex">
+                        <CInputGroup size="sm" class="mb-3">
+                            <CInputGroupText class="headercolor" as="label">
+                                <i class="bi bi-calendar-event me-2"></i>{{ srf.formato?.fechaTitulo }} :
+                            </CInputGroupText>
+                            <CFormInput type="text" :value="srf.fechaFin" disabled />
+                            <CInputGroupText class="headercolor" as="label">
+                                <i class="bi bi-currency-dollar me-2"></i>{{ srf.formato?.montoTitulo }} :
+                            </CInputGroupText>
+                            <CFormInput type="text" :value="`${formatearNumero(srf.monto)} ${srf.moneda}`" disabled />
+                        </CInputGroup>
+                    </div>
+
+                    <!--Movil-->
+                    <div class="d-md-none mb-3">
+                        <CInputGroup size="sm" class="mb-3">
+                            <CInputGroupText class="headercolor" as="label">
+                                <i class="bi bi-calendar-event me-2"></i>{{ srf.formato?.fechaTitulo }} :
+                            </CInputGroupText>
+                            <CFormInput type="text" :value="srf.fechaFin" disabled />
+                        </CInputGroup>
+                        <CInputGroup>
+                            <CInputGroupText class="headercolor" as="label">
+                                <i class="bi bi-currency-dollar me-2"></i>{{ srf.formato?.montoTitulo }} :
+                            </CInputGroupText>
+                            <CFormInput type="text" :value="`${formatearNumero(srf.monto)} ${srf.moneda}`" disabled />
+                        </CInputGroup>
+                    </div>
+
+                    {{ srf.formato?.descripcion }} :
                     <CAlert color="secondary">
                         {{ srf.detalle }}
                     </CAlert>
-
                     <hr>
-                    <div v-if="srf.formato?.trueEstadoDos">
-                        <CInputGroup size="sm" class="mb-3">
-                            <CInputGroupText class="headercolor" as="label">{{ srf.formato?.detalleDos }} :
-                            </CInputGroupText>
-                            <CFormInput type="text" :value="srf.texto" disabled />
 
-                            <CInputGroupText class="headercolor" as="label">{{ srf.formato?.cantidadDos }} :
-                            </CInputGroupText>
-                            <CFormInput type="text" :value="srf.numerico" disabled />
-                        </CInputGroup>
+                    <div v-if="srf.formato?.trueComplemento">
+                        <div class="d-md-none mb-3">
+                            <CInputGroup size="sm" class="mb-3">
+                                <CInputGroupText class="headercolor" as="label">
+                                    <i class="bi bi-person-vcard-fill me-2"></i>{{ srf.formato?.detalleComplemento }} :
+                                </CInputGroupText>
+                                <CFormInput type="text" :value="srf.texto" disabled />
+                            </CInputGroup>
+                            <CInputGroup>
+                                <CInputGroupText class="headercolor" as="label">
+                                    <i class="bi bi-list-ol me-2"></i>{{ srf.formato?.cantidadComplemento }} :
+                                </CInputGroupText>
+                                <CFormInput type="text" :value="srf.numerico" disabled />
+                            </CInputGroup>
+                        </div>
+
+                        <div class="mb-3 d-none d-md-flex">
+                            <CInputGroup size="sm" class="mb-3">
+                                <CInputGroupText class="headercolor" as="label">
+                                    <i class="bi bi-person-vcard-fill me-2"></i>{{ srf.formato?.detalleComplemento }} :
+                                </CInputGroupText>
+                                <CFormInput type="text" :value="srf.texto" disabled />
+
+                                <CInputGroupText class="headercolor" as="label">
+                                    <i class="bi bi-list-ol me-2"></i>{{ srf.formato?.cantidadComplemento }} :
+                                </CInputGroupText>
+                                <CFormInput type="text" :value="srf.numerico" disabled />
+                            </CInputGroup>
+                        </div>
                     </div>
 
                     <div v-if="srf.formato?.estadoTres">
@@ -140,16 +164,20 @@
                 <CAlert color="secondary">II. {{ srf.formato?.seccionDos }}</CAlert>
 
                 <CInputGroup size="sm" class="mb-3">
-                    <CInputGroupText class="headercolor" as="label">{{ srf.formato?.fecha }} :
+                    <CInputGroupText class="headercolor" as="label">
+                        <i class="bi bi-calendar-event me-2"></i>{{ srf.formato?.fechaTitulo }} :
                     </CInputGroupText>
                     <CFormInput type="date" v-model="updateSrf.fechaFin" :min="hoy" @change="validarFecha"
                         @keydown="bloquearTeclado" required />
                 </CInputGroup>
 
                 <CInputGroup size="sm" class="mb-3">
-                    <CInputGroupText class="headercolor" as="label">{{ srf.formato?.monto }} :
+                    <CInputGroupText class="headercolor" as="label">
+                        <i class="bi bi-currency-dollar me-2"></i>{{ srf.formato?.montoTitulo }} :
                     </CInputGroupText>
+
                     <CFormInput type="text" v-model="updateSrf.monto" required />
+
                     <CFormSelect v-model="updateSrf.moneda" required>
                         <option value="">Moneda</option>
                         <option value="USD">Dollar</option>
@@ -162,33 +190,31 @@
                     :text="getCantidadCaracteres(150 - srf.detalle.length)" maxlength="150" required>
                 </CFormTextarea>
                 <hr>
-                <div v-if="srf.formato?.estadoDos">
-
+                <div v-if="srf.formato?.estadoComplemento">
                     <CAlert color="warning">
-                        <CInputGroup size="sm" class="mb-3 d-none d-md-flex checkcolor">
-                            <CFormCheck type="checkbox" v-model="trueEstadoDos" :label="srf.formato?.cuidado" />
+                        <CInputGroup size="sm" class="mb-3 checkcolor">
+                            <CFormCheck type="checkbox" v-model="trueComplemento" :label="srf.formato?.complemento" />
                         </CInputGroup>
 
-                        <div v-if="trueEstadoDos">
-
+                        <div v-if="trueComplemento">
                             <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText class="headercolor" as="label">{{
-                                    srf.formato?.detalleDos }} :
+                                <CInputGroupText class="headercolor" as="label">
+                                    <i class="bi bi-person-vcard-fill me-2"></i>
+                                    {{ srf.formato?.detalleComplemento }} :
                                 </CInputGroupText>
                                 <CFormInput type="text" v-model="updateSrf.texto" />
                             </CInputGroup>
 
                             <CInputGroup size="sm" class="mb-3">
-                                <CInputGroupText class="headercolor" as="label">{{
-                                    srf.formato?.cantidadDos }}
-                                    :
+                                <CInputGroupText class="headercolor" as="label">
+                                    <i class="bi bi-list-ol me-2"></i>
+                                    {{ srf.formato?.cantidadComplemento }} :
                                 </CInputGroupText>
                                 <CFormInput type="text" v-model="updateSrf.numerico" />
                             </CInputGroup>
                         </div>
                     </CAlert>
                 </div>
-
             </CModalBody>
             <CModalFooter>
                 <CButton @click="clickModalSrf(false)" color="danger" class="font" size="sm">
@@ -249,36 +275,34 @@ const detalleProps = defineProps({
     }
 })
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { ref, reactive, computed, onMounted } from 'vue'
-
-import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
-
-import { useFunction } from '@/composables/useFunction'
-const { getColor, getIcono, getImagen, lenPdf, getCantidadCaracteres } = useFunction()
-
-import { API_URL_IMG100, API_URL_IMG200 } from "@/env"
-const img100 = API_URL_IMG100
-const img200 = API_URL_IMG200
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 import { useAlert } from '@/composables/useAlert'
-import { CModal } from '@coreui/vue'
-const { confirm, error, success } = useAlert()
+const { dataLoading, close } = useAlert()
+import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
+import { useFunction } from '@/composables/useFunction'
+const { getFoto, formatearNumero, getColor, getIcono, lenFirma, lenPdf, getCantidadCaracteres } = useFunction()
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+import { API_URL_SGRF, API_URL_IMG100} from "@/env"
+const img100 = API_URL_IMG100
+const dominio = API_URL_SGRF
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
 
-const persona = auth.persona
-const idUsuario = ref(auth.idUsuario)
-const imagen = ref(auth.imagen)
+const persona = ref(auth.persona)
 const idpName = ref(auth.idpName)
-const trueEstadoDos = ref(false)
+const trueComplemento = ref(false)
 
 import { useSrf } from '@/composables/useSrf'
 const { updateSrfUse, getSrfUsuarioUse, srf } = useSrf()
 
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
-import { crearSrfPdf } from '../../pdf/srfPdf'
+import { crearSrfPdf } from '../pdf/srfPdfLite'
 
 pdfMake.vfs = pdfFonts.vfs
 
@@ -290,7 +314,7 @@ const updateSrf = reactive({
     detalle: '',
     texto: '',
     numerico: 0,
-    formato:{}
+    formato: {}
 })
 
 const obsSrf = reactive({
@@ -303,12 +327,12 @@ const obsSrf = reactive({
 })
 
 const datos = reactive({
-    nombre:'',
-    idp:'',
-    idpName:'',
-    cargo:'',
-    centroCostos:'',
-    codigo:''
+    nombre: '',
+    idp: '',
+    idpName: '',
+    cargo: '',
+    centroCostos: '',
+    codigo: ''
 })
 
 const modalSrf = ref(false)
@@ -327,8 +351,12 @@ const vars = {
     '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
 }
 
-const getFoto = (value) => {
-    return value === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + value
+const salir = () => {
+    getSalir()
+}
+
+const editar = () => {
+    clickModalSrf(true)
 }
 
 const validarFecha = (e) => {
@@ -352,7 +380,7 @@ const clickModalObs = (value) => {
 
 const actualizarSrf = async () => {
     clickModalSrf(false)
-    updateSrf.formato.trueEstadoDos = trueEstadoDos.value
+    updateSrf.formato.trueComplemento = trueComplemento.value
     const resultService = await updateSrfUse(updateSrf)
     if (resultService) {
         location.reload()
@@ -371,35 +399,35 @@ const getObs = (value) => {
             obsSrf.color = getColor(element.estado)
             obsSrf.fecha = new Date(element.fechaActualizacion)
         }
-    });
+    })
     clickModalObs(true)
 }
 
 const generarPDF = async () => {
-
-    const foto = await getImagen(img200 + imagen.value)
     const pdf = {
         titulo: srf.formato?.titulo,
         numero: srf.numero,
         fecha: 'Fecha de Solicitud : ' + srf.fechaInicio,
-        gestion: persona.idp + ' | ' + srf.gestion,
+        gestion: persona.value.idp + ' | ' + srf.gestion,
 
         seccionUno: srf.formato?.seccionUno,
-        imagen: foto,
-        qr: 'http://192.168.31.34:3000/#/srf/formulario/5',
-        nombre: persona.nombre + ' ' + persona.paterno + ' ' + persona.materno,
-        idp: persona.idp,
-        idpName:idpName.value+":",
-        email: persona.email,
+        qr: dominio + '#/pages/srfpublico/' + srf.token,
+        nombre: datos.nombre,
+        idp: persona.value.idp,
+        idpName: idpName.value + ":",
+        email: persona.value.email,
         cargo: srf.cargo,
-        costo: 'Centro de Costos : ' + srf.centrocosto,
-        codigo: ' ' + srf.codigo,
+        costo: srf.centrocosto,
+        codigo: srf.codigo,
 
         seccionDos: srf.formato?.seccionDos,
-        fechafin: srf.formato?.fecha + ' : ' + srf.fechaFin,
-        monto: srf.formato?.monto + ' : ' + srf.monto + ' ' + srf.moneda,
+        fechaTituloFin: srf.formato?.fechaTitulo + ' : ',
+        fechafin: srf.fechaFin,
+        montoTitulo: srf.formato?.montoTitulo + ' : ',
+        monto: formatearNumero(srf.monto) + ' ' + srf.moneda,
+        descripcion: srf.formato?.descripcion + " : ",
         detalle: srf.detalle,
-        
+
         //-condicional
         visibleDos: srf.formato?.trueEstadoDos,
         //obstitulo: srf.formato?.cuidado,
@@ -411,21 +439,29 @@ const generarPDF = async () => {
         obs: srf.formato.detalle,
 
         jefe: {
-            nombre: srf.lista[0].jefe.nombre + ' ' + srf.lista[0].jefe.paterno + ' ' + srf.lista[0].jefe.materno,
+            nombre: lenFirma(srf.lista[0].jefe.nombre + ' ' + srf.lista[0].jefe.paterno + ' ' + srf.lista[0].jefe.materno),
             idp: srf.lista[0].jefe.idp,
             cargo: lenPdf(srf.lista[0].cargo)
         },
         pago: {
-            nombre: srf.lista[srf.lista.length - 1].jefe.nombre + ' ' + srf.lista[srf.lista.length - 1].jefe.paterno + ' ' + srf.lista[srf.lista.length - 1].jefe.materno,
+            nombre: lenFirma(srf.lista[srf.lista.length - 1].jefe.nombre + ' ' + srf.lista[srf.lista.length - 1].jefe.paterno + ' ' + srf.lista[srf.lista.length - 1].jefe.materno),
             idp: srf.lista[srf.lista.length - 1].jefe.idp,
             cargo: lenPdf(srf.lista[srf.lista.length - 1].cargo)
         },
+        nombreFirma: lenFirma(datos.nombre),
         cargofirma: lenPdf(srf.cargo),
 
     }
     const docDefinition = crearSrfPdf(pdf)
-    const name = persona.idp + '' + srf.id + '' + srf.numero + '.pdf'
+    const name = persona.value.idp + '' + srf.id + '' + srf.numero + '.pdf'
     pdfMake.createPdf(docDefinition).download(name)
+}
+
+const getSalir = () => {
+    router.push({
+        name: 'ListaSRF',
+        params: { estado: detalleProps.estado }
+    })
 }
 
 const getLoadData = () => {
@@ -437,20 +473,64 @@ const getLoadData = () => {
     updateSrf.texto = srf.texto
     updateSrf.numerico = srf.numerico
     updateSrf.formato = srf.formato
-    trueEstadoDos.value = srf.formato?.trueEstadoDos
+    trueComplemento.value = srf.formato?.trueComplemento
 
-    datos.nombre = persona.nombre + " "+ persona.paterno + " "+persona.materno
+    datos.nombre = persona.value.nombre + " " + persona.value.paterno + " " + persona.value.materno
     datos.idpName = idpName
-    datos.idp = persona.idp
+    datos.idp = persona.value.idp
     datos.cargo = srf.cargo
     datos.centroCostos = srf.centrocosto
     datos.codigo = srf.codigo
 }
 
+
+const getAction = () => {
+    setActions([
+        {
+            visible: srf.editar ? true : false,
+            label: 'Editar',
+            icon: 'cil-pencil',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: editar
+        },
+        {
+            visible: true,
+            label: 'PDF',
+            icon: 'cil-data-transfer-down',
+            color: 'success',
+            variant: 'ghost',
+            disabled: srf.pdf ? true : false,
+            onClick: generarPDF
+        },
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+
 onMounted(async () => {
     const tooltips = document.querySelectorAll('.tooltip')
     tooltips.forEach(tooltip => tooltip.remove())
-    await getSrfUsuarioUse(detalleProps.idSrf, persona.id)
-    getLoadData()
+    dataLoading()
+    try {
+        await getSrfUsuarioUse(detalleProps.idSrf, persona.value.id)
+        getLoadData()
+    } finally {
+        close()
+    }
+    getAction()
+
+})
+
+onUnmounted(() => {
+    clearActions()
 })
 </script>

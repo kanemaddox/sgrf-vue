@@ -8,41 +8,38 @@
         Cuenta
       </CDropdownHeader>
       <CDropdownItem style="cursor: pointer;" @click="profile">
-        <CIcon icon="cil-user"/> Perfil Usuario
+        <CIcon icon="cil-user" /> Perfil Usuario
       </CDropdownItem>
       <CDropdownItem style="cursor: pointer;">
-        <CIcon icon="cil-dollar"/> Cuentas Bancarias
+        <CIcon icon="cil-dollar" /> Cuentas Bancarias
       </CDropdownItem>
       <CDropdownDivider />
       <CDropdownItem style="cursor: pointer;" @click="confirmLogout">
-        <CIcon icon="cil-lock-locked"/> Salir 
+        <CIcon icon="cil-lock-locked" /> Salir
       </CDropdownItem>
     </CDropdownMenu>
   </CDropdown>
 </template>
 <script setup>
 
-import { useAuthStore } from '@/stores/authStores'
-import { API_URL_IMG100} from "@/env";
-
-const img100 = API_URL_IMG100
-const auth = useAuthStore()
-var nombre= "/public/usuario.png"
-if(auth.imagen != "usuario.png"){
-  nombre = img100+auth.imagen
-}
-const imagen = ref(nombre) 
-
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { useUser } from '@/composables/useUsers'
 import Swal from 'sweetalert2'
+import { useAuthStore } from '@/stores/authStores'
+import { API_URL_IMG100 } from "@/env";
 
-const itemsCount = 42
+const img100 = API_URL_IMG100
+const auth = useAuthStore()
 
-const router = useRouter()
-const { logout} = useAuth()
+var nombre = "/usuario.png"
+if (auth.imagen !== "usuario.png") {
+  nombre = img100 + auth.imagen
+}
+const imagen = ref(nombre)
+
+
+const { logout } = useAuth()
 const { goToProfile } = useUser()
 
 const confirmLogout = async () => {
@@ -58,7 +55,7 @@ const confirmLogout = async () => {
     logout()
   }
 }
-const profile = () =>{
+const profile = () => {
   goToProfile()
 }
 

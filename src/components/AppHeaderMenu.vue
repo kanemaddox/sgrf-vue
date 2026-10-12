@@ -3,8 +3,8 @@
         <CDropdown placement="bottom-end" variant="nav-item">
             <CDropdownToggle :caret="false">
                 <CIcon icon="cil-settings" size="lg"></CIcon>
-
             </CDropdownToggle>
+            
             <CDropdownMenu class="pt-0">
                 <CDropdownHeader component="h6" class="bg-body-secondary text-body-secondary fw-semibold my-2">
                     Settings Local
@@ -53,10 +53,6 @@
                 <CDropdownHeader component="h6" class="bg-body-secondary text-body-secondary fw-semibold my-2">
                     Dependencias
                 </CDropdownHeader>
-
-                <CDropdownItem style="cursor: pointer;" @click="getMenu">
-                    <CIcon icon="cil-menu" /> Menu
-                </CDropdownItem>
 
                 <CDropdownItem style="cursor: pointer;" @click="getJefes" v-if="pernicions?.jefes && admin">
                     <CIcon icon="cil-contact" /> Jefes

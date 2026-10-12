@@ -16,25 +16,26 @@
                             <CInputGroupText class="headercolor" as="label">
                                 <i class="bi bi-boxes me-2"></i>Maximo de Solicitudes :
                             </CInputGroupText>
-                            <CFormSelect  v-model="valores.cantidad" required>
+                            <CFormSelect v-model="formato.cantidadSolicitudes" required>
                                 <option value="">Seleccionar</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
                             </CFormSelect>
                         </CInputGroup>
+
                         <CInputGroup size="sm" class="mb-3">
                             <CInputGroupText class="headercolor" as="label">
                                 <i class="bi bi-tags me-2"></i>Titulo :
                             </CInputGroupText>
-                            <CFormInput type="text" v-model="valores.titulo" required />
+                            <CFormInput type="text" v-model="formato.titulo" required />
                         </CInputGroup>
 
                         <CInputGroup size="sm" class="mb-3">
                             <CInputGroupText class="headercolor" as="label">
                                 <i class="bi bi-tags me-2"></i>Seccion I.
                             </CInputGroupText>
-                            <CFormInput type="text" v-model="valores.seccionUno" required />
+                            <CFormInput type="text" v-model="formato.seccionUno" required />
                         </CInputGroup>
 
                         <CAlert color="secondary">
@@ -42,52 +43,52 @@
                                 <CInputGroupText class="headercolor" as="label">
                                     <i class="bi bi-tags me-2"></i>Seccion II.
                                 </CInputGroupText>
-                                <CFormInput type="text" v-model="valores.seccionDos" required />
+                                <CFormInput type="text" v-model="formato.seccionDos" required />
                             </CInputGroup>
 
                             <CInputGroup size="sm" class="mb-3">
                                 <CInputGroupText class="headercolor" as="label">
                                     <i class="bi bi-calendar-date me-2"></i>Fecha :
                                 </CInputGroupText>
-                                <CFormInput type="text" v-model="valores.fecha" required />
+                                <CFormInput type="text" v-model="formato.fechaTitulo" required />
                             </CInputGroup>
                             <CInputGroup size="sm" class="mb-3">
                                 <CInputGroupText class="headercolor" as="label">
                                     <i class="bi bi-currency-dollar me-2"></i>Monto :
                                 </CInputGroupText>
-                                <CFormInput type="text" v-model="valores.monto" required />
+                                <CFormInput type="text" v-model="formato.montoTitulo" required />
                             </CInputGroup>
 
                             <CInputGroup size="sm" class="mb-3">
                                 <CInputGroupText class="headercolor" as="label">
                                     <i class="bi bi-tags me-2"></i>Descripcion :
                                 </CInputGroupText>
-                                <CFormInput type="text" v-model="valores.descripcion" required />
+                                <CFormInput type="text" v-model="formato.descripcion" required />
                             </CInputGroup>
 
                             <CInputGroup size="sm" class="mb-3">
                                 <CInputGroupText class="headercolor" as="label">
                                     <i class="bi bi-tags me-2"></i>Complemento :
                                 </CInputGroupText>
-                                <CFormInput type="text" v-model="valores.cuidado" />
+                                <CFormInput type="text" v-model="formato.complemento" />
                                 <CInputGroupText class="headercolor">
-                                    <CFormCheck type="checkbox" v-model="valores.estadoDos"
+                                    <CFormCheck type="checkbox" v-model="formato.estadoComplemento"
                                         aria-label="Checkbox for following text input" />
                                 </CInputGroupText>
                             </CInputGroup>
-                            <div v-if="valores.estadoDos">
+                            <div v-if="formato.estadoComplemento">
                                 <CInputGroup size="sm" class="mb-3">
                                     <CInputGroupText class="headercolor" as="label">
                                         <i class="bi bi-card-text me-2"></i>Detalle :
                                     </CInputGroupText>
-                                    <CFormInput type="text" v-model="valores.detalleDos" required />
+                                    <CFormInput type="text" v-model="formato.detalleComplemento" required />
                                 </CInputGroup>
 
                                 <CInputGroup size="sm" class="mb-3">
                                     <CInputGroupText class="headercolor" as="label">
                                         <i class="bi bi-archive me-2"></i>Cantidad :
                                     </CInputGroupText>
-                                    <CFormInput type="text" v-model="valores.cantidadDos" required />
+                                    <CFormInput type="text" v-model="formato.cantidadComplemento" required />
                                 </CInputGroup>
                             </div>
                         </CAlert>
@@ -96,17 +97,17 @@
                             <CInputGroupText class="headercolor" as="label">
                                 <i class="bi bi-tags me-2"></i>Seccion III.
                             </CInputGroupText>
-                            <CFormInput type="text" v-model="valores.seccionTres" />
+                            <CFormInput type="text" v-model="formato.seccionTres" />
                             <CInputGroupText class="headercolor">
-                                <CFormCheck type="checkbox" v-model="valores.estadoTres"
+                                <CFormCheck type="checkbox" v-model="formato.estadoTres"
                                     aria-label="Checkbox for following text input" />
                             </CInputGroupText>
                         </CInputGroup>
 
-                        <div v-if="valores.estadoTres">
+                        <div v-if="formato.estadoTres">
                             <CInputGroup size="sm" class="mb-3">
                                 <CInputGroupText class="headercolor" as="label">Detalle.</CInputGroupText>
-                                <CFormTextarea v-model="valores.detalle" rows="10">
+                                <CFormTextarea v-model="formato.detalle" rows="10">
                                 </CFormTextarea>
                             </CInputGroup>
                         </div>
@@ -134,8 +135,8 @@
         <CCol :xs="12" :sm="12" :md="7" :lg="7">
             <br>
             <CAlert color="secondary">
-                <h2>Maximo de Solicitudes {{ valores.cantidad }} </h2>
-                <label class="small text-body-secondary"> Vista Previa | 
+                <h2>Maximo de Solicitudes {{ formato.cantidadSolicitudes }} </h2>
+                <label class="small text-body-secondary"> Vista Previa |
                     {{ formatoSRF.fecha }}
                 </label>
             </CAlert>
@@ -143,11 +144,11 @@
                 <CCardHeader class="headercolor justify-content-between align-items-center">
                     <div class="align-items-center">
                         <CIcon icon="cil-description" size="lg" class="me-2 text-light" />
-                        <label class="mb-0 fs-6 text-white">{{ valores.titulo }}</label><br>
+                        <label class="mb-0 fs-6 text-white">{{ formato.titulo }}</label><br>
                     </div>
                 </CCardHeader>
                 <CCardBody>
-                    <CAlert color="secondary">I. {{ valores.seccionUno }}</CAlert>
+                    <CAlert color="secondary">I. {{ formato.seccionUno }}</CAlert>
                     <CInputGroup size="sm" class="mb-3">
                         <CInputGroupText class="headercolor" as="label">Nombre Completo :
                         </CInputGroupText>
@@ -161,15 +162,15 @@
                         <CFormInput type="text" value="" disabled />
                     </CInputGroup>
 
-                    <CAlert color="secondary">II. {{ valores.seccionDos }}</CAlert>
+                    <CAlert color="secondary">II. {{ formato.seccionDos }}</CAlert>
 
                     <CInputGroup size="sm" class="mb-3">
                         <CInputGroupText class="headercolor" as="label">
-                            <i class="bi bi-calendar-date me-2"></i>{{ valores.fecha }} :
+                            <i class="bi bi-calendar-date me-2"></i>{{ formato.fechaTitulo }} :
                         </CInputGroupText>
                         <CFormInput type="date" />
                         <CInputGroupText class="headercolor" as="label">
-                            <i class="bi bi-currency-dollar me-2"></i>{{ valores.monto }} :
+                            <i class="bi bi-currency-dollar me-2"></i>{{ formato.montoTitulo }} :
                         </CInputGroupText>
                         <CFormInput type="text" />
                         <CFormSelect>
@@ -180,29 +181,29 @@
                         </CFormSelect>
                     </CInputGroup>
 
-                    <CFormTextarea :label="valores.descripcion" rows="1" disabled>
+                    <CFormTextarea :label="formato.descripcion" rows="1" disabled>
                     </CFormTextarea>
 
                     <hr>
 
-                    <div v-if="valores.estadoDos">
-                        <CAlert color="warning">{{ valores.cuidado }}</CAlert>
+                    <div v-if="formato.estadoComplemento">
+                        <CAlert color="warning">{{ formato.complemento }}</CAlert>
                         <CInputGroup size="sm" class="mb-3">
                             <CInputGroupText class="headercolor" as="label">
-                                <i class="bi bi-card-text me-2"></i>{{ valores.detalleDos }} :
+                                <i class="bi bi-card-text me-2"></i>{{ formato.detalleComplemento }} :
                             </CInputGroupText>
                             <CFormInput type="text" />
 
                             <CInputGroupText class="headercolor" as="label">
-                                <i class="bi bi-archive me-2"></i>{{ valores.cantidadDos }} :
+                                <i class="bi bi-archive me-2"></i>{{ formato.cantidadComplemento }} :
                             </CInputGroupText>
                             <CFormInput type="text" />
                         </CInputGroup>
                     </div>
 
-                    <div v-if="valores.estadoTres">
-                        <CAlert color="secondary">III. {{ valores.seccionTres }}</CAlert>
-                        <CAlert> {{ valores.detalle }}
+                    <div v-if="formato.estadoTres">
+                        <CAlert color="secondary">III. {{ formato.seccionTres }}</CAlert>
+                        <CAlert> {{ formato.detalle }}
                         </CAlert>
                     </div>
 
@@ -229,62 +230,103 @@
 
         </CCol>
     </CRow>
-</template>
 
+</template>
 <script setup>
-import { CCardBody, CForm } from '@coreui/vue';
-import { reactive, ref, onMounted } from 'vue'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+import { ref, onMounted,onUnmounted } from 'vue'
+
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 import { useSettings } from '@/composables/useSettings'
-const { updateSettingsUse, getSettingsUse, getFormatoSrfUse, formatoSRF } = useSettings()
-
-import 'bootstrap-icons/font/bootstrap-icons.css'
+const { updateSettingsUse, getFormatoSrfUse, formatoSRF } = useSettings()
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
 const idpName = ref(auth.idpName)
 
-const valores = ref({
-    cantidad:0,
-    titulo: "",
-    seccionUno: "",
-    seccionDos: "",
-    fecha: "",
-    monto: "",
-    descripcion: "",
-    estadoDos: false,
-    cuidado: "",
-    detalleDos: "",
-    cantidadDos: "",
-    seccionTres: "",
-    detalle: "",
-    estadoTres: false
+/**Funciones */
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({name: 'Home'})
+}
+
+const formato = ref({
+    cantidadSolicitudes: '0',
+    titulo: '',
+    seccionUno: '',
+    seccionDos: '',
+    fechaTitulo: '',
+    montoTitulo: '',
+    descripcion: '',
+    complemento: '',
+    estadoComplemento: false,
+    detalleComplemento: '',
+    cantidadComplemento: '',
+    seccionTres: '',
+    detalle: '',
+    estadoTres: false,
+    nivel: 0,
+    total: 0
 })
 
 const updateFormato = async () => {
-    const formato = {
+    formato.value.nivel = 0
+    formato.value.total = 0
+    const formulario = {
         id: formatoSRF.id,
         nombre: formatoSRF.nombre,
         categoria: formatoSRF.categoria,
-        value: valores.value
+        value: formato.value
     }
-    const resultService = await updateSettingsUse(formato)
+    const resultService = await updateSettingsUse(formulario)
     if (resultService) {
         location.reload()
     }
     else {
-        valores.value = { ...formatoSRF.value }
+        formato.value = { ...formatoSRF.formato }
     }
 }
 
 const getLoadData = () => {
-    valores.value = { ...formatoSRF.value }
+    formato.value = { ...formatoSRF.formato }
+}
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
 }
 onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
-    await getFormatoSrfUse()
-    getLoadData()
+    const tooltips = document.querySelectorAll('.tooltip')
+    tooltips.forEach(tooltip => tooltip.remove())
+    dataLoading()
+    try {
+        await getFormatoSrfUse()
+        getLoadData()
+    } finally {
+        close()
+    }
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
 })
 
 </script>

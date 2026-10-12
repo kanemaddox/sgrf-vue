@@ -23,7 +23,7 @@ const props = defineProps({
         type: String,
         required: true
     }
-});
+})
 
 // 2. Estado Reactivo (Reemplaza a data())
 const scale = ref(1)

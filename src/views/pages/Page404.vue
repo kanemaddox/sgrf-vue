@@ -11,14 +11,25 @@
             </p>
           </div>
           <CInputGroup class="input-prepend">
-            <CInputGroupText>
-              <CIcon icon="cil-magnifying-glass" />
-            </CInputGroupText>
-            <CFormInput type="text" placeholder="What are you looking for?" />
-            <CButton color="info">Search</CButton>
+            <CButton @click="login" color="primary" class="px-4">
+              <CIcon icon="cil-user" class="me-2" />
+              Pagina de Inicio
+            </CButton>
           </CInputGroup>
         </CCol>
       </CRow>
     </CContainer>
   </div>
 </template>
+<script setup>
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const login=()=>{
+    router.push({
+        name: 'Home'
+    })
+
+}
+</script>

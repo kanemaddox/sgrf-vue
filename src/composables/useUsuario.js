@@ -6,10 +6,10 @@ const { confirm, success, error } = useAlert()
 /**End Declaraciones para alertas */
 
 import { useDto } from '@/composables/useDto'
-const { getPerfil, getPersona,getPerfilCuenta } = useDto()
+const { getPerfil, getPersona, getPerfilCuenta } = useDto()
 
 /**Declaraciones para Servicios */
-import {getPerfilService, updateUsuarioRolService, findByRolService, updateUsuarioPernicionsService, getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
+import { getPerfilService, updateUsuarioRolService, findByRolService, updateUsuarioPernicionsService, getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
 
 
 import { API_URL_IMG100, API_URL_IMG200, API_URL_IMG800 } from "@/env"
@@ -23,7 +23,8 @@ export const useUsuario = () => {
     const personaUsuario = reactive({})
     const perfilUsuario = reactive({})
     const perfilCuenta = reactive({})
-
+    const listaUsuario = ref([])
+    const listaAdm = ref([])
     const updateUsuarioImagenUse = async (id, imagen) => {
         loading.value = true
         errorUse.value = null
@@ -97,7 +98,7 @@ export const useUsuario = () => {
         }
     }
 
-    const updatePasswordUse = async (value,nombre,paterno) => {
+    const updatePasswordUse = async (value, nombre, paterno) => {
         loading.value = true
         errorUse.value = null
         var passRequest = {
@@ -110,24 +111,24 @@ export const useUsuario = () => {
         if (resultAlert.isConfirmed) {
             try {
                 const { data } = await updatePasswordService(passRequest)
-                if(data){
-                    await success('Well Done!!!','Constrasena Restablecida Correctamente','')
+                if (data) {
+                    await success('Well Done!!!', 'Constrasena Restablecida Correctamente', '')
                     return true
                 }
-                else{
+                else {
                     return false
                 }
             } catch (errr) {
                 errorUse.value = errr
-                await error('Error !!!!!','Servicio no Disponible',errr)
+                await error('Error !!!!!', 'Servicio no Disponible', errr)
                 return false
             } finally {
                 loading.value = false
             }
         }
         else {
-            await error('Error !!!!!','Datos Cancelados','')
-            return false 
+            await error('Error !!!!!', 'Datos Cancelados', '')
+            return false
         }
     }
 
@@ -169,8 +170,73 @@ export const useUsuario = () => {
     const findAllResponseUse = async (estado) => {
         loading.value = true
         errorUse.value = null
+        listaUsuario.value = []
         try {
-            return await findAllResponseService(estado)
+            const lista = await findAllResponseService(estado)
+            listaUsuario.value = lista.data.map(item => ({
+                id: item.id,
+                imagen: {
+                    foto: item.persona?.foto === 'usuario.png' ? '/usuario.png' : img100 + item.persona.foto,
+                    estado: item.estado ? 'success' : 'danger',
+                },
+                datos: {
+                    idp: item.persona?.idp,
+                    nombre: item.persona?.nombre,
+                    apellido: item.persona?.paterno + " " + item.persona?.materno,
+                    email: item.persona?.email,
+                    celular: item.persona?.celular,
+                },
+                estado: item.estado,
+                acciones: item.id,
+            }))
+        } catch (errr) {
+            errorUse.value = errr
+            throw errr
+        } finally {
+            loading.value = false
+        }
+    }
+    const findByRolUse = async (value) => {
+        loading.value = true
+        errorUse.value = null
+        listaAdm.value = []
+        try {
+            const lista = await findByRolService(value)
+            listaAdm.value = lista.data.map(item => ({
+                id: item.id,
+                imagen: {
+                    foto: item.persona?.foto === 'usuario.png' ? '/usuario.png' : img100 + item.persona.foto,
+                    estado: item.estado ? 'success' : 'danger',
+                },
+                datos: {
+                    idp: item.persona?.idp,
+                    nombre: item.persona?.nombre,
+                    apellido: item.persona?.paterno + " " + item.persona?.materno,
+                    email: item.persona?.email,
+                    celular: item.persona?.celular,
+                },
+                estado: item.estado,
+                acciones: item.id,
+            }))
+        } catch (errr) {
+            errorUse.value = errr
+            throw errr
+        } finally {
+            loading.value = false
+        }
+    }
+    const findAllUserUse = async (estado) => {
+        loading.value = true
+        errorUse.value = null
+        listaUsuario.value = []
+        try {
+            const lista = await findAllResponseService(estado)
+            listaUsuario.value = lista.data.map(item => ({
+                id: item.id,
+                nombre: item.persona?.nombre + " " + item.persona?.paterno + " " + item.persona?.materno,
+                idp: item.persona?.idp,
+                estado: item.estado,
+            }))
         } catch (errr) {
             errorUse.value = errr
             throw errr
@@ -178,18 +244,6 @@ export const useUsuario = () => {
             loading.value = false
         }
 
-    }
-    const findByRolUse = async (value) => {
-        loading.value = true
-        errorUse.value = null
-        try {
-            return await findByRolService(value)
-        } catch (errr) {
-            errorUse.value = errr
-            throw errr
-        } finally {
-            loading.value = false
-        }
     }
     const getDatosUse = async (value) => {
         loading.value = true
@@ -312,10 +366,19 @@ export const useUsuario = () => {
             "rol": rol,
         }
         try {
-            return await updateUsuarioRolService(user)
+            const resultService = await updateUsuarioRolService(user)
+            if (resultService.data) {
+                await success('Well Done!!!', 'Administrador Agregado Correctamente', '')
+                return true
+            } else {
+                await error('Error !!!!', 'Password Incirrecto', '')
+                return false
+            }
         } catch (errr) {
             errorUse.value = errr
+            await error('Error !!!!', 'Servicio no Disponible', errr)
             throw errr
+            return false
         } finally {
             loading.value = false
         }
@@ -336,9 +399,12 @@ export const useUsuario = () => {
         updateUsuarioPernicionsUse,
         updateUsuarioRolUse,
         getPerfilUse,
+        findAllUserUse,
         perfilUsuario,
         perfilCuenta,
         personaUsuario,
+        listaUsuario,
+        listaAdm,
         loading,
         errorUse
     }

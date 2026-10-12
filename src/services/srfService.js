@@ -6,8 +6,8 @@ export const createSrfService = (request) => {
     return axiosService.post(sgrf + 'createSrf', request)
 }
 
-export const getSrfUsuarioEstadoService = (idUsuario, estado) => {
-    return axiosService.get(sgrf + 'getSrfUsuarioEstado', { params: { idUsuario: idUsuario, estado: estado } })
+export const getSrfUsuarioEstadoService = (persona, estado) => {
+    return axiosService.get(sgrf + 'getSrfUsuarioEstado', { params: { idPersona: persona, estado: estado } })
 }
 
 export const getSrfService = (value) => {
@@ -20,4 +20,8 @@ export const getSrfUsuarioService = (srf, persona) => {
 
 export const updateSrfService = (response) => {
     return axiosService.put(sgrf + 'updateSrf', response)
+}
+
+export const getSrfEstadoService = (value) => {
+    return axiosService.get(sgrf + 'getSrfEstado', { params: { idPersona: value } })
 }

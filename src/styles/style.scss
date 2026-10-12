@@ -98,6 +98,11 @@ body {
   font-weight: bold;
 }
 
+.folio{
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
 .headercolor .btn-close {
   filter: invert(5); /* vuelve blanca la X */
 }
@@ -119,4 +124,27 @@ body {
 
 .form-check-input{
   border: var(--cui-border-width) solid #6e6e6e
+}
+
+/* Estado activo de la transición (entrada y salida) */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+/* Estado inicial al ENTRAR (se desplaza 15px desde la derecha) */
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateX(15px);
+}
+
+/* Estado final al SALIR (se desplaza 15px hacia la izquierda) */
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-15px);
+}
+
+/* El selector .btn asegura la especificidad frente a los estilos de CoreUI */
+.custom-hover-btn.btn:hover {
+  color: #ffffff !important;            /* Color del texto */
 }

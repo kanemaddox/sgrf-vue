@@ -14,7 +14,7 @@
                 </CCardHeader>
                 <CCardBody>
                     <CRow class="table-responsive">
-                        <DataTable :data="lista" :columns="columns" class="table table-striped"
+                        <DataTable :data="listaBancaria" :columns="columns" class="table table-striped"
                             :options="{ responsive: true }">
 
                             <!-- Estado personalizado -->
@@ -40,15 +40,15 @@ import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 DataTable.use(DataTablesCore)
 
 import { useAuthStore } from '@/stores/authStores'
-const secion = useAuthStore()
+const auth = useAuthStore()
 
 import { useCuentasBancarias } from '@/composables/useCuentaBancaria'
-const { getCuentasBancariasUse } = useCuentasBancarias()
+const { getCuentasBancariasUse,listaBancaria } = useCuentasBancarias()
 
 /** DEcalraciones */
 
-const persona = secion.persona
-const lista = ref([])
+const persona = auth.persona
+
 const columns = [
     { data: 'id', title: 'ID' },
     { data: 'banco', title: 'Banco' },
@@ -57,25 +57,7 @@ const columns = [
     { data: 'estado', title: 'Estado', name: 'estado' }
 ]
 
-/*Funciones*/
-const getCuentasBancarias = async () => {
-    try {
-        console.log(persona.id)
-        const cuentas = await getCuentasBancariasUse(persona.id)
-        lista.value = cuentas.map(item => ({
-            id: item.id,
-            banco: item.banco.nombre,
-            tipo: item.tipoCuenta,
-            numero: item.numero,
-            estado: item.estado
-        }))
-    } catch (errr) {
-        console.log(errr)
-    }
-}
-
-
-onMounted(() => {
-    getCuentasBancarias()
+onMounted(async () => {
+    getCuentasBancariasUse(persona.id)
 })
 </script>

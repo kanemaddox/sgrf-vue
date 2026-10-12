@@ -11,8 +11,8 @@ export const useCuentasBancarias = () =>{
         errorCuentaBancaria.value = null
         listaBancaria.value = []
         try{
-            const {data} = await getCuentasBancariasService(value) 
-            listaBancaria.value = data.map(item => ({
+            const cuentas = await getCuentasBancariasService(value)
+            listaBancaria.value = cuentas.data.map(item => ({
                 id: item.id,
                 banco: item.banco.nombre,
                 tipo: item.tipoCuenta,
@@ -25,7 +25,6 @@ export const useCuentasBancarias = () =>{
         }finally{
             loadingCuentaBancaria.value = false
         }
-
     }
 
     return{

@@ -10,13 +10,16 @@ export const useCuenta = () => {
     const errorCuenta = ref(null)
     const listaCuenta = ref([])
 
+    //Registro de Cuenta Automatico desde Excel
     const createCuentaUse = async (value) => {
         loadingCuenta.value = true
         errorCuenta.value = null
         const cuenta = {
             "tipo": value.tipo,
-            "codigo": value.codigo,
-            "detalle": value.detalle
+            "cuenta": value.cuenta,
+            "nombre": value.nombre,
+            "glosa":value.glosa,
+            "categoria":value.categoria
         }
         try {
             return await createCuentaService(cuenta)
@@ -28,17 +31,19 @@ export const useCuenta = () => {
 
     }
 
-    const getCuentaUse = async () => {
+    const getCuentasUse = async (categoria) => {
         loadingCuenta.value = true
         errorCuenta.value = null
         listaCuenta.value = []
         try {
-            const { data } = await getCuentasService()
+            const { data } = await getCuentasService(categoria)
             listaCuenta.value = data.map(item => ({
                 id: item.idCuenta,
                 tipo: item.tipo,
-                codigo: item.codigo,
-                detalle: item.detalle,
+                cuenta: item.cuenta,
+                nombre: item.nombre,
+                glosa:item.glosa,
+                categoria:item.categoria,
                 acciones: item.idCuenta
             }))
         } catch (errr) {
@@ -54,9 +59,11 @@ export const useCuenta = () => {
         errorCuenta.value = null
         const cuenta ={
             "idCuenta":value.id,
-            "tipo":value.tipo,
-            "codigo":value.codigo,
-            "detalle":value.detalle
+            "tipo": value.tipo,
+            "cuenta": value.cuenta,
+            "nombre": value.nombre,
+            "glosa":value.glosa,
+            "categoria":value.categoria
         }
         const resultAlert = await confirm('Actuallizar Resgistro ?', 'Desea Actualizar registro de Gasto?', '')
         if (resultAlert.isConfirmed) {
@@ -82,15 +89,18 @@ export const useCuenta = () => {
         }
     }
 
+    //Registro de cuanta manual desde la Vista
     const registrarCuentaUse = async (value) => {
         loadingCuenta.value = true
         errorCuenta.value = null
         const cuenta ={
-            "tipo":value.tipo,
-            "codigo":value.codigo,
-            "detalle":value.detalle
+            "tipo": value.tipo,
+            "cuenta": value.cuenta,
+            "nombre": value.nombre,
+            "glosa":value.glosa,
+            "categoria":value.categoria
         }
-        const resultAlert = await confirm('Crear Nuevo Gasto ?', 'Desea Crar un Nuevo Registro de Gasto?', '')
+        const resultAlert = await confirm('Crear Nuevo Gasto ?', 'Desea Crear un Nuevo Registro de Gasto?', '')
         if (resultAlert.isConfirmed) {
             try {
                 const resultService = await createCuentaService(cuenta)
@@ -116,7 +126,7 @@ export const useCuenta = () => {
 
     return {
         createCuentaUse,
-        getCuentaUse,
+        getCuentasUse,
         updateCuentaUse,
         registrarCuentaUse,
         listaCuenta,

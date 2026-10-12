@@ -1,21 +1,29 @@
 import { ref, reactive } from 'vue'
-import { getSrfUsuarioService,updateSrfService, getSrfService, getSrfUsuarioEstadoService, createSrfService } from '@/services/srfService'
+import { useRouter } from 'vue-router'
+
+
+import { getSrfEstadoService,getSrfUsuarioService, updateSrfService, getSrfService, getSrfUsuarioEstadoService, createSrfService } from '@/services/srfService'
+import { getSrfPublicoService } from '@/services/publicoService'
 
 import { useAlert } from '@/composables/useAlert'
-const { confirm, error, success } = useAlert()
+const {confirm, error, success } = useAlert()
 
-import { useDto } from '@/composables/useDto'
-const { getSRF } = useDto()
+import { dtoSrf } from '@/composables/Dto/dtoSrf'
+const { getSrf } = dtoSrf()
 
 export const useSrf = () => {
     const loadingSrf = ref(false)
     const errorSrf = ref(null)
     const srf = reactive({})
+    const listaSrf = ref([])
+    const router = useRouter()
+    const estado = reactive([])
+
     const createSrfUse = async (value) => {
         loadingSrf.value = true
         errorSrf.value = null
         const request = {
-            "idUsuario": value.idUsuario,
+            "idPersona": value.idPersona,
             "tipo": '',
             "fechaSolicitud": value.fechaInicio,
             "fechaEstimada": value.fechaFin,
@@ -27,17 +35,17 @@ export const useSrf = () => {
             "cargo": value.cargo,
             "codigo": value.codigo,
             "centrocosto": value.costo,
-            "formato":value.formato
+            "formato": value.formato
         }
-        const resultAlert = await confirm('Crear Solicitud', 'Desea crear y enviar la Solicitud ????', '')
+        const resultAlert = await confirm('Crear Formulario de Solicitud', 'Desea crear y enviar el Formulario de Solicitud de Fondos ?', '')
         if (resultAlert.isConfirmed) {
             try {
                 const resultService = await createSrfService(request)
                 if (resultService.status == 201) {
-                    await success('Well Done !!', 'Solicitud creada con exito, la solicitud se envio a su inmediato superior')
+                    await success('Well Done !!', 'Formulario de Solicitud creada con exito, la solicitud se envio a su inmediato superior')
                     return true
                 } else {
-                    await error('Error !!!', 'Datos Incinsistentes', 'Revice e intente nuevamente')
+                    await error('Error !!!', 'Datos Incinsostentes', 'Revice e intente nuevamente')
                     return false
                 }
             } catch (errr) {
@@ -53,11 +61,44 @@ export const useSrf = () => {
         }
     }
 
-    const getSrfUsuarioEstadoUse = async (idUsuario, estado) => {
+    const getSrfUsuarioEstadoUse = async (idPersona, estado) => {
         loadingSrf.value = true
         errorSrf.value = null
+        listaSrf.value = []
         try {
-            return await getSrfUsuarioEstadoService(idUsuario, estado)
+            const lista = await getSrfUsuarioEstadoService(idPersona, estado)
+            listaSrf.value = lista.data.map(item => ({
+                id: item.id,
+                datos: {
+                    numero: item.numero,
+                    gestion: item.gestion,
+                    monto: item.monto,
+                    moneda: item.moneda,
+                    tipo: item.tipo,
+                    texto: item.campoTexto,
+                    numerico: item.campoNumerico,
+                    token:item.token,
+                    fechaInicio: item.fechaSolicitud,
+                },
+                detalle: {
+                    detalle: item.detalle,
+                    fechaFin: item.fechaEstimada.split('T')[0],
+                    monto: item.monto,
+                    moneda: item.moneda,
+                    fechaTitulo:item.fechaTitulo,
+                    montoTitulo:item.montoTitulo,
+                    aprobacion:item.aprobacion,
+                },
+                estado: {
+                    estado: item.estado,
+                    //lista: item.aprobadores,
+                },
+                acciones: {
+                    id: item.token,
+                    estado: item.estado
+                }
+            }))
+
         } catch (errr) {
             errorSrf.value = errr
             throw errr
@@ -77,12 +118,12 @@ export const useSrf = () => {
             loadingSrf.value = false
         }
     }
-    const getSrfUsuarioUse = async (idSrf,persona) => {
+    const getSrfUsuarioUse = async (idSrf, persona) => {
         loadingSrf.value = true
         errorSrf.value = null
         try {
-            const { data } = await getSrfUsuarioService(idSrf,persona)
-            Object.assign(srf, getSRF(data))
+            const { data } = await getSrfUsuarioService(idSrf, persona)
+            Object.assign(srf, getSrf(data))
         } catch (errr) {
             errorSrf.value = errr
         } finally {
@@ -111,7 +152,7 @@ export const useSrf = () => {
             "cuenta": null,
             "empleado": null,
             "aprobadores": null,
-            "formato":value.formato
+            "formato": value.formato
         }
         const resultAlert = await confirm('Actualizar Solicitud', 'Esta seguro de actualizar el formulario', '')
         if (resultAlert.isConfirmed) {
@@ -136,13 +177,46 @@ export const useSrf = () => {
             return false
         }
     }
+    const getSrfPublicoUse = async (value) => {
+        loadingSrf.value = true
+        errorSrf.value = null
+        try {
+            const { data } = await getSrfPublicoService(value)
+            Object.assign(srf, getSrf(data))
+        } catch (errr) {
+            errorSrf.value = errr
+            if (errr.response?.status === 404) {
+                router.push({name:'Page404'})
+            }
+        } finally {
+            loadingSrf.value = false
+        }
+    }
+    const getSrfEstadoUse = async (idPersona)=>{
+        loadingSrf.value = true
+        errorSrf.value = null
+        try {
+            const { data } = await getSrfEstadoService(idPersona)
+            Object.assign(estado, data)
+
+        } catch (errr) {
+            errorSrf.value = errr
+            throw errr
+        } finally {
+            loadingSrf.value = false
+        }
+    }
     return {
         createSrfUse,
         getSrfUsuarioEstadoUse,
         getSrfUse,
         updateSrfUse,
         getSrfUsuarioUse,
+        getSrfPublicoUse,
+        getSrfEstadoUse,
         srf,
+        estado,
+        listaSrf,
         loadingSrf,
         errorSrf
     }

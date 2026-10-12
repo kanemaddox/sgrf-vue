@@ -122,7 +122,6 @@ const columns = [
 const getPendientes = async (value) => {
   try {
     const resultLista = await getPendientesUse(idUsuario.value, value)
-    console.log(resultLista)
     listaPendiente.value = resultLista.map(item => ({
       id: item.id,
       srf: {
@@ -137,7 +136,7 @@ const getPendientes = async (value) => {
         nombre: item.srf.empleado.persona.nombre,
       },
       imagen: {
-        foto: item.srf.empleado.persona.foto === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + item.srf.empleado.persona.foto
+        foto: item.srf.empleado.persona.foto === 'usuario.png' ? '/usuario.png' : img100 + item.srf.empleado.persona.foto
       },
       detalle: item.srf.detalle,
       estado: item.estado,

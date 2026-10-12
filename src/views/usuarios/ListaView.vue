@@ -2,35 +2,9 @@
   <CRow>
     <CCol :xs="12">
       <CCard>
-        <CCardHeader class="headercolor justify-content-between align-items-center">
-          <CRow>
-            <CCol :xs="7" :sm="6" :md="6" :lg="6">
-              <div class="align-items-center">
-                <CIcon icon="cil-list" size="lg" class="me-2 text-light" />
-                <label class="mb-0 fs-6 text-white">Lista de Usuarios</label>
-              </div>
-            </CCol>
-            <CCol :xs="5" :sm="6" :md="6" :lg="6" class="text-end">
-              <CDropdown variant="btn-group">
-                <CDropdownToggle class="font border-0" size="sm">
-                  <CIcon icon="cil-menu" color="dark" class="me-2 text-success" />Opciones
-                </CDropdownToggle>
-                <CDropdownMenu class="pt-0">
-                  <CDropdownHeader component="h6"
-                    class="bg-body-secondary text-body-secondary fw-semibold mb-2 rounded-top">
-                    Opciones
-                  </CDropdownHeader>
-                  <CDropdownItem style="cursor: pointer;" @click="clickModalImportar(true)">
-                    <CIcon icon="cil-data-transfer-down" /> Importar Usuarios
-                  </CDropdownItem>
-                  <CDropdownDivider />
-                  <CDropdownItem style="cursor: pointer;" @click="clickModalExportar(true)">
-                    <CIcon icon="cil-cloud-upload" /> Exportar Usuarios DB
-                  </CDropdownItem>
-                </CDropdownMenu>
-              </CDropdown>
-            </CCol>
-          </CRow>
+        <CCardHeader class="headercolor">
+          <CIcon icon="cil-list" size="lg" class="me-2 text-light" />
+          <label class="mb-0 fs-6 text-white">Lista de Usuarios</label>
         </CCardHeader>
         <CCardBody>
           <CRow class="table-responsive">
@@ -38,7 +12,6 @@
               :options="{ responsive: true }">
 
               <template #column-imagen="{ cellData }">
-                <!--<CImage :src="cellData" width="70" height="70" />-->
                 <CAvatar size="xl" :src="cellData.foto" :status="cellData.estado" />
               </template>
 
@@ -59,19 +32,19 @@
 
               <template #column-acciones="{ cellData }">
                 <CButtonGroup role="group" size="sm">
-                  <CButton color="secondary" variant="outline" @click="getPerfil(cellData)"
-                    v-c-tooltip="{ content: 'Ver Perfil Usuario', placement: 'top' }">
-                    <i class="bi bi-person me-2"></i>
+                  <CButton color="success" class="custom-hover-btn" variant="outline" @click="getPerfil(cellData)">
+                    <i class="bi bi-person"></i>
+                    <span class="d-none d-md-inline"> Perfil</span>
+                  </CButton>
+                  
+                  <CButton color="secondary" variant="outline" @click="getPerfil(cellData)">
+                    <i class="bi bi-file-earmark"></i>
+                    <span class="d-none d-md-inline"> Srf</span>
                   </CButton>
 
-                  <CButton color="secondary" variant="outline" @click="getPerfil(cellData)"
-                    v-c-tooltip="{ content: 'Solicitudes de Fondos Por Rendir', placement: 'top' }">
-                    <i class="bi bi-clipboard me-2"></i>
-                  </CButton>
-
-                  <CButton color="secondary" variant="outline" @click="getPerfil(cellData)"
-                    v-c-tooltip="{ content: 'Rendiciones de Gastos', placement: 'top' }">
-                    <i class="bi bi-file-earmark-text me-2"></i>
+                  <CButton color="secondary" variant="outline" @click="getPerfil(cellData)">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span class="d-none d-md-inline"> Rdg</span>
                   </CButton>
                 </CButtonGroup>
               </template>
@@ -82,34 +55,34 @@
       </CCard>
     </CCol>
   </CRow>
+  <br>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 
 DataTable.use(DataTablesCore)
 
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
 import { useUsuario } from '@/composables/useUsuario'
-const { findAllResponseUse, loading, errorUse } = useUsuario()
+const { listaUsuario, findAllResponseUse } = useUsuario()
+
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { API_URL_IMG100 } from "@/env"
-const img100 = API_URL_IMG100
-
-//const lista = reactive([])
-const listaUsuario = ref([])
-
 const columns = [
-  { data: 'id', title: 'ID' },
+  { data: 'id', title: 'ID', width: '5%'},
   { data: 'imagen', title: '', name: "imagen" },
-  { data: 'datos', title: 'Datos Personales', name: 'datos'},
+  { data: 'datos', title: 'Datos Personales', name: 'datos' },
   { data: 'estado', title: 'Estado', name: 'estado' },
   {
     data: 'acciones',
@@ -121,31 +94,14 @@ const columns = [
 ]
 
 /**Funciones */
-const findAllResponse = async (value) => {
-  try {
-    const resultLista = await findAllResponseUse(value)
-    const lista = resultLista.data
-    listaUsuario.value = lista.map(item => ({
-      id: item.id,
-      imagen: {
-        foto: item.persona?.foto === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + item.persona.foto,
-        estado: item.estado ? 'success' : 'danger',
-      },
-      datos: {
-        idp: item.persona?.idp,
-        nombre: item.persona?.nombre,
-        apellido: item.persona?.paterno + " " + item.persona?.materno,
-        email: item.persona?.email,
-        celular: item.persona?.celular,
-      },
-      estado: item.estado,
-      acciones: item.id,
-    }))
-  } catch (errr) {
-    console.log(errr)
-  }
-
+const salir = () => {
+  getSalir()
 }
+
+const getSalir = () => {
+  router.push({ name: 'UsuariosMenu' })
+}
+
 const getPerfil = (value) => {
   router.push({
     name: 'PerfilUsuario',
@@ -153,13 +109,34 @@ const getPerfil = (value) => {
   })
 }
 
+const getAction = () => {
+  setActions([
+    {
+      visible: true,
+      label: 'Salir',
+      icon: 'cil-account-logout',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      onClick: salir
+    }
+  ])
+}
 
-onMounted(() => {
-  const tooltips = document.querySelectorAll('.tooltip');
-  tooltips.forEach(tooltip => tooltip.remove());
-  findAllResponse('TODOS')
+onMounted(async () => {
+  const tooltips = document.querySelectorAll('.tooltip')
+  tooltips.forEach(tooltip => tooltip.remove())
+  dataLoading()
+  try {
+    await findAllResponseUse('TODOS')
+  } finally {
+    close()
+  }
+  getAction()
 })
-
+onUnmounted(() => {
+  clearActions()
+})
 
 </script>
 <style>

@@ -3,34 +3,8 @@
         <CCol :xs="12">
             <CCard>
                 <CCardHeader class="headercolor justify-content-between align-items-center">
-                    <CRow>
-                        <CCol :xs="7" :sm="6" :md="6" :lg="6">
-                            <div class="align-items-center">
-                                <CIcon icon="cil-data-transfer-down" size="lg" class="me-2 text-light" />
-                                <label class="mb-0 fs-6 text-white">Importar Gastos</label>
-                            </div>
-                        </CCol>
-                        <CCol :xs="5" :sm="6" :md="6" :lg="6" class="text-end">
-                            <CDropdown variant="btn-group">
-                                <CDropdownToggle class="font border-0" size="sm">
-                                    <CIcon icon="cil-menu" color="dark" class="me-2 text-success" />Opciones
-                                </CDropdownToggle>
-                                <CDropdownMenu class="pt-0">
-                                    <CDropdownHeader component="h6"
-                                        class="bg-body-secondary text-body-secondary fw-semibold mb-2 rounded-top">
-                                        Opciones
-                                    </CDropdownHeader>
-                                    <CDropdownItem style="cursor: pointer;" @click="clickModalImportar(true)">
-                                        <CIcon icon="cil-data-transfer-down" /> Importar Gastos
-                                    </CDropdownItem>
-                                    <CDropdownDivider />
-                                    <CDropdownItem style="cursor: pointer;" @click="clickModalExportar(true)">
-                                        <CIcon icon="cil-cloud-upload" /> Cargar Gastos DB
-                                    </CDropdownItem>
-                                </CDropdownMenu>
-                            </CDropdown>
-                        </CCol>
-                    </CRow>
+                    <CIcon icon="cil-data-transfer-down" size="lg" class="me-2 text-light" />
+                    <label class="mb-0 fs-6 text-white">Importar Gastos</label>
                 </CCardHeader>
                 <CCardBody>
                     <div class="table-responsive">
@@ -38,9 +12,11 @@
                             <CTableHead color="dark">
                                 <CTableRow>
                                     <CTableHeaderCell>#</CTableHeaderCell>
-                                    <CTableHeaderCell>Tipo</CTableHeaderCell>
-                                    <CTableHeaderCell>Codigo</CTableHeaderCell>
-                                    <CTableHeaderCell>Detalle</CTableHeaderCell>
+                                    <CTableHeaderCell>Tipo de Gasto</CTableHeaderCell>
+                                    <CTableHeaderCell>Cuenta</CTableHeaderCell>
+                                    <CTableHeaderCell>Nombre de la Cuenta</CTableHeaderCell>
+                                    <CTableHeaderCell>Glosa</CTableHeaderCell>
+                                    <CTableHeaderCell>Categoria</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
@@ -49,10 +25,16 @@
                                     <CTableDataCell>{{ index + 1 }}</CTableDataCell>
                                     <CTableDataCell>{{ item.tipo }}</CTableDataCell>
                                     <CTableDataCell>
-                                        {{ item.codigo }}
+                                        {{ item.cuenta }}
                                     </CTableDataCell>
                                     <CTableDataCell>
-                                        {{ item.detalle }}
+                                        {{ item.nombre }}
+                                    </CTableDataCell>
+                                    <CTableDataCell>
+                                        {{ item.glosa }}
+                                    </CTableDataCell>
+                                    <CTableDataCell>
+                                        {{ item.categoria }}
                                     </CTableDataCell>
                                 </CTableRow>
                             </CTableBody>
@@ -64,7 +46,7 @@
     </CRow>
 
     <!-- Modal  Importar datos-->
-    <CModal backdrop="static" :visible="modalImportar" @close="clickModalImportar(false)">
+    <CModal backdrop="static" alignment="center" size="lg" :visible="modalImportar" @close="clickModalImportar(false)">
         <CForm @submit.prevent="uploadTable">
             <CModalHeader class="headercolor" dismiss @close="clickModalImportar(false)">
                 <CModalTitle>
@@ -77,7 +59,9 @@
             <CModalBody>
                 <!-- INPUT -->
                 <CInputGroup class="mb-3">
-                    <CInputGroupText as="label" class="headercolor">Archivo : </CInputGroupText>
+                    <CInputGroupText as="label" class="headercolor">
+                        <i class="bi bi-file-earmark-excel me-2"></i>Archivo :
+                    </CInputGroupText>
                     <CFormInput type="file" ref="fileInput" id="filedoc" accept=".xls,.xlsx" @change="selectFile"
                         :valid="fileValid" :disabled="uploading" required />
                     <CInputGroupText v-if="fileValid">
@@ -141,7 +125,7 @@
     <!-- End Modal Importar Datos-->
 
     <!-- Modal  Exportar datos-->
-    <CModal backdrop="static" :visible="modalExportar" @close="clickModalExportar(false)">
+    <CModal backdrop="static" alignment="center" size="lg" :visible="modalExportar" @close="clickModalExportar(false)">
         <CForm @submit.prevent="uploadDatos">
             <CModalHeader class="headercolor" dismiss @close="clickModalExportar(false)">
                 <CModalTitle>
@@ -217,8 +201,7 @@
                     <span>Exportar</span>
                 </CButton>
 
-                <CButton v-if="fileValid || errorMsg" @click="clickModalExportar(false)" class="font" color="success"
-                    size="sm">
+                <CButton v-if="fileValid || errorMsg" @click="getListaGastos" class="font" color="success" size="sm">
                     <CIcon icon="cil-check-alt" class="me-2" />
                     <span>Aceptar</span>
                 </CButton>
@@ -231,14 +214,22 @@
 
 <script setup>
 /**Import de librerias */
-import { reactive, ref, onMounted } from 'vue'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+import { reactive, ref, onMounted,onUnmounted } from 'vue'
 import readSheet from 'read-excel-file/browser'
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
 
 import { useAlert } from '@/composables/useAlert'
 const { success, confirm, error } = useAlert()
 
-import {useCuenta} from '@/composables/useCuenta'
-const {createCuentaUse} = useCuenta()
+import { useCuenta } from '@/composables/useCuenta'
+const { createCuentaUse } = useCuenta()
+
 
 /**VAriables para el Archivo */
 const archivo = ref(null)
@@ -257,8 +248,26 @@ const gastos = ref([])
 /**Variables para Modales */
 const modalImportar = ref(false)
 const modalExportar = ref(false)
-
+const exportar = ref(false)
 /** Funciones  */
+
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({ name: 'MenuGastos' })
+}
+
+const getExportar = () => {
+    clickModalExportar(true)
+}
+const importar = () => {
+    clickModalImportar(true)
+}
+const cancelar = () => {
+    getCancelar()
+}
 
 const selectFile = async (e) => {
     const file = e.target.files[0]
@@ -301,17 +310,42 @@ const selectFile = async (e) => {
 const uploadTable = async () => {
     clickModalImportar(false)
     gastos.value = []
+    let cobrar = 0
+    let pagar = 0
+    let cat = ''
     rows.value.slice(1).forEach(fila => {
+        cat = fila[4].replace(/\s+/g, '').toUpperCase()
         const datos = {
             tipo: fila[0],
-            codigo: fila[1],
-            detalle: fila[2], 
+            cuenta: fila[1],
+            nombre: fila[2],
+            glosa: fila[3],
+            categoria: cat,
             estado: true
-        } 
+        }
+
+        if (datos.categoria === 'PORCOBRAR') {
+            cobrar++
+            if (Number(cobrar) > 1) {
+                datos.estado = false
+            }
+        }
+        if (datos.categoria === 'PORPAGAR') {
+            pagar++
+            if (Number(pagar) > 1) {
+                datos.estado = false
+            }
+        }
         gastos.value.push(datos)
-    });
+    })
     registros.value = gastos.value.length
-    await success('Gastos Subidos', 'Se subieron ' + registros.value + ' Gastos.')
+    if (Number(registros.value) > 0 && Number(cobrar) <= 1 && Number(pagar) <= 1) {
+        exportar.value = true
+        await success('Gastos Importados', 'Se Importaron ' + registros.value + ' Gastos.')
+        getAction()
+    } else {
+        await error('Gastos Importados', 'Se Importaron ' + registros.value + ' Gastos, Pero Existen categorias duplicadas', '')
+    }
 }
 
 const uploadDatos = async () => {
@@ -324,29 +358,29 @@ const uploadDatos = async () => {
         let procesados = 0
         let errores = 0
         const listaCarga = [...gastos.value];
-        
-            for (const value of listaCarga) {
-                try {
-                    const resultService = await createCuentaUse(value)
-                    if (resultService.status !== 201) {
-                        errores++
-                    }
-                    gastos.value = gastos.value.filter(item => item.codigo !== value.codigo)
-                } catch (err) {
+
+        for (const value of listaCarga) {
+            try {
+                const resultService = await createCuentaUse(value)
+                if (resultService.status !== 201) {
                     errores++
-                    value.estado = false
                 }
-                procesados++
-                uploadProgress.value = Math.round((procesados / registros.value) * 100)
+                gastos.value = gastos.value.filter(item => item.cuenta !== value.cuenta)
+            } catch (err) {
+                errores++
+                value.estado = false
             }
-            uploading.value = false
-            if (errores > 0) {
-                errorMsg.value = 'Se completó con ' + errores + ' errores'
-                fileValid.value = false
-            } else {
-                uploadProgress.value = 100
-                fileValid.value = true
-            }
+            procesados++
+            uploadProgress.value = Math.round((procesados / registros.value) * 100)
+        }
+        uploading.value = false
+        if (errores > 0) {
+            errorMsg.value = 'Se completó con ' + errores + ' errores'
+            fileValid.value = false
+        } else {
+            uploadProgress.value = 100
+            fileValid.value = true
+        }
     }
     else {
         await error('Datos Cancelados')
@@ -363,8 +397,68 @@ const clickModalExportar = (value) => {
     fileValid.value = false
 }
 
+const getCancelar = async () => {
+    const resultAlert = await confirm('Cancelar de Datos', 'Desea Salir de Importacion de Datos ?', '')
+    if (resultAlert.isConfirmed) {
+        getSalir()
+    }
+}
+const getListaGastos = () => {
+    exportar.value = false
+    clickModalExportar(false)
+    router.push({ name: 'ListaGastos' })
+}
+
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Importar ',
+            icon: 'cil-data-transfer-down',
+            color: 'success',
+            variant: 'ghost',
+            disabled: false,
+            movile: 'd-none d-md-inline',
+            onClick: importar
+        },
+        {
+            visible: true,
+            label: 'Cargar Datos',
+            icon: 'cil-cloud-upload',
+            color: exportar.value ? 'success' : 'secondary',
+            variant: 'ghost',
+            disabled: !exportar.value,
+            movile: 'd-none d-md-inline',
+            onClick: getExportar
+        },
+        {
+            visible: true,
+            label: 'Cancelar',
+            icon: 'cil-x',
+            color: 'danger',
+            variant: 'ghost',
+            disabled: false,
+            movile: 'd-none d-md-inline',
+            onClick: cancelar
+        },
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+
 onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
+    const tooltips = document.querySelectorAll('.tooltip')
+    tooltips.forEach(tooltip => tooltip.remove())
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
 })
 </script>

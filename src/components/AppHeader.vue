@@ -1,32 +1,3 @@
-<script setup>
-import { onMounted, ref } from 'vue'
-import { useColorModes } from '@coreui/vue'
-
-import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
-import AppHeaderDropdownAccnt from '@/components/AppHeaderDropdownAccnt.vue'
-import AppHeaderMenu from '@/components/AppHeaderMenu.vue'
-import { useSidebarStore } from '@/stores/sidebar.js'
-
-const headerClassNames = ref('mb-4 p-0')
-const { colorMode, setColorMode } = useColorModes('coreui-free-vue-admin-template-theme')
-const sidebar = useSidebarStore()
-
-import { useAuthStore } from '@/stores/authStores'
-const auth = useAuthStore()
-
-const pernicions = ref(auth.pernicions)
-
-onMounted(() => {
-  document.addEventListener('scroll', () => {
-    if (document.documentElement.scrollTop > 0) {
-      headerClassNames.value = 'mb-4 p-0 shadow-sm'
-    } else {
-      headerClassNames.value = 'mb-4 p-0'
-    }
-  })
-})
-</script>
-
 <template>
   <CHeader position="sticky" :class="headerClassNames">
     <CContainer class="border-bottom px-4" fluid>
@@ -55,31 +26,16 @@ onMounted(() => {
             <CIcon v-else icon="cil-contrast" size="lg" />
           </CDropdownToggle>
           <CDropdownMenu>
-            <CDropdownItem
-              :active="colorMode === 'light'"
-              class="d-flex align-items-center"
-              component="button"
-              type="button"
-              @click="setColorMode('light')"
-            >
+            <CDropdownItem :active="colorMode === 'light'" class="d-flex align-items-center" component="button"
+              type="button" @click="setColorMode('light')">
               <CIcon class="me-2" icon="cil-sun" size="lg" /> Light
             </CDropdownItem>
-            <CDropdownItem
-              :active="colorMode === 'dark'"
-              class="d-flex align-items-center"
-              component="button"
-              type="button"
-              @click="setColorMode('dark')"
-            >
+            <CDropdownItem :active="colorMode === 'dark'" class="d-flex align-items-center" component="button"
+              type="button" @click="setColorMode('dark')">
               <CIcon class="me-2" icon="cil-moon" size="lg" /> Dark
             </CDropdownItem>
-            <CDropdownItem
-              :active="colorMode === 'auto'"
-              class="d-flex align-items-center"
-              component="button"
-              type="button"
-              @click="setColorMode('auto')"
-            >
+            <CDropdownItem :active="colorMode === 'auto'" class="d-flex align-items-center" component="button"
+              type="button" @click="setColorMode('auto')">
               <CIcon class="me-2" icon="cil-contrast" size="lg" /> Auto
             </CDropdownItem>
           </CDropdownMenu>
@@ -95,3 +51,32 @@ onMounted(() => {
     </CContainer>
   </CHeader>
 </template>
+
+<script setup>
+import { onMounted, ref} from 'vue'
+import { useColorModes } from '@coreui/vue'
+
+import AppBreadcrumb from '@/components/AppBreadcrumb.vue'
+import AppHeaderDropdownAccnt from '@/components/AppHeaderDropdownAccnt.vue'
+import AppHeaderMenu from '@/components/AppHeaderMenu.vue'
+import { useSidebarStore } from '@/stores/sidebar.js'
+
+const headerClassNames = ref('mb-4 p-0')
+const { colorMode, setColorMode } = useColorModes('coreui-free-vue-admin-template-theme')
+const sidebar = useSidebarStore()
+
+import { useAuthStore } from '@/stores/authStores'
+const auth = useAuthStore()
+
+const pernicions = ref(auth.pernicions)
+
+onMounted(() => {
+  document.addEventListener('scroll', () => {
+    if (document.documentElement.scrollTop > 0) {
+      headerClassNames.value = 'mb-4 p-0 shadow-sm'
+    } else {
+      headerClassNames.value = 'mb-4 p-0'
+    }
+  })
+})
+</script>

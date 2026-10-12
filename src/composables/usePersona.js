@@ -25,7 +25,6 @@ export const usePersona = () => {
             "fechaCreacion": "",
             "fechaActualizacion": ""
         }
-        console.log(personaResponse)
         const resultAlert = await confirm('Actualizar Datos', 'Desea Actualizar el numero de Celular ?', '')
         if (resultAlert.isConfirmed) {
             try {

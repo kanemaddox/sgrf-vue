@@ -94,7 +94,7 @@
 
                     <CInputGroup size="sm" class="mb-3">
                         <CInputGroupText class="headercolor" as="label">
-                            <i class="bi bi-calendar-date me-2"></i>ACtividad / Gasto : 
+                            <i class="bi bi-calendar-date me-2"></i>Actividad / Gasto :
                         </CInputGroupText>
                         <CFormInput type="text" disabled />
                     </CInputGroup>
@@ -107,7 +107,7 @@
                         <CFormInput type="text" disabled />
 
                         <CInputGroupText class="headercolor" as="label">
-                            <i class="bi bi-calendar-date me-2"></i>Total Dias : 
+                            <i class="bi bi-calendar-date me-2"></i>Total Dias :
                         </CInputGroupText>
                         <CFormInput type="text" disabled />
                     </CInputGroup>
@@ -119,7 +119,7 @@
                     <CAlert color="secondary">III. {{ valores.seccionTres }}</CAlert>
 
                     <CAlert>
-                        <CTable bordered border-color="dark">
+                        <CTable bordered border-color="dark" hover responsive>
                             <CTableHead>
                                 <CTableRow>
                                     <CTableHeaderCell scope="col">Fecha</CTableHeaderCell>
@@ -177,16 +177,24 @@
 </template>
 
 <script setup>
-import { CCardBody, CForm } from '@coreui/vue';
-import { reactive, ref, onMounted } from 'vue'
+import { ref, onMounted,onUnmounted } from 'vue'
+
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 import { useSettings } from '@/composables/useSettings'
-const { updateSettingsUse, getSettingsUse, getFormatoRdgUse, formatoRDG } = useSettings()
+const { updateSettingsUse,  getFormatoRdgUse, formatoRDG } = useSettings()
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
+
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
+
 const idpName = ref(auth.idpName)
 
 const valores = ref({
@@ -195,6 +203,15 @@ const valores = ref({
     seccionDos: "",
     seccionTres: "",
 })
+
+/**Funciones */
+const salir = () => {
+    getSalir()
+}
+
+const getSalir = () => {
+    router.push({name: 'Home'})
+}
 
 const updateFormato = async () => {
     const formato = {
@@ -215,11 +232,32 @@ const updateFormato = async () => {
 const getLoadData = () => {
     valores.value = { ...formatoRDG.value }
 }
-onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
-    await getFormatoRdgUse()
-    getLoadData()
-})
 
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+
+onMounted(async () => {
+    dataLoading()
+    try {
+        await getFormatoRdgUse()
+        getLoadData()
+    } finally {
+        close()
+    }
+    getAction()
+})
+onUnmounted(() => {
+    clearActions()
+})
 </script>

@@ -18,81 +18,98 @@
         </CCardHeader>
         <CCardBody>
           <CRow>
-            <CCol :xs="7" :sm="8" :md="7" :lg="7">
-              <h5><strong>{{ srf.formato?.titulo }}</strong></h5>
+            <CCol :xs="12" :sm="8" :md="7" :lg="7">
+              <h5><strong>{{ srf.titulo }}</strong></h5>
             </CCol>
-            <CCol :xs="5" :sm="4" :md="5" :lg="5" class="text-end">
-              <CRow>
-                <CButtonGroup role="group" size="sm">
-                  <CButton v-if="updateApr.estado !== 'APROBADO'" color="success" variant="outline"
-                    @click="AprobarSolicitud()" v-c-tooltip="{ content: 'Aprobar Solicitud ', placement: 'top' }">
-                    <i class="bi bi-hand-thumbs-up d-inline-block"></i> <span
-                      class="small d-none d-md-inline">Aprobar</span>
-                  </CButton>
-
-                  <CButton v-if="updateApr.estado !== 'APROBADO'" color="secondary" variant="outline"
-                    @click="clickModalDevolver(true)"
-                    v-c-tooltip="{ content: 'Devolver para Modificacion', placement: 'top' }">
-                    <i class="bi bi-send-arrow-down me-2"></i>
-                  </CButton>
-
-                  <CButton v-if="updateApr.estado !== 'APROBADO'" color="danger" class="font"
-                    @click="clickModalRechazar(true)" v-c-tooltip="{ content: 'Rechazar Solicitud', placement: 'top' }">
-                    <i class="bi bi-trash3 me-2"></i>
-                  </CButton>
-
-                  <CButton color="secondary" variant="outline" @click="clickCanvaApr(true)"
-                    v-c-tooltip="{ content: 'Lista de Autorizadores', placement: 'top' }">
-                    <i class="bi bi-inboxes me-2"></i>
-                  </CButton>
-                </CButtonGroup>
-              </CRow>
+            <CCol :xs="12" :sm="4" :md="5" :lg="5" class="text-end">
               <h3><strong>No.: {{ srf.numero }}</strong> </h3>
               <div class="space">{{ srf.idp }} | {{ srf.gestion }}</div>
             </CCol>
           </CRow>
           <div>
-            <CAlert color="success" :style="vars">Fecha de solicitud: {{ srf.fechaInicio }}</CAlert>
-            <CAlert color="secondary" :style="vars">I. {{ srf.formato?.seccionUno }}</CAlert>
-
+            <CAlert color="success" :style="vars">Fecha de solicitud: {{ srf.fechaSolicitud }}</CAlert>
+            <CAlert color="secondary" :style="vars">I. {{ srf.seccionUno }}</CAlert>
             <ComponenteDatos :datos="datos" />
 
-            <CAlert color="secondary" :style="vars">II. {{ srf.formato?.seccionDos }}</CAlert>
+            <CAlert color="secondary" :style="vars">II. {{ srf.seccionDos }}</CAlert>
+            <!--PC-->
+            <div class="mb-3 d-none d-md-flex">
+              <CInputGroup size="sm" class="mb-3">
+                <CInputGroupText class="headercolor" as="label">
+                  <i class="bi bi-calendar-event me-2"></i>{{ srf.fechaTitulo }} :
+                </CInputGroupText>
+                <CFormInput type="text" :value="srf.fechaEstimada" disabled />
+                <CInputGroupText class="headercolor" as="label">
+                  <i class="bi bi-currency-dollar me-2"></i>{{ srf.montoTitulo }} :
+                </CInputGroupText>
+                <CFormInput type="text" :value="`${formatearNumero(srf.monto)} ${srf.moneda}`" disabled />
+              </CInputGroup>
+            </div>
+            <!--PC-->
 
-            <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor d-none d-md-inline" as="label">{{ srf.formato?.fecha }} :
-              </CInputGroupText>
-              <CFormInput type="text" :value="srf.fechaFin" disabled />
-              <CInputGroupText class="headercolor" as="label">{{ srf.formato?.monto }} :
-              </CInputGroupText>
-              <CFormInput type="text" :value="srf.monto" disabled />
-            </CInputGroup>
+            <!--Movil-->
+            <div class="d-md-none mb-3">
+              <CInputGroup size="sm" class="mb-3">
+                <CInputGroupText class="headercolor" as="label">
+                  <i class="bi bi-calendar-event me-2"></i>{{ srf.fechaTitulo }} :
+                </CInputGroupText>
+                <CFormInput type="text" :value="srf.fechaEstimada" disabled />
+              </CInputGroup>
+              <CInputGroup>
+                <CInputGroupText class="headercolor" as="label">
+                  <i class="bi bi-currency-dollar me-2"></i>{{ srf.montoTitulo }} :
+                </CInputGroupText>
+                <CFormInput type="text" :value="`${formatearNumero(srf.monto)} ${srf.moneda}`" disabled />
+              </CInputGroup>
+            </div>
+            <!--Movil-->
+
+            {{ srf.descripcion }} :
             <CAlert color="secondary">
               {{ srf.detalle }}
             </CAlert>
 
             <hr>
-            <div v-if="srf.formato?.trueEstadoDos">
+            <div v-if="srf.trueComplemento">
+              <!--PC-->
+              <div class="mb-3 d-none d-md-flex">
+                <CInputGroup size="sm" class="mb-3">
+                  <CInputGroupText class="headercolor" as="label">
+                    <i class="bi bi-person-vcard-fill me-2"></i>{{ srf.detalleComplemento }} :
+                  </CInputGroupText>
+                  <CFormInput type="text" :value="srf.campoTexto" disabled />
 
-              <CInputGroup size="sm" class="mb-3">
-                <CInputGroupText class="headercolor" as="label">{{ srf.formato?.detalleDos }} :
-                </CInputGroupText>
-                <CFormInput type="text" :value="srf.texto" disabled />
-
-                <CInputGroupText class="headercolor" as="label">{{ srf.formato?.cantidadDos }} :
-                </CInputGroupText>
-                <CFormInput type="text" :value="srf.numerico" disabled />
-              </CInputGroup>
+                  <CInputGroupText class="headercolor" as="label">
+                    <i class="bi bi-list-ol me-2"></i>{{ srf.cantidadComplemento }} :
+                  </CInputGroupText>
+                  <CFormInput type="text" :value="srf.campoNumerico" disabled />
+                </CInputGroup>
+              </div>
+              <!--Movil-->
+              <div class="d-md-none mb-3">
+                <CInputGroup size="sm" class="mb-3">
+                  <CInputGroupText class="headercolor" as="label">
+                    <i class="bi bi-person-vcard-fill me-2"></i>{{ srf.detalleComplemento }} :
+                  </CInputGroupText>
+                  <CFormInput type="text" :value="srf.campoTexto" disabled />
+                </CInputGroup>
+                <CInputGroup>
+                  <CInputGroupText class="headercolor" as="label">
+                    <i class="bi bi-list-ol me-2"></i>{{ srf.cantidadComplemento }} :
+                  </CInputGroupText>
+                  <CFormInput type="text" :value="srf.campoNumerico" disabled />
+                </CInputGroup>
+              </div>
             </div>
 
-            <div v-if="srf.formato?.estadoTres">
+            <div v-if="srf.estadoTres">
               <CAccordion>
                 <CAccordionItem>
                   <CAccordionHeader>
-                    III. {{ srf.formato?.seccionTres }}
+                    III. {{ srf.seccionTres }}
                   </CAccordionHeader>
                   <CAccordionBody>
-                    <CAlert>{{ srf.formato?.detalle }}</CAlert>
+                    <CAlert>{{ srf.detalleFormato }}</CAlert>
                   </CAccordionBody>
                 </CAccordionItem>
               </CAccordion>
@@ -103,6 +120,7 @@
 
         </CCardFooter>
       </CCard>
+      <br>
     </CCol>
 
     <CCol :xs="0" :sm="1" :md="1" :lg="1" class="align-self-end">
@@ -126,14 +144,14 @@
           </CTableRow>
         </CTableHead>
         <CTableBody>
-          <CTableRow v-for="item in srf.lista" :key="item.name">
+          <CTableRow v-for="item in srf.autorizador" :key="item.id">
             <CTableDataCell class="text-center">
-              <CAvatar size="md" :src="getFoto(item.persona.foto)" :status="getColor(item.estado)" />
+              <CAvatar size="md" :src="getFoto(item.foto, '/usuario.png', img100)" :status="getColor(item.estado)" />
             </CTableDataCell>
             <CTableDataCell>
-              <div>{{ item.persona.nombre }}</div>
+              <div>{{ item.nombre }}</div>
               <div class="small text-body-secondary text-nowrap">
-                <span>{{ item.persona.idp }}</span> |
+                <span>{{ item.idp }}</span> |
                 <CChip :color="getColor(item.estado)">
                   <span class="chip-icon">
                     <i :class="getIcono(item.estado)"></i>
@@ -228,7 +246,8 @@
         <CContainer>
           <CRow>
             <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor" as="label">Motivo :
+              <CInputGroupText class="headercolor" as="label">
+                <i class="bi bi-recycle me-2"></i>Motivo :
               </CInputGroupText>
               <CFormInput type="text" v-model="observacion" placeholder="Motivo de Devolucion" required />
             </CInputGroup>
@@ -263,32 +282,31 @@ const solicitud = defineProps({
 })
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
+
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close, confirm } = useAlert()
+
 import { useFunction } from '@/composables/useFunction'
-const { getColor, getIcono } = useFunction()
+const { getFoto, formatearNumero, getColor, getIcono } = useFunction()
+
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
 
 import { API_URL_IMG100 } from "@/env"
 const img100 = API_URL_IMG100
 
-import { useAlert } from '@/composables/useAlert'
-import { CContainer, CModal } from '@coreui/vue'
-const { confirm, error, success } = useAlert()
-
 import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
-import { useUsuario } from '@/composables/useUsuario'
-const { getDatosUse } = useUsuario()
 
-const persona = auth.persona
-const idUsuario = ref(auth.idUsuario)
-const perfil = ref(null)
+const persona = ref(auth.persona)
 const idpName = ref(auth.idpName)
 
-import { useAprobacion } from '@/composables/useAprobacion'
-import router from '../../../router'
-
-const { updateAprobacionUse, getAprUse, srf } = useAprobacion()
+import { useApSrf } from '@/composables/Aprobacion/useSrf'
+const { updateAprobacionUse, getAprUse, srf } = useApSrf()
 
 const updateApr = reactive({
   idApr: null,
@@ -316,14 +334,8 @@ const color = ref('danger')
 const icon = ref('')
 const motivoSeleccionado = ref('ninguna')
 const observacion = ref('')
+const valor = ref('')
 
-const getFoto = (value) => {
-  return value === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + value
-}
-
-const clickModalSrf = (value) => {
-  modalSrf.value = value
-}
 const clickCanvaApr = (value) => {
   canvaApr.value = value
 }
@@ -341,30 +353,21 @@ const AprobarSolicitud = async () => {
   updateApr.estado = 'APROBADO'
   const ob = updateApr.obs === 'PENDIENTE' ? 'Ninguno' : (updateApr.obs + ' | Ninguno')
   updateApr.obs = ob
-  const sms = "Solictud Aprobada Correctamente"
-  const resultService = await updateAprobacionUse(updateApr, srf.numero, srf.monto, srf.nombre, sms,'Aprobar Solicitud ?')
+  const resultService = await updateAprobacionUse(updateApr, srf.numero, valor.value, srf.nombre, 'Solictud Aprobada Correctamente', 'Aprobar Solicitud ?')
   if (resultService) {
-    router.push({
-      name: 'SolicitudSRF',
-      params: { solicitud: 'pendiente' }
-    })
+    getLista()
   } else {
     getLoadData()
   }
-
 }
 
 const RechazarSolicitud = async () => {
   clickModalRechazar(false)
   updateApr.estado = 'RECHAZADO'
   updateApr.obs = motivoSeleccionado.value === 'otros' ? observacion.value : motivoSeleccionado.value
-  const sms = "Solictud Rechazada Correctamente"
-  const resultService = await updateAprobacionUse(updateApr, srf.numero, srf.monto, srf.nombre, sms)
+  const resultService = await updateAprobacionUse(updateApr, srf.numero, valor.value, srf.nombre, 'Solictud Rechazada Correctamente')
   if (resultService) {
-    router.push({
-      name: 'SolicitudSRF',
-      params: { solicitud: 'pendiente' }
-    })
+    getLista()
   } else {
     getLoadData()
   }
@@ -374,13 +377,9 @@ const DevolverSolicitud = async () => {
   clickModalDevolver(false)
   updateApr.estado = 'DEVUELTO'
   updateApr.obs = observacion.value
-  const sms = "Solictud Devuelta Correctamente"
-  const resultService = await updateAprobacionUse(updateApr, srf.numero, srf.monto, srf.nombre, sms)
+  const resultService = await updateAprobacionUse(updateApr, srf.numero, valor.value, srf.nombre, 'Solictud Devuelta Correctamente')
   if (resultService) {
-    router.push({
-      name: 'SolicitudSRF',
-      params: { solicitud: 'pendiente' }
-    })
+    getLista()
   } else {
     getLoadData()
   }
@@ -396,28 +395,145 @@ const getLoadData = () => {
   updateApr.idApr = srf.idApr
   updateApr.destino = srf.destino
   updateApr.estado = srf.estado
-  updateApr.idSrf = srf.id
-  updateApr.idPersona = idUsuario.value
+  updateApr.idSrf = srf.idSrf
+  updateApr.idPersona = persona.value.id
   updateApr.obs = srf.obs
   color.value = getColor(srf.estado)
   icon.value = getIcono(srf.estado)
+  valor.value = formatearNumero(srf.monto) + " " + srf.moneda
 
   datos.nombre = srf.nombre
   datos.idpName = idpName
   datos.idp = srf.idp
   datos.cargo = srf.cargo
-  datos.centroCostos = srf.centrocosto
+  datos.centroCostos = srf.centro
   datos.codigo = srf.codigo
 }
 const getTool = () => {
   const tooltips = document.querySelectorAll('.tooltip')
   tooltips.forEach(tooltip => tooltip.remove())
 }
+const getLista = () => {
+  router.push({
+    name: 'SolicitudSRF',
+    params: { solicitud: 'pendiente' }
+  })
+}
+
+const getCancelar = async () => {
+  const resultAlert = await confirm('Cancelar', 'Desea cancelar la revision ????', '')
+  if (resultAlert.isConfirmed) {
+    router.push({
+      name: 'SolicitudSRF',
+      params: { solicitud: solicitud.solicitud }
+    })
+  }
+}
+const getSalir = () => {
+  router.push({
+    name: 'SolicitudSRF',
+    params: { solicitud: solicitud.solicitud }
+  })
+}
+
+/* Breadcrum Actions */
+const salir = () => {
+  getSalir()
+}
+const cancelar = () => {
+  getCancelar()
+}
+const rechazar = () => {
+  clickModalRechazar(true)
+}
+const devolver = () => {
+  clickModalDevolver(true)
+}
+const aprobar = () => {
+  AprobarSolicitud()
+}
+const aprobadores = () => {
+  clickCanvaApr(true)
+}
+/* Breadcrum Actions */
+
+const getAction = () => {
+  setActions([
+    {
+      visible: updateApr.estado !== 'APROBADO' ? true : false,
+      label: 'Aprobar',
+      icon: 'cil-thumb-up',
+      color: 'success',
+      variant: 'ghost',
+      disabled: false,
+      movile: 'd-none d-md-inline',
+      onClick: aprobar
+    },
+    {
+      visible: updateApr.estado !== 'APROBADO' ? true : false,
+      label: 'Devolver',
+      icon: 'cil-cursor',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      movile: 'd-none d-md-inline',
+      onClick: devolver
+    },
+    {
+      visible: updateApr.estado !== 'APROBADO' ? true : false,
+      label: 'Rechazar',
+      icon: 'cil-trash',
+      color: 'danger',
+      variant: 'ghost',
+      disabled: false,
+      movile: 'd-none d-md-inline',
+      onClick: rechazar
+    },
+    {
+      visible: true,
+      label: 'Detalle',
+      icon: 'cil-user',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      movile: 'd-none d-md-inline',
+      onClick: aprobadores
+    },
+    {
+      visible: updateApr.estado !== 'APROBADO' ? true : false,
+      label: 'Cancelar',
+      icon: 'cil-x',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      movile: 'd-none d-md-inline',
+      onClick: cancelar
+    },
+    {
+      visible: updateApr.estado !== 'APROBADO' ? false : true,
+      label: 'Salir',
+      icon: 'cil-account-logout',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      onClick: salir
+    }
+  ])
+}
 
 onMounted(async () => {
   getTool()
-  await getAprUse(idUsuario.value, solicitud.idSrf)
-  getLoadData()
+  dataLoading()
+  try {
+    await getAprUse(persona.value.id, solicitud.idSrf)
+    getLoadData()
+  } finally {
+    close()
+  }
+  getAction()
+})
+onUnmounted(() => {
+  clearActions()
 })
 
 </script>

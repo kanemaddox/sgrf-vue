@@ -79,7 +79,7 @@ const routes = [
             path: '/usuarios/lista',
             name: 'ListaUsuarios',
             meta: { title: 'Lista de Usuarios' },
-            component: {render() { return h(resolveComponent('router-view')) },},
+            component: { render() { return h(resolveComponent('router-view')) }, },
             redirect: '/usuarios/lista/listausuario',
             children: [
               {
@@ -107,13 +107,13 @@ const routes = [
             name: 'Importar Usuarios',
             component: () => import('@/views/usuarios/ImportarView.vue'),
           },
+          {
+            path: '/usuarios/administradores',
+            name: 'Administradores',
+            component: () => import('@/views/usuarios/AdministradoresView.vue'),
+          },
         ],
 
-      },
-      {
-        path: '/administradores',
-        name: 'Administradores',
-        component: () => import('@/views/admin/AdministradoresView.vue'),
       },
       {
         path: '/area',
@@ -123,7 +123,7 @@ const routes = [
           render() { return h(resolveComponent('router-view')) },
         },
         redirect: '/area/menu',
-        children:[
+        children: [
           {
             path: 'menu',
             name: 'MenuArea',
@@ -131,19 +131,19 @@ const routes = [
             component: () => import('@/views/admin/area/MenuView.vue'),
           },
           {
-            path: 'lista', 
+            path: 'lista',
             name: 'ListaArea',
             meta: { title: 'Estructura', },
             component: () => import('@/views/admin/area/ListaView.vue'),
           },
           {
-            path: 'registrar', 
+            path: 'registrar',
             name: 'RegistrarArea',
             meta: { title: 'Registrar Centro de Costos', },
             component: () => import('@/views/srf/CrearSolicitudView.vue'),
           },
           {
-            path: 'importar', 
+            path: 'importar',
             name: 'ImportarArea',
             meta: { title: 'Importar Centros de Costo', },
             component: () => import('@/views/admin/area/ImportarView.vue'),
@@ -158,7 +158,7 @@ const routes = [
           render() { return h(resolveComponent('router-view')) },
         },
         redirect: '/gastos/menu',
-        children:[
+        children: [
           {
             path: 'menu',
             name: 'MenuGastos',
@@ -166,13 +166,13 @@ const routes = [
             component: () => import('@/views/gasto/MenuView.vue'),
           },
           {
-            path: 'lista', 
+            path: 'lista',
             name: 'ListaGastos',
             meta: { title: 'Lista de Gastos', },
             component: () => import('@/views/gasto/ListaView.vue'),
           },
           {
-            path: 'importar', 
+            path: 'importar',
             name: 'ImportarGasto',
             meta: { title: 'Importar Gastos', },
             component: () => import('@/views/gasto/ImportarView.vue'),
@@ -226,7 +226,8 @@ const routes = [
           },
           {
             path: 'crear', // hijo 2
-            name: 'Crear Solicitud de Fondos',
+            name: 'CrearSrf',
+            meta: { title: 'Crear Formulario de Solicitud de Fondos' },
             component: () => import('@/views/srf/CrearSolicitudView.vue'),
           },
           {
@@ -248,7 +249,7 @@ const routes = [
                 path: 'revisar/:idSrf',
                 name: 'RevisarSrf',
                 meta: { title: 'Revisar Solicitud', },
-                component: () => import('@/views/srf/detalle/SolicitudView.vue'),
+                component: () => import('@/views/srf/RevisarView.vue'),
                 props: true
               },
             ],
@@ -265,13 +266,13 @@ const routes = [
                 path: 'listas',
                 name: '',
                 meta: { title: ' ' },
-                component: () => import('@/views/srf/ListaSolicitudesView.vue'),
+                component: () => import('@/views/srf/ListaView.vue'),
                 props: true,
               },
               {
                 path: 'detalle/:idSrf',
                 name: 'DetalleSrf',
-                component: () => import('@/views/srf/detalle/DetalleView.vue'),
+                component: () => import('@/views/srf/DetalleView.vue'),
                 props: true,
                 meta: { title: ' Detalle' }
               },
@@ -298,28 +299,34 @@ const routes = [
             name: 'CrearRDG',
             meta: { title: 'Crear Rendicion de Fondos', },
             component: () => import('@/views/rdg/CrearRendicionView.vue'),
-            props:true,
+            props: true,
           },
           {
-            path: 'autorizar/:solicitud', // hijo 3 
-            name: 'SolicitudDRF',
+            path: 'solicitudes',
+            name: 'Solicitudes',
+            meta: { title: 'Formularios de Solicitud', },
+            component: () => import('@/views/rdg/SolicitudesView.vue'),
+          },
+          {
+            path: 'autorizarrdg/:rendicion', // hijo 3 
+            name: 'RendicionRdg',
             component: { render() { return h(resolveComponent('router-view')) }, },
             props: true,
-            meta: { title: (route) => route.params.solicitud.charAt(0).toUpperCase() + route.params.solicitud.slice(1) + 's' },
-            redirect: to => { return '/srf/autorizar/' + to.params.solicitud + '/solicitud' },
+            meta: { title: (route) => route.params.rendicion.charAt(0).toUpperCase() + route.params.rendicion.slice(1) + 's' },
+            redirect: to => { return '/rdg/autorizarrdg/' + to.params.rendicion + '/rendicion' },
             children: [
               {
-                path: 'solicitud',
+                path: 'rendicion',
                 name: '',
                 meta: { title: '' },
-                component: () => import('@/views/srf/SolicitudesView.vue'),
+                component: () => import('@/views/rdg/RendicionesView.vue'),
                 props: true,
               },
               {
-                path: 'revisar/:idSrf',
-                name: 'RevisarSrf',
-                meta: { title: 'Revisar Solicitud', },
-                component: () => import('@/views/srf/detalle/SolicitudView.vue'),
+                path: 'revisar/:idRdg',
+                name: 'RevisarRdg',
+                meta: { title: 'Revisar Rendicion', },
+                component: () => import('@/views/rdg/RevisarView.vue'),
                 props: true
               },
             ],
@@ -340,9 +347,9 @@ const routes = [
                 props: true,
               },
               {
-                path: 'detalle/:idSrf',
+                path: 'detalle/:idRdg',
                 name: 'DetalleDrf',
-                component: () => import('@/views/srf/detalle/DetalleView.vue'),
+                component: () => import('@/views/rdg/DetalleView.vue'),
                 props: true,
                 meta: { title: ' Detalle' }
               },
@@ -420,6 +427,24 @@ const routes = [
         path: 'register',
         name: 'Register',
         component: () => import('@/views/pages/Register'),
+      },
+      {
+        path: 'srfpublico/:idSrf',
+        name: 'SrfPublico',
+        component: () => import('@/views/pages/PublicSrf'),
+        props: true,
+      },
+      {
+        path: 'rdgpublico/:idRdg',
+        name: 'RdgPublico',
+        component: () => import('@/views/pages/PublicRdg'),
+        props: true,
+      },
+      {
+        path: 'documentopublico/:idDetalle',
+        name: 'DocumentoPublico',
+        component: () => import('@/views/pages/PublicDocumento'),
+        props: true,
       },
     ],
   },

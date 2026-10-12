@@ -14,7 +14,6 @@
                             :options="{ responsive: true }">
 
                             <template #column-imagen="{ cellData }">
-                                <!--<CImage :src="cellData" width="70" height="70" />-->
                                 <CAvatar size="xl" :src="cellData.foto" :status="cellData.estado" />
                             </template>
 
@@ -22,7 +21,7 @@
                                 <span>{{ cellData.idp }}</span>
                                 <div class="small text-body-secondary text-nowrap">
                                     <span><strong>Nombre :</strong> {{ cellData.nombre }} {{ cellData.apellido
-                                    }}</span><br>
+                                        }}</span><br>
                                     <span>{{ cellData.email }} | {{ cellData.celular }}</span>
                                 </div>
                             </template>
@@ -62,30 +61,28 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 DataTable.use(DataTablesCore)
-
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
 import { useEmpleado } from '@/composables/useEmpleado'
-const { findByTipoUse } = useEmpleado()
+const { findByTipoUse, listaJefes } = useEmpleado()
 
-import { API_URL_IMG100 } from "@/env"
-const img100 = API_URL_IMG100
-
-//const lista = reactive([])
-const listaJefes = ref([])
+import { useAlert } from '@/composables/useAlert'
+const { dataLoading, close } = useAlert()
 
 const columns = [
     { data: 'id', title: 'ID' },
     { data: 'imagen', title: '', name: "imagen" },
-    { data: 'datos',  title: 'Datos Personales', name: 'datos'},
+    { data: 'datos', title: 'Datos Personales', name: 'datos' },
     { data: 'estado', title: 'Estado', name: 'estado' },
     {
         data: 'acciones',
@@ -96,34 +93,43 @@ const columns = [
     }
 ]
 
-const findByTipo = async (value) => {
-    try {
-        const resultLista = await findByTipoUse(value)
-        listaJefes.value = resultLista.map(item => ({
-            id: item.id,
-            imagen: {
-                foto: item.persona?.foto === 'usuario.png' ? '/public/usuario.png' : API_URL_IMG100 + item.persona?.foto,
-                estado: item.estado ? 'success' : 'danger',
-            },
-            datos: {
-                idp: item.persona?.idp,
-                nombre: item.persona?.nombre,
-                apellido: item.persona?.paterno + " " + item.persona?.materno,
-                email: item.persona?.email,
-                celular: item.persona?.celular,
-            },
-            estado: item.estado,
-            acciones: item.id,
-        }))
-    } catch (errr) {
-        console.log(errr)
-    }
+/**Funciones */
+const salir = () => {
+    getSalir()
 }
 
-onMounted(() => {
-    const tooltips = document.querySelectorAll('.tooltip');
-    tooltips.forEach(tooltip => tooltip.remove());
-    findByTipo('JEFE')
+const getSalir = () => {
+    router.push({ name: 'Dependencias' })
+}
+
+const getAction = () => {
+    setActions([
+        {
+            visible: true,
+            label: 'Salir',
+            icon: 'cil-account-logout',
+            color: 'secondary',
+            variant: 'ghost',
+            disabled: false,
+            onClick: salir
+        }
+    ])
+}
+
+onMounted(async () => {
+    const tooltips = document.querySelectorAll('.tooltip')
+    tooltips.forEach(tooltip => tooltip.remove())
+    dataLoading()
+    try {
+        await findByTipoUse('JEFE')
+    } finally {
+        close()
+    }
+    getAction()
+
+})
+onUnmounted(() => {
+    clearActions()
 })
 
 </script>
