@@ -1,30 +1,48 @@
 <template>
-    <!--Card para revisar solicitudes-->
     <CRow>
-        <CCol :xs="12" :sm="4" :md="4" :lg="4" v-if="pernicions?.aprobar_solicitud">
+        <!-- ================================================================================ -->
+        <!-- Tarjeta de Revisar Solicitudes de Fondos (Visible solo para autorizados)         -->
+        <!-- ================================================================================ -->
+        <CCol :xs="12" :sm="12" :md="6" :lg="4" v-if="pernicions?.aprobar_solicitud">
             <CCard>
-                <CCardHeader class="headercolor justify-content-between align-items-center">
-                    <i class="bi bi-clipboard2-check-fill me-2"></i>
-                    <label class="mb-0 fs-6 text-white">Revisar Solicitudes de Fondos</label>
+                <!-- Cabecera de la tarjeta -->
+                <CCardHeader class="headercolor d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clipboard2-check-fill text-white me-2"></i>
+                        <span class="text-white">Revisar Solicitudes</span>
+                    </div>
+                    <CBadge color="light" text-color="dark" shape="rounded-pill" class="px-2.5 py-1 fw-semibold">
+                        {{ (Number(estado[3]) || 0) + (Number(estado[4]) || 0) + (Number(estado[5]) || 0) }} Total
+                    </CBadge>
                 </CCardHeader>
-                <CCardBody class="text-center">
+
+                <!-- Cuerpo de la tarjeta dividido en dos columnas responsivas -->
+                <CCardBody>
                     <CRow>
-                        <CCol :xs="6" :sm="6" :md="6" :lg="6">
-                            <i class="bi bi-clipboard2-check-fill text-success" style="font-size: 4rem;"></i>
-                            <p>Revisar Solicitudes de Fondos</p>
+                        <!-- Columna Izquierda: Icono ilustrativo y título secundario -->
+                        <CCol :xs="12" :sm="6" :md="6" :lg="6"
+                            class="text-center border-end d-flex flex-column align-items-center justify-content-center py-2">
+                            <div class="bg-success-subtle p-3 rounded-circle mb-2 d-inline-flex align-items-center justify-content-center"
+                                style="width: 100px; height: 100px;">
+                                <i class="bi bi-clipboard2-check-fill text-success fs-2"></i>
+                            </div>
+                            <span class="text-muted small fw-medium">Gestión de Fondos</span>
                         </CCol>
-                        <CCol :xs="6" :sm="6" :md="6" :lg="6">
+
+                        <!-- Columna Derecha: Botones de estado modernos -->
+                        <CCol :xs="12" :sm="6" :md="6" :lg="6">
                             <CCard :style="vars">
-                                <CListGroup flush>
-                                    <CListGroupItem>
+                                <CListGroup flush >
+                                    <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" class="position-relative ms-1" variant="outline"
                                             size="sm" @click="getRevisar('pendiente')">
                                             <CBadge color="info" position="top-end" shape="rounded-pill">{{ estado[3] }}
                                             </CBadge>
-                                            <i class="bi bi-exclamation-triangle text-warning"></i> Pendientes
+                                            <i class="bi bi-hourglass-split text-warning"></i> Pendientes
                                         </CButton>
                                     </CListGroupItem>
-                                    <CListGroupItem>
+
+                                    <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" class="position-relative ms-1" variant="outline"
                                             size="sm" @click="getRevisar('aprobado')">
                                             <CBadge color="info" position="top-end" shape="rounded-pill">{{ estado[4] }}
@@ -32,7 +50,8 @@
                                             <i class="bi bi-check-circle text-success"></i> Aprobados
                                         </CButton>
                                     </CListGroupItem>
-                                    <CListGroupItem>
+
+                                    <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" class="position-relative ms-1" variant="outline"
                                             size="sm" @click="getRevisar('rechazado')">
                                             <CBadge color="info" position="top-end" shape="rounded-pill">{{ estado[5] }}
@@ -46,70 +65,103 @@
                     </CRow>
                 </CCardBody>
                 <CCardFooter class="text-center">
+                    <span class="text-muted small fw-medium">Gestione y consulte el estado de sus formularios
+                        enviados.</span>
                 </CCardFooter>
             </CCard>
         </CCol>
-    
-            <!--Card para revisar solicitudes-->
 
-        <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.crear_solicitud">
-            <br />
+        <!-- ==================================================================== -->
+        <!-- Tarjeta: Crear Solicitud de Fondos                                   -->
+        <!-- ==================================================================== -->
+        <CCol :xs="12" :sm="6" :md="4" :lg="3" v-if="pernicions?.crear_solicitud">
             <CCard>
-                <CCardHeader class="headercolor justify-content-between align-items-center">
-                    <i class="bi bi-file-earmark-text me-2"></i>
-                    <label class="mb-0 fs-6 text-white">Formulario de Solicitud</label>
+                <!-- Encabezado -->
+                <CCardHeader class="headercolor">
+                    <i class="bi bi-file-earmark-plus-fill text-white me-2"></i>
+                    <span class="text-white">Formulario de Solicitud</span>
                 </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-file-earmark-text" style="font-size: 4rem;"></i>
-                    <p>Crear un Formulario de Solicitud de Fondos</p>
+
+                <!-- Cuerpo de la Tarjeta -->
+                <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+                    <!-- Icono principal en contenedor estético -->
+                    <div class="icon-container mb-3 text-primary bg-light p-3 rounded-circle shadow-inner"
+                        style="width: 100px; height: 100px;">
+                        <i class="bi bi-file-earmark-text fs-1"></i>
+                    </div>
+
+                    <h6 class="fw-bold text-dark mb-1">Crear Solicitud</h6>
+                    <p class="text-muted small mb-0">Genere una nueva solicitud de fondos para su procesamiento.</p>
                 </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getCrear">
-                        <i class="bi bi-file-earmark-text"></i> Ingresar
+
+                <!-- Pie de la Tarjeta -->
+                <CCardFooter class="pb-3 text-center">
+                    <CButton color="primary" variant="outline" size="sm" class="w-75 rounded-pill shadow-sm py-2"
+                        @click="getCrear">
+                        <i class="bi bi-arrow-right-circle me-1"></i> Ingresar
                     </CButton>
                 </CCardFooter>
             </CCard>
         </CCol>
 
-        <CCol :xs="12" :sm="4" :md="4" :lg="4">
-            <br />
+        <!-- ==================================================================== -->
+        <!-- Tarjeta: Mis Solicitudes de Fondos                                   -->
+        <!-- ==================================================================== -->
+        <CCol :xs="12" :sm="6" :md="6" :lg="4">
             <CCard>
-                <CCardHeader class="headercolor justify-content-between align-items-center">
-                    <i class="bi bi-file-earmark-text-fill me-2"></i>
-                    <label class="mb-0 fs-6 text-white">Mis Solicitudes de Fondos</label>
+                <!-- Cabecera de la tarjeta -->
+                <CCardHeader class="headercolor d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-file-earmark-text-fill me-2"></i>
+                        <span class="text-white">Mis Solicitudes de Fondos</span>
+                    </div>
+                    <CBadge color="light" text-color="dark" shape="rounded-pill" class="px-2.5 py-1 fw-semibold">
+                        {{ (Number(estado[0]) || 0) + (Number(estado[1]) || 0) + (Number(estado[2]) || 0) }} Total
+                    </CBadge>
                 </CCardHeader>
-                <CCardBody class="text-center">
-                    <CRow>
-                        <CCol :xs="6" :sm="6" :md="6" :lg="6">
-                            <i class="bi bi-file-earmark-text-fill text-info" style="font-size: 4rem;"></i>
-                            <p>Formularios de Solicitudes de Fondos</p>
+
+                <!-- Cuerpo de la tarjeta -->
+                <CCardBody class="d-flex flex-column justify-content-center p-3">
+                    <CRow class="w-100 align-items-center g-3">
+                        <!-- Columna Izquierda: Icono ilustrativo y título secundario -->
+                        <CCol :xs="12" :sm="6" :md="6" :lg="6"
+                            class="text-center border-end d-flex flex-column align-items-center justify-content-center py-2">
+                            <div class="bg-info-subtle p-3 rounded-circle mb-2 d-inline-flex align-items-center justify-content-center"
+                                style="width: 100px; height: 100px;">
+                                <i class="bi bi-file-earmark-text-fill text-info fs-2"></i>
+                            </div>
+                            <span class="text-muted small fw-medium">Gestión de Solicitudes</span>
                         </CCol>
-                        <CCol :xs="6" :sm="6" :md="6" :lg="6">
+
+                        <!-- Columna Derecha: Botones de estado modernos -->
+                        <CCol :xs="12" :sm="6" :md="6" :lg="6">
                             <CCard :style="vars">
                                 <CListGroup flush>
-                                    <CListGroupItem>
+                                    <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" class="position-relative ms-1" variant="outline"
                                             size="sm" @click="getSolicitudes('pendiente')">
                                             <CBadge color="warning" position="top-end" shape="rounded-pill">{{ estado[0]
-                                            }}
+                                                || 0 }}
                                             </CBadge>
-                                            <i class="bi bi-exclamation-triangle text-warning"></i> Pendientes
+                                            <i class="bi bi-hourglass-split text-warning"></i> Pendientes
                                         </CButton>
                                     </CListGroupItem>
-                                    <CListGroupItem>
+
+                                    <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" class="position-relative ms-1" variant="outline"
                                             size="sm" @click="getSolicitudes('aprobado')">
                                             <CBadge color="success" position="top-end" shape="rounded-pill">{{ estado[1]
-                                            }}
+                                                || 0 }}
                                             </CBadge>
                                             <i class="bi bi-check-circle text-success"></i> Aprobados
                                         </CButton>
                                     </CListGroupItem>
-                                    <CListGroupItem>
+
+                                    <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" class="position-relative ms-1" variant="outline"
                                             size="sm" @click="getSolicitudes('rechazado')">
                                             <CBadge color="danger" position="top-end" shape="rounded-pill">{{ estado[2]
-                                            }}
+                                                || 0 }}
                                             </CBadge>
                                             <i class="bi bi-x-circle text-danger"></i> Rechazados
                                         </CButton>
@@ -120,7 +172,8 @@
                     </CRow>
                 </CCardBody>
                 <CCardFooter class="text-center">
-
+                    <span class="text-muted small fw-medium">Gestione y consulte el estado de sus formularios
+                        enviados.</span>
                 </CCardFooter>
             </CCard>
         </CCol>
@@ -129,27 +182,45 @@
 
 </template>
 <script setup>
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStores'
-const auth = useAuthStore()
-
 import { useAlert } from '@/composables/useAlert'
-const { dataLoading, close, info } = useAlert()
-
 import { useRouter } from 'vue-router'
+import { useSrf } from '@/composables/useSrf'
+
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+
+const auth = useAuthStore()
+const { dataLoading, close, info } = useAlert()
 const router = useRouter()
 
-import { useSrf } from '@/composables/useSrf'
 const { getSrfEstadoUse, estado } = useSrf()
+
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 
 const pernicions = ref(auth.pernicions)
 const persona = ref(auth.persona)
 const image = ref(auth.imagen)
 
+// ============================================================================
+// 4. CONFIGURACIÓN VISUAL
+// ============================================================================
 const vars = {
     '--cui-card-border-color': '#ffffff',
 }
+
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 
 const getCrear = async () => {
     if (image.value === "usuario.png") {
@@ -179,7 +250,9 @@ const getRevisar = (value) => {
     })
 }
 
-/**Funciones */
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 
 onMounted(async () => {
     dataLoading()
