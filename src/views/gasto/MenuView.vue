@@ -1,65 +1,126 @@
 <template>
-    <CRow>
-        <!--Lista de Gastos-->
-        <CCol :xs="12" :sm="4" :md="3" :lg="3">
-            <br />
-            <CCard>
-                <CCardHeader class="headercolor text-center">
-                    <div class="align-items-center">
-                        <i class="bi bi-list-task me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Lista de Gastos</label>
-                    </div>
-                </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-list-task me-2" style="font-size: 5rem;"></i>
-                    <p>Ver lista de Gastos Registrados</p>
-                </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getListaGastos">
-                        <i class="bi bi-list-task me-2"></i> Ver Lista
-                    </CButton>
-                </CCardFooter>
-            </CCard>
-        </CCol>
-        <!--End Lista de Gastos-->
+  <CRow>
+    <!-- ==================================================================== -->
+    <!-- Tarjeta para Listar las Cuentas de Gasto        -->
+    <!-- ==================================================================== -->
+    <CCol :xs="12" :sm="4" :md="3" :lg="3">
+      <CCard>
+        <!-- Cabecera de la tarjeta -->
+        <CCardHeader class="headercolor text-white d-flex align-items-center">
+          <i class="bi bi-list-task me-2"></i>
+          <span class="fs-6 text-white">Cuenta de Gastos</span>
+        </CCardHeader>
+        <!-- Cuerpo de la tarjeta  -->
+        <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+          <!-- Icono principal en contenedor estético -->
+          <div class="icon-container mb-3 bg-secundary-subtle bg-light p-3 rounded-circle shadow-inner"
+            style="width: 100px; height: 100px;">
+            <i class="bi bi-list-task fs-1"></i>
+          </div>
+          <h6 class="fw-bold text-body mb-1">Cuenta de Gastos</h6>
+          <small class="text-body-secondary">Gestion de las cuentas de gasto.</small>
+        </CCardBody>
+        <!-- Pie de la Tarjeta -->
+        <CCardFooter class="bg-transparent border-0 text-center pb-3">
+          <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getListaGastos">
+            Ingresar
+            <CIcon icon="cil-arrow-right" class="ms-1" />
+          </CButton>
+        </CCardFooter>
+      </CCard>
+    </CCol>
 
-        <!--Importar Lista de Gastos-->
-        <CCol :xs="12" :sm="4" :md="3" :lg="3">
-            <br />
-            <CCard>
-                <CCardHeader class="headercolor text-center">
-                    <div class="align-items-center">
-                        <i class="bi bi-file-earmark-excel me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Importar Gastos</label>
-                    </div>
-                </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-file-earmark-excel" style="font-size: 5rem;"></i>
-                    <p>Importar Gastos de un Archivo Excel</p>
-                </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getGastoImport">
-                        <i class="bi bi-file-earmark-excel"></i> Importar
-                    </CButton>
-                </CCardFooter>
-            </CCard>
-        </CCol>
-        <!--End Importar Lista de Gastos-->
-    </CRow>
+    <!-- ==================================================================== -->
+    <!-- Tarjeta para importar cuenta de gastos por Excel                    -->
+    <!-- ==================================================================== -->
+    <CCol :xs="12" :sm="4" :md="3" :lg="3">
+      <div class="d-md-none mb-3"></div>
+      <CCard>
+        <!-- Cabecera de la tarjeta -->
+        <CCardHeader class="headercolor text-white d-flex align-items-center">
+          <i class="bi bi-file-earmark-excel me-2"></i>
+          <span class="fs-6">Importar Gastos</span>
+        </CCardHeader>
+
+        <!-- Cuerpo de la tarjeta  -->
+        <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+          <!-- Icono principal en contenedor estético -->
+          <div class="icon-container mb-3 bg-success-subtle bg-light p-3 rounded-circle shadow-inner"
+            style="width: 100px; height: 100px;">
+            <i class="bi bi-file-earmark-excel text-success fs-1"></i>
+          </div>
+          <h6 class="fw-bold text-body mb-2">Importar desde Excel</h6>
+          <!-- Enlace para descargar el formato/plantilla -->
+          <small class="text-body-secondary">
+            <a href="#" @click.prevent="formato">
+              descarga el formato Excel
+            </a>
+          </small>
+        </CCardBody>
+
+        <!-- Pie de la Tarjeta -->
+        <CCardFooter class="bg-transparent border-0 text-center pb-3">
+          <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getGastoImport">
+            Importar
+            <CIcon icon="cil-arrow-right" class="ms-1" />
+          </CButton>
+        </CCardFooter>
+      </CCard>
+    </CCol>
+  </CRow>
 
 </template>
 <script setup>
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+const { setActions, clearActions } = useBreadcrumb()
+
 const getListaGastos = () => {
-    router.push({ name: 'ListaGastos' })
+  router.push({ name: 'ListaGastos' })
 }
 const getGastoImport = () => {
-    router.push({ name: 'ImportarGasto' })
+  router.push({ name: 'ImportarGasto' })
 }
-const getGastoRegister = () => {
-    router.push({ name: 'RegistrarGastos' })
+
+const formato = () => {
+  const urlArchivo = '/plantilla_gasto.xlsx'
+  const enlace = document.createElement('a')
+  enlace.href = urlArchivo
+  enlace.download = 'Formato_Gasto.xlsx'
+  document.body.appendChild(enlace)
+  enlace.click()
+  document.body.removeChild(enlace)
 }
+
+const salir = () => {
+  getSalir()
+}
+
+const getSalir = () => {
+  router.push({ name: 'Dependencias' })
+}
+
+const getAction = () => {
+  setActions([
+    {
+      visible: true,
+      label: 'Salir',
+      icon: 'cil-account-logout',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      onClick: salir
+    }
+  ])
+}
+onMounted(async () => {
+  getAction()
+})
+onUnmounted(() => {
+  clearActions()
+})
 </script>

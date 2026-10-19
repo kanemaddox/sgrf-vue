@@ -15,7 +15,7 @@
       </CDropdownItem>
       <CDropdownDivider />
       <CDropdownItem style="cursor: pointer;" @click="confirmLogout">
-        <CIcon icon="cil-lock-locked" /> Salir
+        <CIcon icon="cil-lock-locked" /> Cerrar Sesion
       </CDropdownItem>
     </CDropdownMenu>
   </CDropdown>

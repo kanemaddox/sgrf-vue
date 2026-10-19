@@ -8,6 +8,9 @@ const { confirm, success, error } = useAlert()
 import { useDto } from '@/composables/useDto'
 const { getPerfil, getPersona, getPerfilCuenta } = useDto()
 
+import { dtoRegistro } from '@/composables/Dto/dtoRegistro'
+const {getRegistro} = dtoRegistro()
+
 /**Declaraciones para Servicios */
 import { getPerfilService, updateUsuarioRolService, findByRolService, updateUsuarioPernicionsService, getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
 
@@ -25,6 +28,8 @@ export const useUsuario = () => {
     const perfilCuenta = reactive({})
     const listaUsuario = ref([])
     const listaAdm = ref([])
+    const registro = reactive({})
+
     const updateUsuarioImagenUse = async (id, imagen) => {
         loading.value = true
         errorUse.value = null
@@ -196,6 +201,7 @@ export const useUsuario = () => {
             loading.value = false
         }
     }
+
     const findByRolUse = async (value) => {
         loading.value = true
         errorUse.value = null
@@ -225,6 +231,7 @@ export const useUsuario = () => {
             loading.value = false
         }
     }
+
     const findAllUserUse = async (estado) => {
         loading.value = true
         errorUse.value = null
@@ -245,6 +252,7 @@ export const useUsuario = () => {
         }
 
     }
+
     const getDatosUse = async (value) => {
         loading.value = true
         errorUse.value = null
@@ -260,6 +268,7 @@ export const useUsuario = () => {
             loading.value = false
         }
     }
+
     const getPerfilUse = async (value) => {
         loading.value = true
         errorUse.value = null
@@ -287,6 +296,7 @@ export const useUsuario = () => {
             loading.value = false
         }
     }
+
     const setEstadoUse = async (value) => {
         loading.value = true
         errorUse.value = null
@@ -301,6 +311,7 @@ export const useUsuario = () => {
             loading.value = false
         }
     }
+
     const getEmpleadosFileUse = async () => {
         loading.value = true
         errorUse.value = null
@@ -321,7 +332,7 @@ export const useUsuario = () => {
         errorUse.value = null
         try {
             const { data } = await getDatosEmpleadosService()
-            return data
+            Object.assign(registro, getRegistro(data))
         } catch (errr) {
             errorUse.value = errr
             throw errr
@@ -405,6 +416,7 @@ export const useUsuario = () => {
         personaUsuario,
         listaUsuario,
         listaAdm,
+        registro,
         loading,
         errorUse
     }

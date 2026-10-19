@@ -1,73 +1,105 @@
 <template>
-    <CRow>
-        <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.jefes && admin">
-            <CCard>
-                <CCardHeader class="headercolor text-center">
-                    <div class="align-items-center">
-                        <i class="bi bi-person-workspace me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Jefes</label>
-                    </div>
-                </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-person-workspace" style="font-size: 5rem;"></i>
-                    <p>Administrar Categoria de Jefes</p>
-                </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getJefes">
-                        <i class="bi bi bi-person-workspace"></i> Ingresar
-                    </CButton>
-                </CCardFooter>
-            </CCard>
-        </CCol>
+  <CRow>
+    <!-- ==================================================================== -->
+    <!-- Tarjeta para gestionar jefes         -->
+    <!-- ==================================================================== -->
+    <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.jefes && admin">
+      <CCard>
+        <!-- Cabecera de la tarjeta -->
+        <CCardHeader class="headercolor text-white d-flex align-items-center">
+          <i class="bi bi-person-workspace me-2"></i>
+          <span class="fs-6 text-white">Jefes</span>
+        </CCardHeader>
+        <!-- Cuerpo de la tarjeta  -->
+        <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+          <!-- Icono principal en contenedor estético -->
+          <div class="icon-container mb-3 bg-secundary-subtle bg-light p-3 rounded-circle shadow-inner"
+            style="width: 100px; height: 100px;">
+            <i class="bi bi-person-workspace fs-1"></i>
+          </div>
+          <h6 class="fw-bold text-body mb-1">Jefes</h6>
+          <small class="text-body-secondary">Genstion de Jefes</small>
+        </CCardBody>
+        <!-- Pie de la Tarjeta -->
+        <CCardFooter class="bg-transparent border-0 text-center pb-3">
+          <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getJefes">
+            Ingresar
+            <CIcon icon="cil-arrow-right" class="ms-1" />
+          </CButton>
+        </CCardFooter>
+      </CCard>
+    </CCol>
 
-        <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.areas && admin">
-            <div class="d-md-none mb-3"></div>
-            <CCard>
-                <CCardHeader class="headercolor text-center">
-                    <div class="align-items-center">
-                        <i class="bi bi-building-check me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Centro Costos</label>
-                    </div>
-                </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-building-check" style="font-size: 5rem;"></i>
-                    <p>Administrar Centros de Costo</p>
-                </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getAreas">
-                        <i class="bi bi-building-check"></i> Ingresar
-                    </CButton>
-                </CCardFooter>
-            </CCard>
-        </CCol>
+    <!-- ==================================================================== -->
+    <!-- Tarjeta para administrar Centros de Costos         -->
+    <!-- ==================================================================== -->
+    <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.areas && admin">
+      <div class="d-md-none mb-3"></div>
+      <CCard>
+        <!-- Cabecera de la tarjeta -->
+        <CCardHeader class="headercolor text-white d-flex align-items-center">
+          <div class="align-items-center">
+            <i class="bi bi-building-check me-2"></i>
+            <span class="fs-6 text-white">Centro Costos</span>
+          </div>
+        </CCardHeader>
+        <!-- Cuerpo de la tarjeta  -->
+        <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+          <!-- Icono principal en contenedor estético -->
+          <div class="icon-container mb-3 bg-secundary-subtle bg-light p-3 rounded-circle shadow-inner"
+            style="width: 100px; height: 100px;">
+            <i class="bi bi-building-check fs-1"></i>
+          </div>
+          <h6 class="fw-bold text-body mb-1">Centros de Costo</h6>
+          <small class="text-body-secondary">Gestion y Administracion.</small>
+        </CCardBody>
+        <!-- Pie de la Tarjeta -->
+        <CCardFooter class="bg-transparent border-0 text-center pb-3">
+          <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getAreas">
+            Ingresar
+            <CIcon icon="cil-arrow-right" class="ms-1" />
+          </CButton>
+        </CCardFooter>
+      </CCard>
+    </CCol>
 
-        <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.sucursales && admin">
-            <div class="d-md-none mb-3"></div>
-            <CCard>
-                <CCardHeader class="headercolor text-center">
-                    <div class="align-items-center">
-                        <i class="bi bi-person-vcard me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Cuentas de Gastos</label>
-                    </div>
-                </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-person-vcard" style="font-size: 5rem;"></i>
-                    <p>Adminsitrar Cuentas de Gastos</p>
-                </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getGastos">
-                        <i class="bi bi-person-vcard"></i> Ingresar
-                    </CButton>
-                </CCardFooter>
-            </CCard>
-        </CCol>
+    <!-- ==================================================================== -->
+    <!-- Tarjeta para administrar Cuantas Contables        -->
+    <!-- ==================================================================== -->
+    <CCol :xs="12" :sm="4" :md="3" :lg="3" v-if="pernicions?.sucursales && admin">
+      <div class="d-md-none mb-3"></div>
+      <CCard>
+        <!-- Cabecera de la tarjeta -->
+        <CCardHeader class="headercolor text-white d-flex align-items-center">
+          <i class="bi bi-person-vcard me-2"></i>
+          <span class="fs-6 text-white">Cuenta de Gastos</span>
+        </CCardHeader>
+        <!-- Cuerpo de la tarjeta  -->
+        <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+          <!-- Icono principal en contenedor estético -->
+          <div class="icon-container mb-3 bg-secundary-subtle bg-light p-3 rounded-circle shadow-inner"
+            style="width: 100px; height: 100px;">
+            <i class="bi bi-person-vcard fs-1"></i>
+          </div>
+          <h6 class="fw-bold text-body mb-1">Cuenta de Gastos</h6>
+          <small class="text-body-secondary">Genstion de Gastos.</small>
+        </CCardBody>
+        <!-- Pie de la Tarjeta -->
+        <CCardFooter class="bg-transparent border-0 text-center pb-3">
+          <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getGastos">
+            Ingresar
+            <CIcon icon="cil-arrow-right" class="ms-1" />
+          </CButton>
+        </CCardFooter>
+      </CCard>
+    </CCol>
 
-    </CRow>
+  </CRow>
 </template>
 
 <script setup>
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import {onMounted, ref,onUnmounted } from 'vue'
+import { onMounted, ref, onUnmounted } from 'vue'
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
 const { setActions, clearActions } = useBreadcrumb()
 import { useRouter } from 'vue-router'
@@ -78,44 +110,44 @@ const auth = useAuthStore()
 
 const pernicions = ref(auth.pernicions)
 const rol = ref(auth.rol)
-const admin = ref(rol.value==='ADMIN'?true:false)
+const admin = ref(rol.value === 'ADMIN' ? true : false)
 
 /**Funciones */
 const salir = () => {
-    getSalir()
+  getSalir()
 }
 
 const getSalir = () => {
-    router.push({name: 'Home'})
+  router.push({ name: 'Home' })
 }
 const getJefes = () => {
-    router.push({ name: 'Lista de Jefes' })
+  router.push({ name: 'Lista de Jefes' })
 }
 const getAreas = () => {
-    router.push({ name: 'AREA' })
+  router.push({ name: 'AREA' })
 }
 
 const getGastos = () => {
-    router.push({ name: 'GASTOS' })
+  router.push({ name: 'GASTOS' })
 }
 
 const getAction = () => {
-    setActions([
-        {
-            visible: true,
-            label: 'Salir',
-            icon: 'cil-account-logout',
-            color: 'secondary',
-            variant: 'ghost',
-            disabled: false,
-            onClick: salir
-        }
-    ])
+  setActions([
+    {
+      visible: true,
+      label: 'Salir',
+      icon: 'cil-account-logout',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      onClick: salir
+    }
+  ])
 }
 onMounted(async () => {
-    getAction()
+  getAction()
 })
 onUnmounted(() => {
-    clearActions()
+  clearActions()
 })
 </script>

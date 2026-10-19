@@ -1,80 +1,134 @@
 <template>
     <CRow>
-        <!--Card para observaciones Aprobadas-->
+        <!-- ==================================================================== -->
+        <!-- Tarjeta para mostrar usuarios                                        -->
+        <!-- ==================================================================== -->
         <CCol :xs="12" :sm="4" :md="3" :lg="3">
             <CCard>
-                <CCardHeader class="headercolor">
+                <!-- Cabecera de la tarjeta -->
+                <CCardHeader class="headercolor text-white d-flex align-items-center ">
                     <i class="bi bi-people me-2"></i>
-                    <label class="mb-0 fs-6 text-white">Lista de Usuarios</label>
+                    <span class="fs-6">Lista de Usuarios</span>
                 </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-people me-2" style="font-size: 5rem;"></i>
-                    <p>Usuarios Registrados</p>
+
+                <!-- Cuerpo de la tarjeta  -->
+                <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+                    <!-- Icono principal en contenedor estético -->
+                    <div class="icon-container mb-3 text-primary bg-light p-3 rounded-circle shadow-inner"
+                        style="width: 100px; height: 100px;">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold text-body mb-1">Usuarios Registrados</h6>
+                    <small class="text-body-secondary">Consulta y gestiona el listado completo</small>
                 </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getUsuariosView">
-                        <i class="bi bi-people me-2"></i> Ver Usuarios
+
+                <!-- Pie de la Tarjeta -->
+                <CCardFooter class="bg-transparent border-0 text-center pb-3">
+                    <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getUsuariosView">
+                        Ver Usuarios
+                        <CIcon icon="cil-arrow-right" class="ms-1" />
                     </CButton>
                 </CCardFooter>
             </CCard>
         </CCol>
-        
+
+        <!-- ==================================================================== -->
+        <!-- Tarjeta de para mostrar adminsitradores         -->
+        <!-- ==================================================================== -->
         <CCol :xs="12" :sm="4" :md="3" :lg="3">
             <div class="d-md-none mb-3"></div>
             <CCard>
-                <CCardHeader class="headercolor">
+                <!-- Cabecera de la tarjeta -->
+                <CCardHeader class="headercolor text-white d-flex align-items-center">
                     <i class="bi bi-people-fill me-2"></i>
-                    <label class="mb-0 fs-6 text-white">Administradores</label>
+                    <span class="fs-6 text-white">Administradores</span>
                 </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-people-fill me-2" style="font-size: 5rem;"></i>
-                    <p>Administradores del Sistema</p>
+                <!-- Cuerpo de la tarjeta  -->
+                <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+                    <!-- Icono principal en contenedor estético -->
+                    <div class="icon-container mb-3 bg-warning-subtle bg-light p-3 rounded-circle shadow-inner"
+                        style="width: 100px; height: 100px;">
+                        <i class="bi bi-people-fill text-warning fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold text-body mb-1">Administradores</h6>
+                    <small class="text-body-secondary">Consulta y gestiona el listado completo</small>
                 </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getAdmin">
-                        <i class="bi bi-people-fill me-2"></i> Ver Lista
+                <!-- Pie de la Tarjeta -->
+                <CCardFooter class="bg-transparent border-0 text-center pb-3">
+                    <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getAdmin">
+                        Ver Administradores
+                        <CIcon icon="cil-arrow-right" class="ms-1" />
                     </CButton>
                 </CCardFooter>
             </CCard>
         </CCol>
 
+        <!-- ==================================================================== -->
+        <!-- Tarjeta para importar lista de usuarios por Excel                    -->
+        <!-- ==================================================================== -->
         <CCol :xs="12" :sm="4" :md="3" :lg="3">
             <div class="d-md-none mb-3"></div>
             <CCard>
-                <CCardHeader class="headercolor">
-                    <div class="align-items-center">
-                        <i class="bi bi-file-earmark-excel me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Importar Usuarios</label>
-                    </div>
+                <!-- Cabecera de la tarjeta -->
+                <CCardHeader class="headercolor text-white d-flex align-items-center">
+                    <i class="bi bi-file-earmark-excel me-2"></i>
+                    <span class="fs-6">Importar Usuarios</span>
                 </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-file-earmark-excel" style="font-size: 5rem;"></i>
-                    <p>Importar Usuarios de un Archivo Excel</p>
+
+                <!-- Cuerpo de la tarjeta  -->
+                <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+                    <!-- Icono principal en contenedor estético -->
+                    <div class="icon-container mb-3 bg-success-subtle bg-light p-3 rounded-circle shadow-inner"
+                        style="width: 100px; height: 100px;">
+                        <i class="bi bi-file-earmark-excel text-success fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold text-body mb-2">Importar desde Excel</h6>
+                    <!-- Enlace para descargar el formato/plantilla -->
+                    <small class="text-body-secondary">
+                        <a href="#" @click.prevent="formato">
+                            descarga el formato Excel
+                        </a>
+                    </small>
                 </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getUsuariosImport">
-                        <i class="bi bi-file-earmark-excel"></i> Importar
+
+                <!-- Pie de la Tarjeta -->
+                <CCardFooter class="bg-transparent border-0 text-center pb-3">
+                    <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getUsuariosImport">
+                        Importar
+                        <CIcon icon="cil-arrow-right" class="ms-1" />
                     </CButton>
                 </CCardFooter>
+
             </CCard>
         </CCol>
 
+        <!-- ==================================================================== -->
+        <!-- Tarjeta para registrar un nuevo usuario         -->
+        <!-- ==================================================================== -->
         <CCol :xs="12" :sm="4" :md="3" :lg="3">
             <div class="d-md-none mb-3"></div>
             <CCard>
-                <CCardHeader class="headercolor">
-                    <div class="align-items-center">
-                        <i class="bi bi-person-add me-2"></i>
-                        <label class="mb-0 fs-6 text-white">Registrar Usuario</label>
-                    </div>
+                <!-- Cabecera de la tarjeta -->
+                <CCardHeader class="headercolor text-white d-flex align-items-center">
+                    <i class="bi bi-person-add me-2"></i>
+                    <span class="fs-6 text-white">Registrar Usuario</span>
                 </CCardHeader>
-                <CCardBody class="text-center">
-                    <i class="bi bi-person-add" style="font-size: 5rem;"></i>
-                    <p>Registrar un Usuario Nuevo y Datos Personales</p>
+                <!-- Cuerpo de la tarjeta  -->
+                <CCardBody class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+                    <!-- Icono principal en contenedor estético -->
+                    <div class="icon-container mb-3 bg-secundary-subtle bg-light p-3 rounded-circle shadow-inner"
+                        style="width: 100px; height: 100px;">
+                        <i class="bi bi-person-add fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold text-body mb-1">Registrar Usuario</h6>
+                    <small class="text-body-secondary">Registra un usuario nuevo</small>
+                    
                 </CCardBody>
-                <CCardFooter class="text-center">
-                    <CButton color="secondary" variant="outline" size="sm" @click="getUsuariosRegister">
-                        <i class="bi bi-person-add"></i> Registrar
+                <!-- Pie de la Tarjeta -->
+                <CCardFooter class="bg-transparent border-0 text-center pb-3">
+                    <CButton color="primary" variant="outline" class="w-100 rounded-pill" @click="getUsuariosRegister">
+                        Registrar
+                        <CIcon icon="cil-arrow-right" class="ms-1" />
                     </CButton>
                 </CCardFooter>
             </CCard>
@@ -108,8 +162,8 @@ const getUsuariosImport = () => {
 const getUsuariosRegister = () => {
     router.push({ name: 'Registrar Usuario' })
 }
-const getAdmin =()=>{
-    router.push({name:'Administradores'})
+const getAdmin = () => {
+    router.push({ name: 'Administradores' })
 }
 
 const getAction = () => {
@@ -124,6 +178,15 @@ const getAction = () => {
             onClick: salir
         }
     ])
+}
+const formato = () => {
+    const urlArchivo = '/plantilla_usuarios.xlsx'
+    const enlace = document.createElement('a')
+    enlace.href = urlArchivo
+    enlace.download = 'Formato_Plantilla.xlsx'
+    document.body.appendChild(enlace)
+    enlace.click()
+    document.body.removeChild(enlace)
 }
 onMounted(() => {
     getAction()

@@ -129,28 +129,44 @@
 </template>
 
 <script setup>
+
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
+import { watch, ref, onMounted, onUnmounted } from 'vue'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useAuthStore } from '@/stores/authStores'
+import { useRouter } from 'vue-router'
+import { useUsuario } from '@/composables/useUsuario'
+import { useAlert } from '@/composables/useAlert'
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
 
 DataTable.use(DataTablesCore)
-
-import { watch, ref, onMounted, onUnmounted } from 'vue'
-
-import { useBreadcrumb } from '@/composables/useBreadcrumb'
 const { setActions, clearActions } = useBreadcrumb()
-import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
-
-import { useRouter } from 'vue-router'
 const router = useRouter()
-
-import { useUsuario } from '@/composables/useUsuario'
 const { findAllUserUse, listaAdm, listaUsuario, updateUsuarioRolUse, findByRolUse } = useUsuario()
-
-import { useAlert } from '@/composables/useAlert'
 const { dataLoading, close, input, error } = useAlert()
+
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
+const idUsuario = ref(auth.idUsuario)
+const idpName = ref(auth.idpName)
+
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
+const modalUsuario = ref(false)
+const idAdm = ref("")
+const adm = ref(null)
 
 const columns = [
     { data: 'id', title: 'ID' },
@@ -166,13 +182,10 @@ const columns = [
     }
 ]
 
-const idUsuario = ref(auth.idUsuario)
-const modalUsuario = ref(false)
-const idAdm = ref("")
-const adm = ref(null)
-const idpName = ref(auth.idpName)
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 
-/**Funciones */
 const salir = () => {
     getSalir()
 }
@@ -253,8 +266,6 @@ const getAction = () => {
 }
 
 onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip')
-    tooltips.forEach(tooltip => tooltip.remove())
     dataLoading()
     try {
         await findByRolUse('ADMIN')

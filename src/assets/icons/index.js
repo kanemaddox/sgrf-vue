@@ -206,7 +206,7 @@ export const iconsSet = Object.assign(
     cilSave,
     cilArrowLeft,
     cilAccountLogout,
-    cilPhone
+    cilPhone,
   },
   {
     cifUs,

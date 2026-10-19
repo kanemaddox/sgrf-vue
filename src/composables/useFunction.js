@@ -102,14 +102,16 @@ export function useFunction() {
         return nuevaLista.value
     }
 
-    const getPrefijo = (sucursal, costos) => {
-        const valueSucursal = sucursal.slice(0, 2).toUpperCase()
-        const valueCostos = costos.slice(0, 2).toUpperCase()
-        let iguales = false
-        if (valueSucursal === valueCostos) {
-            iguales = true
+    const getPrefijo = (codigo1, codigo2, tam) => {
+        // 1. Validamos que ambos códigos existan y tengan el tamaño mínimo requerido
+        if (!codigo1 || !codigo2 || codigo1.length < tam || codigo2.length < tam) {
+            return false
         }
-        return iguales
+
+        const value1 = codigo1.slice(0, tam).toUpperCase()
+        const value2 = codigo2.slice(0, tam).toUpperCase()
+
+        return value1 === value2
     }
 
     const esDigito = (value) => {
@@ -257,19 +259,19 @@ export function useFunction() {
     const getImg = (value, publico, uri) => {
         return value === 'ninguno' ? publico : uri + value + '.jpg'
     }
-    const getFoto = (value,publico,uri) => {
+    const getFoto = (value, publico, uri) => {
         return value === 'usuario.png' ? publico : uri + value
     }
     const fecha = (value) => {
         return value.split('T')[0]
     }
-    const getProgreso = (value)=>{
+    const getProgreso = (value) => {
         let nivel = '1'
-        if(Number(value)>=30 && Number(value)<=70){
-            nivel ='2'
+        if (Number(value) >= 30 && Number(value) <= 70) {
+            nivel = '2'
         }
-        if(Number(value)>70){
-            nivel='3'
+        if (Number(value) > 70) {
+            nivel = '3'
         }
         const colores = {
             '1': 'danger',
