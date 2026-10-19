@@ -52,7 +52,7 @@
           <h6 class="fw-bold text-body mb-2">Importar desde Excel</h6>
           <!-- Enlace para descargar el formato/plantilla -->
           <small class="text-body-secondary">
-            <a href="#" @click.prevent="formato">
+            <a href="#" @click.prevent="formatoExcel('centro')">
               descarga el formato Excel
             </a>
           </small>
@@ -72,22 +72,36 @@
 
 </template>
 <script setup>
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
+
 import { onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
-const { setActions, clearActions } = useBreadcrumb()
+import { useFunction } from '@/composables/useFunction'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
-const formato = () => {
-    const urlArchivo = '/plantilla_centro.xlsx'
-    const enlace = document.createElement('a')
-    enlace.href = urlArchivo
-    enlace.download = 'Formato_Centro.xlsx'
-    document.body.appendChild(enlace)
-    enlace.click()
-    document.body.removeChild(enlace)
-}
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { setActions, clearActions } = useBreadcrumb()
+const {formatoExcel} = useFunction()
+const router = useRouter()
+
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
+
+
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
+
+
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 
 const getArea = () => {
   router.push({ name: 'ListaArea' })
@@ -117,11 +131,18 @@ const getAction = () => {
     }
   ])
 }
+
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
   getAction()
 })
 onUnmounted(() => {
   clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 
 </script>

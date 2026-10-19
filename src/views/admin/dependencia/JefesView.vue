@@ -76,31 +76,38 @@
 </template>
 
 <script setup>
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import { onMounted, onUnmounted,ref } from 'vue'
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
+import { useAuthStore } from '@/stores/authStores'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useRouter } from 'vue-router'
+import { useEmpleado } from '@/composables/useEmpleado'
+import { useAlert } from '@/composables/useAlert'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { useAuthStore } from '@/stores/authStores'
 
-DataTable.use(DataTablesCore)
-import { useBreadcrumb } from '@/composables/useBreadcrumb'
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
 const { setActions, clearActions } = useBreadcrumb()
-import { useRouter } from 'vue-router'
-const router = useRouter()
-
-import { useEmpleado } from '@/composables/useEmpleado'
 const { findByTipoUse, listaJefes } = useEmpleado()
-
-import { useAlert } from '@/composables/useAlert'
 const { dataLoading, close } = useAlert()
-
 const auth = useAuthStore()
+const router = useRouter()
+DataTable.use(DataTablesCore)
 
 // ============================================================================
 // 3. DATOS DEL USUARIO AUTENTICADO
 // ============================================================================
 const idpName = ref(auth.idpName)
+
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 
 const columns = [
   { data: 'id', title: 'ID',width: '10%' },
@@ -117,7 +124,9 @@ const columns = [
   }
 ]
 
-/**Funciones */
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const salir = () => {
   getSalir()
 }
@@ -140,9 +149,10 @@ const getAction = () => {
   ])
 }
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
   dataLoading()
   try {
     await findByTipoUse('JEFE')
@@ -155,5 +165,7 @@ onMounted(async () => {
 onUnmounted(() => {
   clearActions()
 })
-
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 </script>

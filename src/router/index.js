@@ -99,12 +99,14 @@ const routes = [
           },
           {
             path: '/usuarios/registrar',
-            name: 'Registrar Usuario',
+            name: 'RegistrarUsuario',
+            meta: { title: 'Registrar Usuario' },
             component: () => import('@/views/usuarios/RegistrarUsuarioView.vue'),
           },
           {
             path: '/usuarios/importar',
-            name: 'Importar Usuarios',
+            name: 'ImportarUsuarios',
+            meta: { title: 'Importar Usuarios' },
             component: () => import('@/views/usuarios/ImportarView.vue'),
           },
           {
@@ -194,18 +196,9 @@ const routes = [
           },
           {
             path: '/admin/dependencia/jefes',
-            name: 'Lista de Jefes',
+            name: 'JEFES',
+            meta: { title: 'Lista de Jefes', },
             component: () => import('@/views/admin/dependencia/JefesView.vue'),
-          },
-          {
-            path: '/admin/dependencia/areas',
-            name: 'Lista de Areas',
-            component: () => import('@/views/admin/dependencia/AreasView.vue'),
-          },
-          {
-            path: '/admin/dependencia/sucursales',
-            name: 'Lista de Sucursales',
-            component: () => import('@/views/admin/dependencia/SucursalesView.vue'),
           },
         ],
 

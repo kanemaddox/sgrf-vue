@@ -213,26 +213,37 @@
 </template>
 
 <script setup>
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
+
 import { ref, reactive, onMounted, watch, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/authStores'
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
 import { useUsuario } from '@/composables/useUsuario';
-const { addDatosUse, getDatosEmpleadosUse, getUsuarioValidoUse, registro } = useUsuario()
-
-import { useFunction } from '@/composables/useFunction';
-const { esDigito } = useFunction()
-
-import { useAlert } from '@/composables/useAlert'
-
-const { dataLoading, close, confirm, error, success } = useAlert()
-
+import { useFunction } from '@/composables/useFunction'
 import { useRouter } from 'vue-router'
-const router = useRouter()
-const { setActions, clearActions } = useBreadcrumb()
+import { useAlert } from '@/composables/useAlert'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { addDatosUse, getDatosEmpleadosUse, getUsuarioValidoUse, registro } = useUsuario()
+const { dataLoading, close, confirm, error, success } = useAlert()
+const { setActions, clearActions } = useBreadcrumb()
+const { esDigito } = useFunction()
+const router = useRouter()
 const auth = useAuthStore()
 
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
+const idpName = ref(auth.idpName)
+
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const listaCCostos = ref([])
 const listaSCostos = ref([])
 const jefeValido = ref(false)
@@ -240,9 +251,6 @@ const cuentaValida = ref(false)
 const datosValidos = ref(false)
 const idpValido = ref(false)
 const emailValido = ref(false)
-
-const idpName = ref(auth.idpName)
-
 
 const datos = reactive({
   idp: '',
@@ -269,6 +277,9 @@ const datos = reactive({
   idpPago: ''
 })
 
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const getCancelar = async () => {
   const resultAlert = await confirm('Salir del Registro de Usuario', 'Desea Salir del Formulario ??', '')
   if (resultAlert.isConfirmed) {
@@ -438,6 +449,9 @@ const getAction = () => {
     }
   ])
 }
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
   dataLoading()
   try {
@@ -450,4 +464,7 @@ onMounted(async () => {
 onUnmounted(() => {
   clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 </script>

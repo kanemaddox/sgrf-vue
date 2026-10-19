@@ -98,21 +98,39 @@
 </template>
 
 <script setup>
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
+
 import { onMounted, ref, onUnmounted } from 'vue'
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useAuthStore } from '@/stores/authStores'
 const { setActions, clearActions } = useBreadcrumb()
 import { useRouter } from 'vue-router'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
 const router = useRouter()
-
-import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
-
 const pernicions = ref(auth.pernicions)
 const rol = ref(auth.rol)
+
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 const admin = ref(rol.value === 'ADMIN' ? true : false)
 
-/**Funciones */
+
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
+
+
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const salir = () => {
   getSalir()
 }
@@ -121,7 +139,7 @@ const getSalir = () => {
   router.push({ name: 'Home' })
 }
 const getJefes = () => {
-  router.push({ name: 'Lista de Jefes' })
+  router.push({ name: 'JEFES' })
 }
 const getAreas = () => {
   router.push({ name: 'AREA' })
@@ -144,10 +162,16 @@ const getAction = () => {
     }
   ])
 }
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
   getAction()
 })
 onUnmounted(() => {
   clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 </script>

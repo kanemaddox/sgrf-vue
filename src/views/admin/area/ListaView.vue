@@ -158,20 +158,33 @@
 </template>
 
 <script setup>
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
+
 import { onMounted, onUnmounted, ref, reactive, watch } from 'vue'
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
-const { setActions, clearActions } = useBreadcrumb()
+import { useAlert } from '@/composables/useAlert'
+import { useArea } from '@/composables/useArea'
 import { useRouter } from 'vue-router'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { setActions, clearActions } = useBreadcrumb()
+const { getEstructuraUse, listaEstructura } = useArea()
+const { dataLoading, close } = useAlert()
 const router = useRouter()
 
-import { useArea } from '@/composables/useArea'
-const { getEstructuraUse, listaEstructura } = useArea()
-
-import { useAlert } from '@/composables/useAlert'
-const { dataLoading, close } = useAlert()
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 
 
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const modalAgregar = ref(false)
 const caracteres = ref(0)
 const validarNombre = ref(false)
@@ -186,7 +199,9 @@ const datos = reactive({
   lista: []
 })
 
-
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const datosModal = (departamento, cod, nivel, lista) => {
   datos.departamento = departamento
   datos.cod = cod
@@ -265,6 +280,9 @@ watch(
   }
 )
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
   dataLoading()
   try {
@@ -277,4 +295,7 @@ onMounted(async () => {
 onUnmounted(() => {
   clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 </script>

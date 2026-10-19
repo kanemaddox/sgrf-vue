@@ -80,23 +80,23 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
-import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 import { useAuthStore } from '@/stores/authStores'
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
 import { useRouter } from 'vue-router'
 import { useUsuario } from '@/composables/useUsuario'
 import { useAlert } from '@/composables/useAlert'
+import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 // ============================================================================
 // 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
 // ============================================================================
-DataTable.use(DataTablesCore)
 const { setActions, clearActions } = useBreadcrumb()
-const router = useRouter()
 const { listaUsuario, findAllResponseUse } = useUsuario()
 const { dataLoading, close } = useAlert()
 const auth = useAuthStore()
+const router = useRouter()
+DataTable.use(DataTablesCore)
 
 // ============================================================================
 // 3. DATOS DEL USUARIO AUTENTICADO
@@ -155,9 +155,10 @@ const getAction = () => {
   ])
 }
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
   dataLoading()
   try {
     await findAllResponseUse('TODOS')
@@ -169,6 +170,10 @@ onMounted(async () => {
 onUnmounted(() => {
   clearActions()
 })
+
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 
 </script>
 <style>
