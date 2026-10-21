@@ -96,10 +96,27 @@ const routes = [
                 props: true
               },
               {
-                path: 'solicitudusuario/:idUsuario',
-                name: 'SolicitudUsuario',
+                path: 'gestionSrf',
+                name: 'GESTIONSRF',
                 meta: { title: 'Solicitudes' },
                 component: () => import('@/views/srf/admin/ListaView.vue'),
+                redirect: '/usuarios/lista/listausuario',
+                children: [
+                  {
+                    path: 'solicitudusuario/:idUsuario',
+                    name: 'SolicitudUsuario',
+                    meta: { title: 'Solicitudes' },
+                    component: () => import('@/views/srf/admin/ListaView.vue'),
+                    props: true
+                  },
+                ],
+              },
+
+              {
+                path: 'detalledusuario/:idUsuario/:idSrf',
+                name: 'DetalleUsuario',
+                meta: { title: 'Detalle' },
+                component: () => import('@/views/srf/admin/DetalleView.vue'),
                 props: true
               },
             ],

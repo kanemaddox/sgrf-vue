@@ -141,10 +141,11 @@ const getSalir = () => {
 
 const getSrf = (value) => {
   router.push({
-    name: 'DetalleSrf',
-    params: { idSrf: value }
+    name: 'DetalleUsuario',
+    params: { idUsuario:usuario.idUsuario,idSrf: value }
   })
 }
+
 const getRdg = () => {
   router.push({
     name: 'MenuRdg'
