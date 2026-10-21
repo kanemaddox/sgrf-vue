@@ -3,6 +3,9 @@
     <CRow>
         <CCol :xs="0" :sm="0" :md="1" :lg="1" class="align-self-start">
         </CCol>
+        <!-- ================================================================================ -->
+        <!-- Formulario de Creasion de Solicitud de Fondos                                    -->
+        <!-- ================================================================================ -->
         <CCol :xs="12" :sm="12" :md="10" :lg="10" class="align-self-center">
             <CForm @submit.prevent="createSrf">
                 <CCard>
@@ -150,6 +153,7 @@
                 </CCard>
             </CForm>
         </CCol>
+
         <CCol :xs="0" :sm="0" :md="1" :lg="1" class="align-self-end">
         </CCol>
     </CRow>
@@ -157,36 +161,55 @@
 
 </template>
 <script setup>
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import { ref, reactive, onMounted } from 'vue'
 import { vMaska } from "maska/vue"
-
 import { useRouter } from 'vue-router'
-const router = useRouter()
-
-
 import { useAuthStore } from '@/stores/authStores'
-const auth = useAuthStore()
-const persona = ref(auth.persona)
-const idpName = ref(auth.idpName)
-
 import { useAlert } from '@/composables/useAlert'
-const { dataLoading, close, confirm } = useAlert()
+import { useUsuario } from '@/composables/useUsuario'
+import { useFunction } from '@/composables/useFunction'
+import { useSettings } from '@/composables/useSettings'
+import { useSrf } from '@/composables/useSrf'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
 
-import { useUsuario } from '@/composables/useUsuario'
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { dataLoading, close, confirm } = useAlert()
 const { getPerfilUse, perfilCuenta } = useUsuario()
-
-import { useFunction } from '@/composables/useFunction'
 const { getCantidadCaracteres } = useFunction()
-
-import { useSettings } from '@/composables/useSettings'
 const { getFormatoSrfUse, formatoSRF } = useSettings()
-
-import { useSrf } from '@/composables/useSrf'
 const { createSrfUse } = useSrf()
+const router = useRouter()
+const auth = useAuthStore()
 
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
+const persona = ref(auth.persona)
+const idpName = ref(auth.idpName)
+
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
+const trueComplemento = ref(false)
+const fecha = new Date()
+const hoy = new Date().toISOString().split('T')[0]
+const fechaSeleccionada = ref('')
+
+const datos = reactive({
+    nombre: '',
+    idp: '',
+    idpName: '',
+    cargo: '',
+    centroCostos: '',
+    codigo: ''
+})
 const srf = reactive({
     idPersona: null,
     tipo: '',
@@ -202,34 +225,11 @@ const srf = reactive({
     costo: '',
     formato: ''
 })
-const trueComplemento = ref(false)
 
-//import router from '../../router'
 
-const vars = {
-    '--cui-accordion-btn-bg': 'var(--cui-secondary-bg-subtle)',
-    '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
-    '--cui-accordion-active-bg': 'var(--cui-secondary-bg-subtle)', // Mismo que el base
-    '--cui-accordion-active-color': 'var(--cui-body-color)',
-    '--cui-accordion-btn-focus-box-shadow': 'none', // Elimina el resplandor azul al hacer clic
-    '--cui-accordion-border-width': '10px',
-    '--cui-accordion-border-style': 'solid',
-    '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
-}
-const datos = reactive({
-    nombre: '',
-    idp: '',
-    idpName: '',
-    cargo: '',
-    centroCostos: '',
-    codigo: ''
-})
-
-const fecha = new Date()
-
-const hoy = new Date().toISOString().split('T')[0]
-const fechaSeleccionada = ref('')
-
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const validarFecha = (e) => {
     const valor = e.target.value
     if (valor && valor < hoy) {
@@ -289,9 +289,11 @@ const getLoadData = () => {
     datos.codigo = perfilCuenta.codigo
 }
 
+
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-    const tooltips = document.querySelectorAll('.tooltip')
-    tooltips.forEach(tooltip => tooltip.remove())
     dataLoading()
     try {
         await getPerfilUse(persona.value.id)
@@ -301,4 +303,18 @@ onMounted(async () => {
         close()
     }
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+const vars = {
+    '--cui-accordion-btn-bg': 'var(--cui-secondary-bg-subtle)',
+    '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
+    '--cui-accordion-active-bg': 'var(--cui-secondary-bg-subtle)', // Mismo que el base
+    '--cui-accordion-active-color': 'var(--cui-body-color)',
+    '--cui-accordion-btn-focus-box-shadow': 'none', // Elimina el resplandor azul al hacer clic
+    '--cui-accordion-border-width': '10px',
+    '--cui-accordion-border-style': 'solid',
+    '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
+}
+
 </script>

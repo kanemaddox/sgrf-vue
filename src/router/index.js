@@ -95,6 +95,13 @@ const routes = [
                 component: () => import('@/views/usuarios/ProfileUsuarioView.vue'),
                 props: true
               },
+              {
+                path: 'solicitudusuario/:idUsuario',
+                name: 'SolicitudUsuario',
+                meta: { title: 'Solicitudes' },
+                component: () => import('@/views/srf/admin/ListaView.vue'),
+                props: true
+              },
             ],
           },
           {

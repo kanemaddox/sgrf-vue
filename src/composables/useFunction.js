@@ -291,7 +291,11 @@ export function useFunction() {
       urlArchivo = '/plantilla_centro.xlsx'
       download = 'Formato_CentroCosto.xlsx'
     }
-    
+    if(plantilla ==='gasto'){
+      urlArchivo = '/plantilla_gasto.xlsx'
+      download = 'Formato_Gasto.xlsx'
+    }
+
     const enlace = document.createElement('a')
     enlace.href = urlArchivo
     enlace.download = download

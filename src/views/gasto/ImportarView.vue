@@ -222,25 +222,33 @@
 </template>
 
 <script setup>
-/**Import de librerias */
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 
-import { reactive, ref, onMounted, onUnmounted } from 'vue'
+import {ref, onMounted, onUnmounted } from 'vue'
 import readSheet from 'read-excel-file/browser'
-
-import { useRouter } from 'vue-router'
-const router = useRouter()
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
-const { setActions, clearActions } = useBreadcrumb()
-
 import { useAlert } from '@/composables/useAlert'
-const { success, confirm, error } = useAlert()
-
 import { useCuenta } from '@/composables/useCuenta'
+import { useRouter } from 'vue-router'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { setActions, clearActions } = useBreadcrumb()
+const { success, confirm, error } = useAlert()
 const { createCuentaUse } = useCuenta()
+const router = useRouter()
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 
 
-/**VAriables para el Archivo */
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
+/**Variables para el Archivo */
 const archivo = ref(null)
 const uploadProgress = ref(0)
 const uploading = ref(false)
@@ -258,7 +266,10 @@ const gastos = ref([])
 const modalImportar = ref(false)
 const modalExportar = ref(false)
 const exportar = ref(false)
-/** Funciones  */
+
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 
 const salir = () => {
   getSalir()
@@ -462,12 +473,20 @@ const getAction = () => {
   ])
 }
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
   getAction()
 })
 onUnmounted(() => {
   clearActions()
 })
+
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+
+
+
 </script>

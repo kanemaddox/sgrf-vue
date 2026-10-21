@@ -194,21 +194,21 @@
 // ============================================================================
 // 1. IMPORTACIONES
 // ============================================================================
-import 'bootstrap-icons/font/bootstrap-icons.css'
+
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStores'
 import { useAlert } from '@/composables/useAlert'
 import { useRouter } from 'vue-router'
 import { useRdg } from '@/composables/useRdg'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 // ============================================================================
 // 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
 // ============================================================================
-
-const auth = useAuthStore()
-const { dataLoading, close } = useAlert()
-const router = useRouter()
 const { getRdgEstadoUse, estado } = useRdg()
+const { dataLoading, close } = useAlert()
+const auth = useAuthStore()
+const router = useRouter()
 
 // ============================================================================
 // 3. DATOS DEL USUARIO AUTENTICADO
@@ -217,11 +217,10 @@ const pernicions = ref(auth.pernicions)
 const persona = ref(auth.persona)
 
 // ============================================================================
-// 4. CONFIGURACIÓN VISUAL
+// 4. DECLARACIONES DE VARIABLES
 // ============================================================================
-const vars = {
-    '--cui-card-border-color': '#ffffff',
-}
+
+
 
 // ============================================================================
 // 5. FUNCIONES DE NAVEGACIÓN
@@ -265,5 +264,12 @@ onMounted(async () => {
         close()
     }
 })
+
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+const vars = {
+    '--cui-card-border-color': '#ffffff',
+}
 
 </script>

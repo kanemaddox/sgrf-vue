@@ -1,20 +1,20 @@
 <template>
   <CRow>
+    <!-- ================================================================================ -->
+    <!-- Tabla de Solcitudes Pendientes                                                   -->
+    <!-- ================================================================================ -->
     <CCol :xs="12">
       <CCard>
+        <!-- Cabecera de la lista -->
         <CCardHeader class="headercolor justify-content-between align-items-center">
-          <CRow>
-            <CCol :xs="12" :sm="12" :md="12" :lg="12">
-              <div class="align-items-center">
-                <CIcon icon="cil-list" size="lg" class="me-2 text-light" />
-                <label class="mb-0 fs-6 text-white">Mis Solicitudes {{ titulo }}</label>
-              </div>
-            </CCol>
-          </CRow>
+          <CIcon icon="cil-list" size="lg" class="me-2 text-light" />
+          <label class="mb-0 fs-6 text-white">Mis Solicitudes {{ titulo }}</label>
         </CCardHeader>
+        <!-- Cuerpo de la lista -->
         <CCardBody>
           <CRow class="table-responsive">
-            <DataTable :data="listaSrf" :columns="columns" class="table table-striped" :options="{ responsive: true }">
+            <DataTable :data="listaSrf" :columns="columns" class="table table-striped"
+              :options="{ responsive: true, language: { search: 'Buscar:', lengthMenu: 'Mostrar _MENU_ registros' } }">
 
               <template #column-datos="{ cellData }">
                 <span><strong>No. : </strong>{{ cellData.numero }}</span><br>
@@ -34,29 +34,29 @@
                 <CProgress thin :color="getProgreso(cellData.aprobacion)" :value="Number(cellData.aprobacion)" />
               </template>
 
+              <!-- Estado de la Solicitud -->
               <template #column-estado="{ cellData }">
-                <CChip :color="color">
+                <CChip :color="color" size="sm">
                   <span class="chip-icon">
                     <i :class="icon"></i>
                   </span>{{ cellData.estado }}
                 </CChip>
               </template>
 
+              <!-- Acciones y eventos para la Solicutd -->
               <template #column-acciones="{ cellData }">
                 <CButtonGroup role="group" size="sm">
                   <CButton color="secondary" variant="ghost" @click="getSrf(cellData.id)">
-                    <i class="bi bi-clipboard me-2"></i> 
+                    <i class="bi bi-clipboard me-2"></i>
                     <span class="d-none d-md-inline">Detalle</span>
                   </CButton>
 
-                  <CButton v-if="cellData.estado === 'APROBADO'" color="secondary" variant="ghost"
-                    @click="getRdg">
+                  <CButton v-if="cellData.estado === 'APROBADO'" color="secondary" variant="ghost" @click="getRdg">
                     <i class="bi bi-cash-coin me-2"></i>
                     <span class="d-none d-md-inline">Formulario</span>
                   </CButton>
                 </CButtonGroup>
               </template>
-
             </DataTable>
           </CRow>
         </CCardBody>
@@ -66,6 +66,7 @@
 </template>
 
 <script setup>
+
 const lista = defineProps({
   estado: {
     type: String,
@@ -73,34 +74,42 @@ const lista = defineProps({
   }
 })
 
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useAlert } from '@/composables/useAlert'
+import { useSrf } from '@/composables/useSrf'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStores'
+import { useFunction } from '@/composables/useFunction'
 
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
-DataTable.use(DataTablesCore)
-
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { onMounted,onUnmounted, ref } from 'vue';
-import { useAlert } from '@/composables/useAlert'
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { formatearNumero, getColor, getIcono, getEstado, getProgreso } = useFunction()
 const { dataLoading, close } = useAlert()
-
-import { useSrf } from '@/composables/useSrf'
 const { getSrfUsuarioEstadoUse, listaSrf } = useSrf()
-
-import { useBreadcrumb } from '@/composables/useBreadcrumb'
 const { setActions, clearActions } = useBreadcrumb()
-
-import { useRouter } from 'vue-router'
 const router = useRouter()
-
-import { useAuthStore } from '@/stores/authStores'
 const auth = useAuthStore()
+DataTable.use(DataTablesCore)
+
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 const persona = ref(auth.persona)
 const idp = persona.value.idp
 
-import { useFunction } from '@/composables/useFunction'
-const { formatearNumero, getColor, getIcono, getEstado,getProgreso } = useFunction()
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const color = ref('')
 const titulo = ref('')
 const icon = ref('')
@@ -119,12 +128,15 @@ const columns = [
   }
 ]
 
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const salir = () => {
-    getSalir()
+  getSalir()
 }
 
 const getSalir = () => {
-    router.push({name: 'MenuSrf'})
+  router.push({ name: 'MenuSrf' })
 }
 const getSrf = (value) => {
   router.push({
@@ -133,7 +145,7 @@ const getSrf = (value) => {
   })
 }
 const getRdg = () => {
-  router.push({ 
+  router.push({
     name: 'MenuRdg'
   })
 }
@@ -145,24 +157,24 @@ const getLoadData = (value) => {
 }
 
 const getAction = () => {
-    setActions([
-        {
-            visible: true,
-            label: 'Salir',
-            icon: 'cil-account-logout',
-            color: 'secondary',
-            variant: 'ghost',
-            disabled: false,
-            onClick: salir
-        }
-    ])
+  setActions([
+    {
+      visible: true,
+      label: 'Salir',
+      icon: 'cil-account-logout',
+      color: 'secondary',
+      variant: 'ghost',
+      disabled: false,
+      onClick: salir
+    }
+  ])
 }
 
-onMounted(async() => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
+onMounted(async () => {
   getLoadData(lista.estado.toUpperCase())
-
   dataLoading()
   try {
     await getSrfUsuarioEstadoUse(persona.value.id, lista.estado.toUpperCase())
@@ -170,9 +182,12 @@ onMounted(async() => {
     close()
   }
   getAction()
-  
 })
 onUnmounted(() => {
-    clearActions()
+  clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+
 </script>

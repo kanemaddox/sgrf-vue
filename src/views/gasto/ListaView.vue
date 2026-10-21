@@ -1,5 +1,8 @@
 <template>
   <CRow>
+    <!-- ================================================================================ -->
+    <!-- Tabla de Gastos                                                         -->
+    <!-- ================================================================================ -->
     <CCol :xs="12">
       <CCard>
         <CCardHeader class="headercolor justify-content-between align-items-center">
@@ -13,7 +16,7 @@
         <CCardBody>
           <CRow class="table-responsive">
             <DataTable :data="listaCuenta" :columns="columns" class="table table-striped"
-              :options="{ responsive: true }">
+              :options="{ responsive: true, language: { search: 'Buscar:', lengthMenu: 'Mostrar _MENU_ registros' } }">
 
               <template #column-acciones="{ cellData }">
                 <CButtonGroup role="group" size="sm">
@@ -120,40 +123,36 @@
 </template>
 
 <script setup>
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import { reactive, ref, onMounted, watch, onUnmounted } from 'vue'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useRouter } from 'vue-router'
+import { useCuenta } from '@/composables/useCuenta'
+import { useAlert } from '@/composables/useAlert'
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { setActions, clearActions } = useBreadcrumb()
+const { registrarCuentaUse, updateCuentaUse, getCuentasUse, listaCuenta } = useCuenta()
+const { dataLoading, close } = useAlert()
+const router = useRouter()
 DataTable.use(DataTablesCore)
 
-import { useBreadcrumb } from '@/composables/useBreadcrumb'
-const { setActions, clearActions } = useBreadcrumb()
-import { useRouter } from 'vue-router'
-const router = useRouter()
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 
-import { useCuenta } from '@/composables/useCuenta'
-const { registrarCuentaUse, updateCuentaUse, getCuentasUse, listaCuenta } = useCuenta()
 
-import { useAlert } from '@/composables/useAlert'
-const { dataLoading, close } = useAlert()
-
-const columns = [
-  { data: 'id', title: 'ID', width: '5%' },
-  { data: 'tipo', title: 'Tipo de Cuenta', name: "tipo", width: '20%' },
-  { data: 'cuenta', title: 'Cuenta', name: 'codigo', width: '10%' },
-  { data: 'nombre', title: 'Nombre de Cuenta', name: 'nombre', width: '30%' },
-  { data: 'glosa', title: 'Glosa', name: 'glosa', width: '20%' },
-  { data: 'categoria', title: 'Categoria', name: 'categoria', width: '5%' },
-  {
-    data: 'acciones',
-    title: 'Acciones',
-    orderable: false,
-    searchable: false,
-    name: 'acciones'
-  }
-]
-
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const validoTipo = ref(false)
 const alertTipo = ref(false)
 const validoCuenta = ref(false)
@@ -178,8 +177,25 @@ const gastoUpdate = reactive({
   categoria: ''
 })
 
-/**Funciones */
+const columns = [
+  { data: 'id', title: 'ID', width: '5%' },
+  { data: 'tipo', title: 'Tipo de Cuenta', name: "tipo", width: '20%' },
+  { data: 'cuenta', title: 'Cuenta', name: 'codigo', width: '10%' },
+  { data: 'nombre', title: 'Nombre de Cuenta', name: 'nombre', width: '30%' },
+  { data: 'glosa', title: 'Glosa', name: 'glosa', width: '20%' },
+  { data: 'categoria', title: 'Categoria', name: 'categoria', width: '5%' },
+  {
+    data: 'acciones',
+    title: 'Acciones',
+    orderable: false,
+    searchable: false,
+    name: 'acciones'
+  }
+]
 
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const create = () => {
   getCreateOrEdit(false, false)
 }
@@ -345,9 +361,10 @@ const getAction = () => {
   ])
 }
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
   dataLoading()
   try {
     await getCuentasUse('TODOS')
@@ -361,6 +378,12 @@ onMounted(async () => {
 onUnmounted(() => {
   clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+
+
+
 </script>
 <style>
 @import 'datatables.net-bs5/css/dataTables.bootstrap5.css';

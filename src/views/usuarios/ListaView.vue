@@ -5,7 +5,7 @@
     <!-- ================================================================================ -->
     <CCol :xs="12">
       <CCard>
-        <!-- Cabecera de la lista con estilo -->
+        <!-- Cabecera de la lista  -->
         <CCardHeader class="headercolor justify-content-between align-items-center">
           <CIcon icon="cil-list" size="lg" class="me-2 text-light" />
           <label class="mb-0 fs-6 text-white">Lista de Usuarios</label>
@@ -39,8 +39,9 @@
               <!-- Estado del usuario -->
               <template #column-estado="{ cellData }">
                 <CChip :color="cellData ? 'success' : 'danger'">
-                  <i :class="cellData ? 'bi bi-check-circle text-success' : 'bi bi-x-circle text-danger'"></i>{{ cellData ?
-                    'Activo' : 'Inactivo' }}
+                  <i :class="cellData ? 'bi bi-check-circle text-success' : 'bi bi-x-circle text-danger'"></i>{{
+                    cellData ?
+                      'Activo' : 'Inactivo' }}
                 </CChip>
               </template>
 
@@ -52,7 +53,7 @@
                     <span class="d-none d-md-inline"> Perfil</span>
                   </CButton>
 
-                  <CButton color="secondary" variant="ghost" @click="getPerfil(cellData)">
+                  <CButton color="secondary" variant="ghost" @click="getSolicitud(cellData)">
                     <i class="bi bi-file-earmark"></i>
                     <span class="d-none d-md-inline"> Solicitudes</span>
                   </CButton>
@@ -111,7 +112,7 @@ const columns = [
   { data: 'id', title: 'ID', width: '10%' },
   { data: 'imagen', title: '', name: "imagen" },
   { data: 'datos', title: 'Datos Personales', name: 'datos' },
-  { data: 'estado', title: 'Estado', name: 'estado',width: '10%' },
+  { data: 'estado', title: 'Estado', name: 'estado', width: '10%' },
   {
     data: 'acciones',
     title: 'Acciones',
@@ -137,6 +138,13 @@ const getSalir = () => {
 const getPerfil = (value) => {
   router.push({
     name: 'PerfilUsuario',
+    params: { idUsuario: value }
+  })
+}
+
+const getSolicitud = (value) => {
+  router.push({
+    name: 'SolicitudUsuario',
     params: { idUsuario: value }
   })
 }
