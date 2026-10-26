@@ -100,18 +100,14 @@ const getMenuUsuario = () => {
 const getAdministradores = () => {
     router.push({ name: 'Administradores' })
 }
-const getMenu = () => {
-    router.push({ name: 'Dependencias Menu' })
-}
+
 const getJefes = () => {
-    router.push({ name: 'Lista de Jefes' })
+    router.push({ name: 'JEFES' })
 }
 const getAreas = () => {
     router.push({ name: 'AREA' })
 }
-const getSucursales = () => {
-    router.push({ name: 'Lista de Sucursales' })
-}
+
 const getLocalSettings = () => {
     router.push({ name: 'LocalSettings' })
 }

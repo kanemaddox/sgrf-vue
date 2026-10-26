@@ -102,18 +102,33 @@ const props = defineProps({
         required: true
     }
 })
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import { ref, watch} from 'vue'
-
 import { useFunction } from '@/composables/useFunction'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
 const { formatearNumero, getDias, getCantidadCaracteres } = useFunction()
 
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const formRef = ref(null);
 
 const hoy = ref(props.datos.del)
 const fechaSeleccionada = ref(props.datos.al)
 
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const validarFecha = (e) => {
     const valor = e.target.value
     if (valor && valor < hoy.value) {
@@ -145,5 +160,13 @@ watch(
 defineExpose({
     validarPaso
 })
+
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
+
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 
 </script>

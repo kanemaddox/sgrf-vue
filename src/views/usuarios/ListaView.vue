@@ -58,7 +58,7 @@
                     <span class="d-none d-md-inline"> Solicitudes</span>
                   </CButton>
 
-                  <CButton color="secondary" variant="ghost" @click="getPerfil(cellData)">
+                  <CButton color="secondary" variant="ghost" @click="getRendicion(cellData)">
                     <i class="bi bi-file-earmark-text"></i>
                     <span class="d-none d-md-inline"> Rendiciones</span>
                   </CButton>
@@ -144,7 +144,14 @@ const getPerfil = (value) => {
 
 const getSolicitud = (value) => {
   router.push({
-    name: 'SolicitudUsuario',
+    name: 'GESTIONSRF',
+    params: { idUsuario: value }
+  })
+}
+
+const getRendicion = (value) => {
+  router.push({
+    name: 'GESTIONRDG',
     params: { idUsuario: value }
   })
 }

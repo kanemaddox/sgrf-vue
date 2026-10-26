@@ -1,6 +1,6 @@
 
 export const API_URL_SGRF = import.meta.env.VITE_API_URL_SGRF
-
+export const API_DOMAIN = import.meta.env.VITE_API_DOMAIN
 //Para Dev
 const API_URL = `${import.meta.env.VITE_API_DOMAIN}:${import.meta.env.VITE_API_PORT}${import.meta.env.VITE_API_PREFIX}/`
 

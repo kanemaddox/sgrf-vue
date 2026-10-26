@@ -166,9 +166,9 @@ export const crearSrfPdf = (srf) => {
                     widths: [165, 165, 165],
                     body: [
                         [
-                            { text: '---------------------------------------\nColaborador', style: 'puntos' },
-                            { text: '---------------------------------------\nVo.Bo.', style: 'puntos' },
-                            { text: '---------------------------------------\nRevisado Por', style: 'puntos' }],
+                            { text: '---------------------------------------\nElaborado por', style: 'puntos' },
+                            { text: '---------------------------------------\nAutorizado por', style: 'puntos' },
+                            { text: '---------------------------------------\nRevisado por', style: 'puntos' }],
                         [
                             [
                                 {

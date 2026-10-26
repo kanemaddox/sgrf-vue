@@ -111,7 +111,7 @@
             <CFormInput type="file" ref="fileInput" id="filedoc" accept=".xls,.xlsx" @change="selectFile"
               :valid="fileValid" :disabled="uploading" required />
             <CInputGroupText v-if="fileValid" class="bg-success-subtle">
-              <CIcon icon="cil-check" class="text-success" />
+              <CIcon icon="cil-check-alt" class="text-success" />
             </CInputGroupText>
           </CInputGroup>
         </div>

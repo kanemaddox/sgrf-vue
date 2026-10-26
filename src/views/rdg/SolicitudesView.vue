@@ -15,7 +15,7 @@
         <CCardBody>
           <CRow class="table-responsive">
             <DataTable :data="listaRdg" :columns="columns" class="table table-striped"
-            :options="{ responsive: true, language: { search: 'Buscar:', lengthMenu: 'Mostrar _MENU_ registros' } }">
+              :options="{ responsive: true, language: { search: 'Buscar:', lengthMenu: 'Mostrar _MENU_ registros' } }">
 
               <template #column-datos="{ cellData }">
                 <span><strong>Numero : </strong>{{ cellData.numero }}</span><br>
@@ -28,7 +28,7 @@
                 <span>{{ cellData.actividad }}</span>
                 <div class="small text-body-secondary text-nowrap">
                   <span><strong>Importe : </strong>{{ cellData.importe }} {{ cellData.moneda
-                  }}</span><br>
+                    }}</span><br>
                   <span><strong>Fecha de Solicitud : </strong>{{ cellData.fechaS }}</span><br>
                   <span><strong>Fecha de Aprobacion : </strong>{{ cellData.fechaA }}</span><br>
                 </div>
@@ -38,26 +38,15 @@
                 <CChip :color="cellData.color">
                   <span class="chip-icon">
                     <i :class="cellData.icon"></i>
-                  </span>{{ cellData.estado }}
+                  </span>SOLICITUD
                 </CChip>
               </template>
 
               <template #column-acciones="{ cellData }">
                 <CButtonGroup role="group" size="sm">
-                  <CButton color="secondary" variant="outline" @click="getRdg(cellData.id)"
-                    v-c-tooltip="{ content: 'Crear Rencicion de Cuentas', placement: 'top' }">
-                    <i class="bi bi-list-check me-2"></i>
-                  </CButton>
-
-                  <CButton v-if="cellData.estado === 'APROBADO'" color="secondary" variant="outline"
-                    @click="getSrf(cellData.id)"
-                    v-c-tooltip="{ content: 'Crear Rendicion de Fondos', placement: 'top' }">
-                    <i class="bi bi-cash-coin me-2"></i>
-                  </CButton>
-
-                  <CButton color="secondary" variant="outline" @click="getSrf(cellData)"
-                    v-c-tooltip="{ content: 'Rendiciones de Gastos', placement: 'top' }">
-                    <i class="bi bi-file-earmark-text me-2"></i>
+                  <CButton color="secondary" variant="ghost" @click="getRdg(cellData.id)">
+                    <i class="bi bi-folder-plus me-2"></i>
+                    <span class="d-none d-md-inline">Crear</span>
                   </CButton>
                 </CButtonGroup>
               </template>
@@ -72,33 +61,42 @@
 
 <script setup>
 
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
+import { onMounted, onUnmounted, ref } from 'vue';
+import { useAlert } from '@/composables/useAlert'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useAuthStore } from '@/stores/authStores'
+import { useFunction } from '@/composables/useFunction'
+import { useRouter } from 'vue-router'
+import { useRdg } from '@/composables/useRdg'
+
 import DataTable from 'datatables.net-vue3'
 import DataTablesCore from 'datatables.net-bs5'
 import 'datatables.net-bs5/css/dataTables.bootstrap5.css'
-DataTable.use(DataTablesCore)
-
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { onMounted, onUnmounted, ref } from 'vue';
-
-import { useRouter } from 'vue-router'
-const router = useRouter()
-import { useAlert } from '@/composables/useAlert'
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
 const { dataLoading, close } = useAlert()
-import { useBreadcrumb } from '@/composables/useBreadcrumb'
 const { setActions, clearActions } = useBreadcrumb()
-
-import { useAuthStore } from '@/stores/authStores'
+const { getRdgUsuarioEstadoUse, listaRdg } = useRdg()
+const { getEstado } = useFunction()
+const router = useRouter()
 const auth = useAuthStore()
+
+DataTable.use(DataTablesCore)
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 const persona = ref(auth.persona)
 
-import { useRdg } from '@/composables/useRdg'
-const { getRdgUsuarioEstadoUse, listaRdg } = useRdg()
-
-import { useFunction } from '@/composables/useFunction'
-const { getEstado } = useFunction()
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const titulo = ref('')
-
 const columns = [
   { data: 'id', title: 'ID' },
   { data: 'datos', title: 'Formulario', name: 'datos' },
@@ -113,6 +111,9 @@ const columns = [
   }
 ]
 
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const salir = () => {
   getSalir()
 }
@@ -143,9 +144,10 @@ const getAction = () => {
   ])
 }
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
   dataLoading()
   try {
     await getRdgUsuarioEstadoUse(persona.value.id, 'TRAMITE')
@@ -158,4 +160,8 @@ onMounted(async () => {
 onUnmounted(() => {
   clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+
 </script>

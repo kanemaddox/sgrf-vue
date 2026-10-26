@@ -1,12 +1,12 @@
 import { ref, reactive } from 'vue'
-import {saveRdgService,getRdgEstadoService, updateRdgSolicitudService, getRdgDetalleService,getRdgListaService,updateRdgService, createRdgService, getRdgUsuarioService, getRdgUsuarioEstadoService, getRdgService } from '@/services/rdgService'
+import {getRdgAdminService,getRdgUsuarioGestionService,saveRdgService,getRdgEstadoService, updateRdgSolicitudService, getRdgDetalleService,getRdgListaService,updateRdgService, createRdgService, getRdgUsuarioService, getRdgUsuarioEstadoService, getRdgService } from '@/services/rdgService'
 import { getDocumentoPublicoService,getRdgPublicoService } from '@/services/publicoService'
 
 import { useAlert } from '@/composables/useAlert'
 const { confirm, error, success } = useAlert()
 
 import { useFunction } from '@/composables/useFunction'
-const { formatearNumero, getColor, getIcono, getEstado } = useFunction()
+const { formatearNumero, getColor, getIcono} = useFunction()
 
 import { dtoRdg } from '@/composables/Dto/dtoRdg'
 const { getDocumento,getRdg,getRdgDetalle,getRdgCreate } = dtoRdg()
@@ -83,6 +83,48 @@ export const useRdg = () => {
                     estado: item.estado,
                     color: getColor(estado),
                     icon: getIcono(estado)
+                },
+                acciones: {
+                    id: item.token,
+                    estado: item.estado
+                }
+            }))
+        } catch (errr) {
+            errorRdg.value = errr
+        } finally {
+            loadingRdg.value = false
+        }
+    }
+
+    const getRdgUsuarioGestionUse = async (idUsuario, gestion) => {
+        loadingRdg.value = true
+        errorRdg.value = null
+        listaRdg.value = []
+        try {
+            const lista  = await getRdgUsuarioGestionService(idUsuario, gestion)
+            listaRdg.value = lista.data.map(item => ({
+                id: item.id,
+                datos: {
+                    numero: item.numero,
+                    gestion: item.gestion,
+                    idp:item.idp,
+                    importe: formatearNumero(item.importe),
+                    moneda: item.moneda,
+                    fecha:item.fecha,
+                },
+                detalle: {
+                    detalle: item.detalle,
+                    actividad:item.actividad,
+                    moneda: item.moneda,
+                    gasto:formatearNumero(item.gasto),
+                    saldo:formatearNumero(item.saldo),
+                    rembolso:formatearNumero(item.rembolso),
+                    devolver:formatearNumero(item.devolver),
+                },
+                estado: {
+                    estado: item.estado,
+                    color: getColor(item.estado),
+                    icon: getIcono(item.estado)
                 },
                 acciones: {
                     id: item.token,
@@ -356,6 +398,19 @@ export const useRdg = () => {
             loadingRdg.value = false
         }
     }
+
+    const getRdgAdminUse = async (idUsuario, idRdg) => {
+        loadingRdg.value = true
+        errorRdg.value = null
+        try {
+            const { data } = await getRdgAdminService(idUsuario, idRdg)
+            Object.assign(rdg, getRdgDetalle(data))
+        } catch (errr) {
+            errorRdg.value = errr
+        } finally {
+            loadingRdg.value = false
+        }
+    }
     const getRdgEstadoUse = async (idPersona)=>{
         loadingRdg.value = true
         errorRdg.value = null
@@ -414,6 +469,8 @@ export const useRdg = () => {
         saveRdgUse,
         getRdgPublicoUse,
         getDocumentoPublicoUse,
+        getRdgUsuarioGestionUse,
+        getRdgAdminUse,
         rdg,
         listaRdg,
         estado,

@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { updateCelularService } from '@/services/personaService'
 import { getPersonaProfesionUsuarioService } from '@/services/personaProfesionService'
 import { useAlert } from '@/composables/useAlert'
+
 const { confirm, success, error } = useAlert()
 
 export const usePersona = () => {

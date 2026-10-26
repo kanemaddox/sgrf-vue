@@ -4,38 +4,10 @@
     <!-- Tarjeta de Autorizadores                                             -->
     <!-- ==================================================================== -->
     <CCol :xs="12" :sm="4" :md="4" :lg="4" class="align-self-start">
-      <CTable align="middle" class="mb-0 border" hover responsive>
-        <CTableHead class="text-nowrap">
-          <CTableRow>
-            <CTableHeaderCell class="bg-body-secondary text-center">
-              <CIcon name="cil-people" />
-            </CTableHeaderCell>
-            <CTableHeaderCell class="bg-body-secondary"> Autorizadores </CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
-          <CTableRow v-for="item in srf.lista" :key="item.name">
-            <CTableDataCell class="text-center">
-              <CAvatar size="md" :src="getFoto(item.jefe.foto, '/usuario.png', img100)"
-                :status="getColor(item.estado)" />
-            </CTableDataCell>
-            <CTableDataCell>
-              <div>{{ item.jefe.nombre }}</div>
-              <div class="small text-body-secondary text-nowrap">
-                <span>{{ item.jefe.idp }}</span> |
-                <CChip clickable @click="getObs(item.id)" :color="getColor(item.estado)" size="sm">
-                  <span class="chip-icon">
-                    <i :class="getIcono(item.estado)"></i>
-                  </span>{{ item.estado }}
-                </CChip>
-              </div>
-            </CTableDataCell>
-          </CTableRow>
-        </CTableBody>
-      </CTable>
+      <ComponenteAutorizadores v-if="srf && srf.lista" :lista="srf.lista" />
     </CCol>
     <!-- ==================================================================== -->
-    <!-- Tarjeta de Autorizadores                                             -->
+    <!-- Formulario de Solicitud                                             -->
     <!-- ==================================================================== -->
     <CCol :xs="12" :sm="8" :md="8" :lg="8" class="align-self-center">
       <div class="d-md-none mb-3"></div>
@@ -237,40 +209,6 @@
   </CModal>
   <!-- End Modal  Actualizar Solicitud-->
 
-  <!-- ==================================================================== -->
-  <!-- Modal para Observaciones                                             -->
-  <!-- ==================================================================== -->
-  <CModal :visible="modalObs" backdrop="static" @close="clickModalObs(false)">
-    <CModalHeader class="headercolor" dismiss @close="clickModalObs(false)">
-      <CModalTitle>
-        <h6>
-          <CIcon icon="cil-description" size="lg" class="me-2" />Observaciones
-        </h6>
-      </CModalTitle>
-    </CModalHeader>
-    <CModalBody>
-      <CRow>
-        <CCol :xs="12">
-          <CWidgetStatsB class="mb-3" :progress="{ color: obsSrf.color, value: 100 }">
-            <template #text>{{ obsSrf.estado }} el {{ obsSrf.fecha }}</template>
-            <template #title>{{ obsSrf.nombre }} | {{ obsSrf.idp }}</template>
-            <template #value>{{ obsSrf.estado }}</template>
-          </CWidgetStatsB>
-          <CAlert :color="obsSrf.color">
-            {{ obsSrf.obs }}
-          </CAlert>
-        </CCol>
-      </CRow>
-    </CModalBody>
-    <CModalFooter>
-      <CButton @click="clickModalObs(false)" class="font" color="success" size="sm">
-        <CIcon icon="cil-check-alt" class="me-2" />
-        <span>Aceptar</span>
-      </CButton>
-    </CModalFooter>
-  </CModal>
-  <!-- End Modal Observaciones-->
-
 </template>
 <script setup>
 const detalleProps = defineProps({
@@ -294,26 +232,25 @@ import { useAlert } from '@/composables/useAlert'
 import { useFunction } from '@/composables/useFunction'
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
 import { useSrf } from '@/composables/useSrf'
+import { usePdf } from '@/composables/usePdf';
 import 'bootstrap-icons/font/bootstrap-icons.css'
-
-import { API_URL_SGRF, API_URL_IMG100 } from "@/env"
-import pdfMake from 'pdfmake/build/pdfmake'
-import pdfFonts from 'pdfmake/build/vfs_fonts'
-import { crearSrfPdf } from '../pdf/srfPdfLite'
+import { API_DOMAIN} from "@/env"
 
 import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
+import ComponenteAutorizadores from '@/components/srf/ComponenteAutorizadores.vue'
+
 
 // ============================================================================
 // 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
 // ============================================================================
 
 const { setActions, clearActions } = useBreadcrumb()
-const { getFoto, formatearNumero, getColor, getIcono, lenFirma, lenPdf, getCantidadCaracteres } = useFunction()
+const { formatearNumero, getColor, getIcono, getCantidadCaracteres } = useFunction()
 const { dataLoading, close } = useAlert()
 const { updateSrfUse, getSrfUsuarioUse, srf } = useSrf()
+const { getSrfPdf } = usePdf()
 const auth = useAuthStore()
 const router = useRouter()
-pdfMake.vfs = pdfFonts.vfs
 
 // ============================================================================
 // 3. DATOS DEL USUARIO AUTENTICADO
@@ -324,11 +261,9 @@ const idpName = ref(auth.idpName)
 // ============================================================================
 // 4. DECLARACIONES DE VARIABLES
 // ============================================================================
-const img100 = API_URL_IMG100
-const dominio = API_URL_SGRF
+const dominio = API_DOMAIN
 const trueComplemento = ref(false)
 const modalSrf = ref(false)
-const modalObs = ref(false)
 const hoy = new Date().toISOString().split('T')[0]
 const fechaSeleccionada = ref(null)
 
@@ -341,15 +276,6 @@ const updateSrf = reactive({
   texto: '',
   numerico: 0,
   formato: {}
-})
-
-const obsSrf = reactive({
-  nombre: '',
-  idp: '',
-  estado: '',
-  color: '',
-  fecha: '',
-  obs: ''
 })
 
 const datos = reactive({
@@ -388,10 +314,6 @@ const clickModalSrf = (value) => {
   modalSrf.value = value
 }
 
-const clickModalObs = (value) => {
-  modalObs.value = value
-}
-
 const actualizarSrf = async () => {
   clickModalSrf(false)
   updateSrf.formato.trueComplemento = trueComplemento.value
@@ -403,69 +325,13 @@ const actualizarSrf = async () => {
   }
 }
 
-const getObs = (value) => {
-  srf.lista.forEach(element => {
-    if (element.id === value) {
-      obsSrf.nombre = element.jefe.nombre
-      obsSrf.idp = element.jefe.idp
-      obsSrf.estado = element.estado
-      obsSrf.obs = element.obs
-      obsSrf.color = getColor(element.estado)
-      obsSrf.fecha = new Date(element.fechaActualizacion)
-    }
-  })
-  clickModalObs(true)
-}
-
 const generarPDF = async () => {
-  const pdf = {
-    titulo: srf.formato?.titulo,
-    numero: srf.numero,
-    fecha: 'Fecha de Solicitud : ' + srf.fechaInicio,
-    gestion: persona.value.idp + ' | ' + srf.gestion,
-
-    seccionUno: srf.formato?.seccionUno,
-    qr: dominio + '#/pages/srfpublico/' + srf.token,
-    nombre: datos.nombre,
-    idp: persona.value.idp,
-    idpName: idpName.value + ":",
-    email: persona.value.email,
-    cargo: srf.cargo,
-    costo: srf.centrocosto,
-    codigo: srf.codigo,
-
-    seccionDos: srf.formato?.seccionDos,
-    fechaTituloFin: srf.formato?.fechaTitulo + ' : ',
-    fechafin: srf.fechaFin,
-    montoTitulo: srf.formato?.montoTitulo + ' : ',
-    monto: formatearNumero(srf.monto) + ' ' + srf.moneda,
-    descripcion: srf.formato?.descripcion + " : ",
-    detalle: srf.detalle,
-    visibleDos: srf.formato?.trueEstadoDos,
-    texto: srf.formato?.detalleDos + ' : ' + srf.texto,
-    numerico: srf.formato.cantidadDos + ' : ' + srf.numerico,
-
-    visibleTres: srf.formato.estadoTres,
-    seccionTres: srf.formato.seccionTres,
-    obs: srf.formato.detalle,
-
-    jefe: {
-      nombre: lenFirma(srf.lista[0].jefe.nombre + ' ' + srf.lista[0].jefe.paterno + ' ' + srf.lista[0].jefe.materno),
-      idp: srf.lista[0].jefe.idp,
-      cargo: lenPdf(srf.lista[0].cargo)
-    },
-    pago: {
-      nombre: lenFirma(srf.lista[srf.lista.length - 1].jefe.nombre + ' ' + srf.lista[srf.lista.length - 1].jefe.paterno + ' ' + srf.lista[srf.lista.length - 1].jefe.materno),
-      idp: srf.lista[srf.lista.length - 1].jefe.idp,
-      cargo: lenPdf(srf.lista[srf.lista.length - 1].cargo)
-    },
-    nombreFirma: lenFirma(datos.nombre),
-    cargofirma: lenPdf(srf.cargo),
-
-  }
-  const docDefinition = crearSrfPdf(pdf)
-  const name = persona.value.idp + '' + srf.id + '' + srf.numero + '.pdf'
-  pdfMake.createPdf(docDefinition).download(name)
+  await getSrfPdf({
+    srf:srf,
+    datos:datos,
+    dominio: dominio,
+    idpName:idpName.value
+  })
 }
 
 const getSalir = () => {

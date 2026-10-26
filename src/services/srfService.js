@@ -18,6 +18,14 @@ export const getSrfUsuarioService = (srf, persona) => {
     return axiosService.get(sgrf + 'getSrfUsuario', { params: { idSrf: srf, idPersona: persona } })
 }
 
+export const getSrfAdminService = (usuario, srf) => {
+    return axiosService.get(sgrf + 'getSrfAdmin', { params: { idUsuario: usuario, idSrf: srf } })
+}
+
+export const getSrfUsuarioGestionService = (id, value) => {
+    return axiosService.get(sgrf + 'getSrfUsuarioGestion', { params: { idUsuario: id, gestion: value } })
+}
+
 export const updateSrfService = (response) => {
     return axiosService.put(sgrf + 'updateSrf', response)
 }

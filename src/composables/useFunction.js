@@ -145,7 +145,7 @@ export function useFunction() {
       'PENDIENTE': 'Pendientes',
       'APROBADO': 'Aprobadas',
       'RECHAZADO': 'Rechazadas',
-      'TRAMITE': 'Solicitud en Tramite',
+      'TRAMITE': 'Solicitudes',
     }
     return estado[value]
   }

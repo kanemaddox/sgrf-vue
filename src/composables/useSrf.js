@@ -2,11 +2,11 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 
-import { getSrfEstadoService,getSrfUsuarioService, updateSrfService, getSrfService, getSrfUsuarioEstadoService, createSrfService } from '@/services/srfService'
+import { getSrfAdminService,getSrfUsuarioGestionService, getSrfEstadoService, getSrfUsuarioService, updateSrfService, getSrfService, getSrfUsuarioEstadoService, createSrfService } from '@/services/srfService'
 import { getSrfPublicoService } from '@/services/publicoService'
 
 import { useAlert } from '@/composables/useAlert'
-const {confirm, error, success } = useAlert()
+const { confirm, error, success } = useAlert()
 
 import { dtoSrf } from '@/composables/Dto/dtoSrf'
 const { getSrf } = dtoSrf()
@@ -77,7 +77,7 @@ export const useSrf = () => {
                     tipo: item.tipo,
                     texto: item.campoTexto,
                     numerico: item.campoNumerico,
-                    token:item.token,
+                    token: item.token,
                     fechaInicio: item.fechaSolicitud,
                 },
                 detalle: {
@@ -85,9 +85,9 @@ export const useSrf = () => {
                     fechaFin: item.fechaEstimada.split('T')[0],
                     monto: item.monto,
                     moneda: item.moneda,
-                    fechaTitulo:item.fechaTitulo,
-                    montoTitulo:item.montoTitulo,
-                    aprobacion:item.aprobacion,
+                    fechaTitulo: item.fechaTitulo,
+                    montoTitulo: item.montoTitulo,
+                    aprobacion: item.aprobacion,
                 },
                 estado: {
                     estado: item.estado,
@@ -126,6 +126,64 @@ export const useSrf = () => {
             Object.assign(srf, getSrf(data))
         } catch (errr) {
             errorSrf.value = errr
+        } finally {
+            loadingSrf.value = false
+        }
+    }
+    const getSrfAdminUse = async (idUsuario, idSrf) => {
+        loadingSrf.value = true
+        errorSrf.value = null
+        try {
+            const { data } = await getSrfAdminService(idUsuario, idSrf)
+            Object.assign(srf, getSrf(data))
+        } catch (errr) {
+            errorSrf.value = errr
+        } finally {
+            loadingSrf.value = false
+        }
+    }
+    const getSrfUsuarioGestionUse = async (idUsuario, gestion) => {
+        loadingSrf.value = true
+        errorSrf.value = null
+        listaSrf.value = []
+        try {
+            const lista = await getSrfUsuarioGestionService(idUsuario, gestion)
+            listaSrf.value = lista.data.map(item => ({
+                id: item.id,
+                datos: {
+                    numero: item.numero,
+                    idp:item.idp,
+                    gestion: item.gestion,
+                    monto: item.monto,
+                    moneda: item.moneda,
+                    tipo: item.tipo,
+                    texto: item.campoTexto,
+                    numerico: item.campoNumerico,
+                    token: item.token,
+                    fechaInicio: item.fechaSolicitud,
+                },
+                detalle: {
+                    detalle: item.detalle,
+                    fechaFin: item.fechaEstimada.split('T')[0],
+                    monto: item.monto,
+                    moneda: item.moneda,
+                    fechaTitulo: item.fechaTitulo,
+                    montoTitulo: item.montoTitulo,
+                    aprobacion: item.aprobacion,
+                },
+                estado: {
+                    estado: item.estado,
+                    //lista: item.aprobadores,
+                },
+                acciones: {
+                    id: item.token,
+                    estado: item.estado
+                }
+            }))
+
+        } catch (errr) {
+            errorSrf.value = errr
+            throw errr
         } finally {
             loadingSrf.value = false
         }
@@ -186,13 +244,13 @@ export const useSrf = () => {
         } catch (errr) {
             errorSrf.value = errr
             if (errr.response?.status === 404) {
-                router.push({name:'Page404'})
+                router.push({ name: 'Page404' })
             }
         } finally {
             loadingSrf.value = false
         }
     }
-    const getSrfEstadoUse = async (idPersona)=>{
+    const getSrfEstadoUse = async (idPersona) => {
         loadingSrf.value = true
         errorSrf.value = null
         try {
@@ -214,6 +272,8 @@ export const useSrf = () => {
         getSrfUsuarioUse,
         getSrfPublicoUse,
         getSrfEstadoUse,
+        getSrfUsuarioGestionUse,
+        getSrfAdminUse,
         srf,
         estado,
         listaSrf,

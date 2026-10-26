@@ -96,28 +96,52 @@ const routes = [
                 props: true
               },
               {
-                path: 'gestionSrf',
+                path: 'gestionSrf/:idUsuario',
                 name: 'GESTIONSRF',
                 meta: { title: 'Solicitudes' },
-                component: () => import('@/views/srf/admin/ListaView.vue'),
-                redirect: '/usuarios/lista/listausuario',
+                component: { render() { return h(resolveComponent('router-view')) }, },
+                props: true,
+                redirect: to => { return '/usuarios/lista/gestionSrf/' + to.params.idUsuario + '/solicitudusuario' },
                 children: [
                   {
-                    path: 'solicitudusuario/:idUsuario',
-                    name: 'SolicitudUsuario',
-                    meta: { title: 'Solicitudes' },
+                    path: 'solicitudusuario',
+                    name: '',
+                    meta: { title: '' },
                     component: () => import('@/views/srf/admin/ListaView.vue'),
+                    props: true
+                  },
+                  {
+                    path: 'detalledusuario/:idSrf',
+                    name: 'DetalleUsuarioSrf',
+                    meta: { title: 'Detalle' },
+                    component: () => import('@/views/srf/admin/DetalleView.vue'),
                     props: true
                   },
                 ],
               },
-
               {
-                path: 'detalledusuario/:idUsuario/:idSrf',
-                name: 'DetalleUsuario',
-                meta: { title: 'Detalle' },
-                component: () => import('@/views/srf/admin/DetalleView.vue'),
-                props: true
+                path: 'gestionRdg/:idUsuario',
+                name: 'GESTIONRDG',
+                meta: { title: 'Rendiciones' },
+                component: { render() { return h(resolveComponent('router-view')) }, },
+                props: true,
+                redirect: to => { return '/usuarios/lista/gestionRdg/' + to.params.idUsuario + '/rendicionusuario' },
+                children: [
+                  {
+                    path: 'rendicionusuario',
+                    name: '',
+                    meta: { title: '' },
+                    component: () => import('@/views/rdg/admin/ListaView.vue'),
+                    props: true
+                  },
+                  {
+                    path: 'detalledusuario/:idRdg',
+                    name: 'DetalleUsuarioRdg',
+                    meta: { title: 'Detalle' },
+                    component: () => import('@/views/rdg/admin/DetalleView.vue'),
+                    props: true
+                  },
+                ],
               },
             ],
           },

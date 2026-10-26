@@ -15,7 +15,9 @@
             <CWidgetStatsC class="mb-3" :value="perfilUsuario.idp"
               :progress="{ color: perfilUsuario.estado ? 'success' : 'danger', value: 100 }" title="Visitors">
               <template #icon>
-                <img :src="perfilUsuario.imagen" class="img-fluid " alt="..."><br>
+                <div class="position-relative d-inline-block mb-3">
+                  <img :src="perfilUsuario.imagen" class="img-fluid rounded-circle" style=" object-fit: cover;" alt="Avatar de perfil" />
+                </div>
               </template>
               <template #title>
                 {{ perfilUsuario.nombre }} {{ perfilUsuario.apellido }}
@@ -247,6 +249,7 @@ const actualizar = reactive({
   apellido: '',
   celular: '',
   email: '',
+  emailC:'',
   idp: '',
   idpName: '',
   datos: {
@@ -289,6 +292,7 @@ const getLoadData = () => {
   actualizar.apellido = perfilUsuario.apellido
   actualizar.celular = perfilUsuario.celular
   actualizar.email = perfilUsuario.email
+  actualizar.emailC = perfilUsuario.corporativo
   actualizar.idp = perfilUsuario.idp
   actualizar.idpName = idpName
   actualizar.datos.idp = personaUsuario.idp

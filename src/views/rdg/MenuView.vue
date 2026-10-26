@@ -85,7 +85,7 @@
                 <CCardBody>
                     <CRow>
                         <!-- Columna Izquierda: Icono ilustrativo y título secundario -->
-                        <CCol :xs="12" :sm="6" :md="6" :lg="6"
+                        <CCol :xs="12" :sm="5" :md="5" :lg="5"
                             class="text-center border-end d-flex flex-column align-items-center justify-content-center py-2">
                             <div class="bg-warning-subtle p-3 rounded-circle mb-2 d-inline-flex align-items-center justify-content-center"
                                 style="width: 100px; height: 100px;">
@@ -93,7 +93,7 @@
                             </div>
                             <span class="text-muted small fw-medium">Crear Rendicion de Fondos</span>
                         </CCol>
-                        <CCol :xs="12" :sm="6" :md="6" :lg="6">
+                        <CCol :xs="12" :sm="7" :md="7" :lg="7">
                             <CCard :style="vars">
                                 <CListGroup flush>
                                     <CListGroupItem class="d-flex flex-column">
@@ -102,12 +102,12 @@
                                             <CBadge color="info" position="top-end" shape="rounded-pill">
                                                 {{ estado[0] }}
                                             </CBadge>
-                                            <i class="bi bi-hourglass-split text-info"></i> Con Solicitud
+                                            <i class="bi bi-hourglass-split text-info"></i>Con Solicitud
                                         </CButton>
                                     </CListGroupItem>
                                     <CListGroupItem class="d-flex flex-column">
                                         <CButton color="secondary" variant="outline" size="sm" @click="getRdg">
-                                            <i class="bi bi-clipboard2-pulse text-warning"></i> Sin Solicitud
+                                            <i class="bi bi-clipboard2-pulse text-warning"></i>Sin Solicitud
                                         </CButton>
                                     </CListGroupItem>
                                 </CListGroup>

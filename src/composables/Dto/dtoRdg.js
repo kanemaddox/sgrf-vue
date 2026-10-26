@@ -208,11 +208,12 @@ export function dtoRdg() {
         return rdgRevisar
     }
     const getRdgDetalle = (data) => {
-        console.log(data.deposito)
         rdgDetalle.idRdg = data.idRdg
         rdgDetalle.idSrf = data.idSrf
         rdgDetalle.numero = data.numero
         rdgDetalle.gestion = data.gestion
+        rdgDetalle.nombre = data.nombre
+        rdgDetalle.idp = data.idp
         rdgDetalle.actividad = data.actividad
         rdgDetalle.fecha = data.fecha
         rdgDetalle.al = data.al !== null ? data.al.split('T')[0] : ''

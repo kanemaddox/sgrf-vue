@@ -4,18 +4,21 @@
     <CCol :xs="0" :sm="1" :md="1" :lg="1" class="align-self-start">
     </CCol>
 
+    <!-- ==================================================================== -->
+    <!-- Formulario de Revision de solisitud                                   -->
+    <!-- ==================================================================== -->
     <CCol :xs="12" :sm="10" :md="10" :lg="10" class="align-self-center">
       <CCard>
+
         <CCardHeader class="headercolor justify-content-between align-items-center">
           <div class="align-items-center">
             <CIcon icon="cil-description" size="lg" class="me-2 text-light" />
-            <CChip :color="color">
-              <span class="chip-icon">
-                <i :class="icon"></i>
-              </span>{{ updateApr.estado }}
+            <CChip :color="color"><span class="chip-icon"><i :class="icon"></i></span>
+              {{ updateApr.estado }}
             </CChip>
           </div>
         </CCardHeader>
+
         <CCardBody>
           <CRow>
             <CCol :xs="12" :sm="8" :md="7" :lg="7">
@@ -65,7 +68,7 @@
             <!--Movil-->
 
             {{ srf.descripcion }} :
-            <CAlert color="secondary">
+            <CAlert color="light">
               {{ srf.detalle }}
             </CAlert>
 
@@ -127,46 +130,23 @@
     </CCol>
   </CRow>
 
-  <!--Canvas Lista de Aprobadores-->
+  <!-- ==================================================================== -->
+  <!-- Canvas para Autirozadores                                      -->
+  <!-- ==================================================================== -->
   <COffcanvas placement="end" :visible="canvaApr" @hide="clickCanvaApr(false)">
     <COffcanvasHeader>
       <COffcanvasTitle>Estado de Solicitud</COffcanvasTitle>
       <CCloseButton class="text-reset" @click="clickCanvaApr(false)" />
     </COffcanvasHeader>
     <COffcanvasBody>
-      <CTable align="middle" class="mb-0 border" hover responsive>
-        <CTableHead class="text-nowrap">
-          <CTableRow>
-            <CTableHeaderCell class="bg-body-secondary text-center">
-              <CIcon name="cil-people" />
-            </CTableHeaderCell>
-            <CTableHeaderCell class="bg-body-secondary"> Autorizadores </CTableHeaderCell>
-          </CTableRow>
-        </CTableHead>
-        <CTableBody>
-          <CTableRow v-for="item in srf.autorizador" :key="item.id">
-            <CTableDataCell class="text-center">
-              <CAvatar size="md" :src="getFoto(item.foto, '/usuario.png', img100)" :status="getColor(item.estado)" />
-            </CTableDataCell>
-            <CTableDataCell>
-              <div>{{ item.nombre }}</div>
-              <div class="small text-body-secondary text-nowrap">
-                <span>{{ item.idp }}</span> |
-                <CChip :color="getColor(item.estado)">
-                  <span class="chip-icon">
-                    <i :class="getIcono(item.estado)"></i>
-                  </span>{{ item.estado }}
-                </CChip>
-              </div>
-            </CTableDataCell>
-          </CTableRow>
-        </CTableBody>
-      </CTable>
+      <ComponenteAutorizadores v-if="srf && srf.autorizador" :lista="srf.autorizador" />
     </COffcanvasBody>
   </COffcanvas>
   <!--End Canvas Lista de Aprobadores-->
 
-  <!-- Modal  Rechazar-->
+  <!-- ==================================================================== -->
+  <!-- Modal para Rechazar Solicitud                                     -->
+  <!-- ==================================================================== -->
   <CModal :visible="modalRechazar" backdrop="static" @close="clickModalRechazar(false)">
     <CForm @submit.prevent="RechazarSolicitud">
       <CModalHeader class="headercolor" dismiss @close="clickModalRechazar(false)">
@@ -229,7 +209,9 @@
   </CModal>
   <!-- End Modal Rechazar-->
 
-  <!-- Modal  Devolver-->
+  <!-- ==================================================================== -->
+  <!-- Modal para DEvolver Solicitud                                    -->
+  <!-- ==================================================================== -->
   <CModal :visible="modalDevolver" backdrop="static" @close="clickModalDevolver(false)">
     <CForm @submit.prevent="DevolverSolicitud">
       <CModalHeader class="headercolor" dismiss @close="clickModalDevolver(false)">
@@ -281,32 +263,48 @@ const solicitud = defineProps({
   }
 })
 
-import 'bootstrap-icons/font/bootstrap-icons.css'
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
 import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
-
 import { useAlert } from '@/composables/useAlert'
-const { dataLoading, close, confirm } = useAlert()
-
 import { useFunction } from '@/composables/useFunction'
-const { getFoto, formatearNumero, getColor, getIcono } = useFunction()
-
 import { useBreadcrumb } from '@/composables/useBreadcrumb'
-const { setActions, clearActions } = useBreadcrumb()
-
-import { API_URL_IMG100 } from "@/env"
-const img100 = API_URL_IMG100
-
 import { useAuthStore } from '@/stores/authStores'
+import { useApSrf } from '@/composables/Aprobacion/useSrf'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+import ComponenteAutorizadores from '@/components/srf/ComponenteAutorizadores.vue'
+
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { dataLoading, close, confirm } = useAlert()
+const { formatearNumero, getColor, getIcono } = useFunction()
+const { setActions, clearActions } = useBreadcrumb()
+const { updateAprobacionUse, getAprUse, srf } = useApSrf()
+const router = useRouter()
 const auth = useAuthStore()
 
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 const persona = ref(auth.persona)
 const idpName = ref(auth.idpName)
 
-import { useApSrf } from '@/composables/Aprobacion/useSrf'
-const { updateAprobacionUse, getAprUse, srf } = useApSrf()
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
+const canvaApr = ref(false)
+const modalRechazar = ref(false)
+const modalDevolver = ref(false)
+const color = ref('danger')
+const icon = ref('')
+const motivoSeleccionado = ref('ninguna')
+const observacion = ref('')
+const valor = ref('')
 
 const updateApr = reactive({
   idApr: null,
@@ -327,15 +325,9 @@ const datos = reactive({
   codigo: ''
 })
 
-const canvaApr = ref(false)
-const modalRechazar = ref(false)
-const modalDevolver = ref(false)
-const color = ref('danger')
-const icon = ref('')
-const motivoSeleccionado = ref('ninguna')
-const observacion = ref('')
-const valor = ref('')
-
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 const clickCanvaApr = (value) => {
   canvaApr.value = value
 }
@@ -349,7 +341,6 @@ const clickModalDevolver = (value) => {
 }
 
 const AprobarSolicitud = async () => {
-  getTool()
   updateApr.estado = 'APROBADO'
   const ob = updateApr.obs === 'PENDIENTE' ? 'Ninguno' : (updateApr.obs + ' | Ninguno')
   updateApr.obs = ob
@@ -385,12 +376,6 @@ const DevolverSolicitud = async () => {
   }
 }
 
-// para personalizacion de los Alerts
-const vars = {
-  '--cui-alert-padding-y': '2px',
-  '--cui-alert-border-radius': '0px'
-}
-
 const getLoadData = () => {
   updateApr.idApr = srf.idApr
   updateApr.destino = srf.destino
@@ -409,10 +394,7 @@ const getLoadData = () => {
   datos.centroCostos = srf.centro
   datos.codigo = srf.codigo
 }
-const getTool = () => {
-  const tooltips = document.querySelectorAll('.tooltip')
-  tooltips.forEach(tooltip => tooltip.remove())
-}
+
 const getLista = () => {
   router.push({
     name: 'SolicitudSRF',
@@ -455,7 +437,7 @@ const aprobar = () => {
 const aprobadores = () => {
   clickCanvaApr(true)
 }
-/* Breadcrum Actions */
+
 
 const getAction = () => {
   setActions([
@@ -521,8 +503,10 @@ const getAction = () => {
   ])
 }
 
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
-  getTool()
   dataLoading()
   try {
     await getAprUse(persona.value.id, solicitud.idSrf)
@@ -536,4 +520,11 @@ onUnmounted(() => {
   clearActions()
 })
 
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
+const vars = {
+  '--cui-alert-padding-y': '2px',
+  '--cui-alert-border-radius': '0px'
+}
 </script>

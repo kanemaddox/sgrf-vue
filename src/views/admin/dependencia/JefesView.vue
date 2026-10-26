@@ -46,26 +46,6 @@
                 </CChip>
               </template>
 
-              <!-- Acciones y eventos para el Usuario -->
-              <template #column-acciones="{ cellData }">
-                <CButtonGroup role="group" size="sm">
-                  <CButton color="secondary" variant="ghost" @click="getPerfil(cellData)">
-                    <i class="bi bi-person"></i>
-                    <span class="d-none d-md-inline"> Perfil</span>
-                  </CButton>
-
-                  <CButton color="secondary" variant="ghost" @click="getPerfil(cellData)">
-                    <i class="bi bi-file-earmark"></i>
-                    <span class="d-none d-md-inline"> Solicitudes</span>
-                  </CButton>
-
-                  <CButton color="secondary" variant="ghost" @click="getPerfil(cellData)">
-                    <i class="bi bi-file-earmark-text"></i>
-                    <span class="d-none d-md-inline"> Rendiciones</span>
-                  </CButton>
-                </CButtonGroup>
-              </template>
-
             </DataTable>
           </CRow>
         </CCardBody>
@@ -113,20 +93,33 @@ const columns = [
   { data: 'id', title: 'ID',width: '10%' },
   { data: 'imagen', title: '', name: "imagen" },
   { data: 'datos', title: 'Datos Personales', name: 'datos' },
-  { data: 'estado', title: 'Estado', name: 'estado',width: '10%' },
-  {
-    data: 'acciones',
-    title: 'Acciones',
-    orderable: false,
-    searchable: false,
-    name: 'acciones',
-    width: '25%'
-  }
+  { data: 'estado', title: 'Estado', name: 'estado',width: '10%' }
 ]
 
 // ============================================================================
 // 5. FUNCIONES DE NAVEGACIÓN
 // ============================================================================
+const getPerfil = (value) => {
+  router.push({
+    name: 'PerfilUsuario',
+    params: { idUsuario: value }
+  })
+}
+
+const getSolicitud = (value) => {
+  router.push({
+    name: 'GESTIONSRF',
+    params: { idUsuario: value }
+  })
+}
+
+const getRendicion = (value) => {
+  router.push({
+    name: 'GESTIONRDG',
+    params: { idUsuario: value }
+  })
+}
+
 const salir = () => {
   getSalir()
 }

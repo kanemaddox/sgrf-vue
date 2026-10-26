@@ -1,7 +1,9 @@
 import { ref } from 'vue'
 
-import { getPersonaService, findByTipoService } from '@/services/empleadoService'
+import { updateCorreoService,getPersonaService, findByTipoService } from '@/services/empleadoService'
 import { getEmpleadoCargoUsuarioService } from '@/services/empleadoCargoService'
+import { useAlert } from '@/composables/useAlert'
+const { confirm, success, error } = useAlert()
 
 import { API_URL_IMG100 } from "@/env"
 const img100 = API_URL_IMG100
@@ -79,10 +81,53 @@ export const useEmpleado = () => {
         }
 
     }
+    const updateCorreoUse = async (persona) => {
+        loadingEmpleado.value = true
+        errorEmpleado.value = null
+        const personaResponse = {
+            "id": persona.id,
+            "idp": "",
+            "nombre": "",
+            "paterno": "",
+            "materno": "",
+            "email": persona.correo,
+            "fechaNacimiento": "",
+            "sexo": "",
+            "celular": "",
+            "fechaCreacion": "",
+            "fechaActualizacion": ""
+        }
+        const resultAlert = await confirm('Actualizar Datos', 'Desea Actualizar el numero de Correo ?', '')
+        if (resultAlert.isConfirmed) {
+            try {
+                const resultservice = await updateCorreoService(personaResponse)
+                if(resultservice.status === 200){
+                    await success ('Well Done!!!!!', 'Registro Actualizado Corectamente','')
+                    return true
+                }
+                else{
+                    await error('Error !!!','Datos Incorectos Verifique e Intente mas tarde','')
+                    return false
+                }
+                
+            } catch (errr) {
+                errorEmpleado.value = errr
+                await error ('Error !!!!','Servicio no Disponible',errr)
+                return false
+            } finally {
+                loadingEmpleado.value = false
+            }
+        }
+        else {
+            await error ('Error !!!','Datos Cancelados','','')
+            return false
+        }
+    }
     return {
         getPersonaUse,
         findByTipoUse,
         getEmpleadoCargoUsuarioUse,
+        updateCorreoUse,
         listaCargos,
         listaJefes,
         loadingEmpleado,
