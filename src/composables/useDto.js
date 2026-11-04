@@ -80,7 +80,8 @@ export function useDto() {
         subCentroCostos: '',
         codigo: '',
         idpJefe: '',
-        jefe: ''
+        jefe: '',
+        pendiente:0
     }
 
     const srf = {
@@ -340,6 +341,21 @@ export function useDto() {
         perfilCuenta.jefe = data.jefe
         return perfilCuenta
     }
+    const getPerfilSrf = (data) => {
+        perfilCuenta.idPersona = data.idPersona
+        perfilCuenta.idp = data.idp
+        perfilCuenta.nombre = data.nombre
+        perfilCuenta.email = data.email
+        perfilCuenta.celular = data.celular
+        perfilCuenta.profesion = data.profesion
+        perfilCuenta.cargo = data.cargo
+        perfilCuenta.corporativo = data.corporativo
+        perfilCuenta.centroCostos = data.centroCostos
+        perfilCuenta.subCentroCostos = data.subCentroCostos
+        perfilCuenta.codigo = data.codigoSubCentro
+        perfilCuenta.pendiente = data.pendiente
+        return perfilCuenta
+    }
 
     const getRDG = (data) => {
         rdg.idRdg = data.idRdg
@@ -407,6 +423,7 @@ export function useDto() {
         getSRF,
         getRDG,
         getPerfilCuenta,
+        getPerfilSrf,
         getRdgCreate
     }
 }

@@ -5,7 +5,7 @@
     </CDropdownToggle>
     <CDropdownMenu class="pt-0">
       <CDropdownHeader component="h6" class="bg-body-secondary text-body-secondary fw-semibold my-2">
-        Cuenta
+        Perfil
       </CDropdownHeader>
       <CDropdownItem style="cursor: pointer;" @click="profile">
         <CIcon icon="cil-user" /> Perfil Usuario

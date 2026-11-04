@@ -40,23 +40,23 @@ const routes = [
     redirect: '/dashboard',
     meta: { requiresAuth: true },
     children: [
-      {//rutas para Cuenta
-        path: '/cuenta',
-        name: 'Cuenta',
+      {//rutas para perfil
+        path: '/perfil',
+        name: 'Perfil',
         component: {
           render() { return h(resolveComponent('router-view')) },
         },
-        redirect: '/cuenta/profile',
+        redirect: '/perfil/profile',
         children: [
           {
-            path: '/cuenta/profile',
+            path: '/perfil/profile',
             name: 'Profile',
-            component: () => import('@/views/cuenta/ProfileView.vue'),
+            component: () => import('@/views/perfil/ProfileView.vue'),
           },
           {
-            path: '/cuenta/cuentabancaria',
+            path: '/perfil/cuentabancaria',
             name: 'Cuentas Bancarias',
-            component: () => import('@/views/cuenta/CuentasBancariasView.vue'),
+            component: () => import('@/views/perfil/CuentasBancariasView.vue'),
           },
         ],
       },

@@ -148,3 +148,26 @@ body {
 .custom-hover-btn.btn:hover {
   color: #ffffff !important;            /* Color del texto */
 }
+
+.input-invisible {
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: transparent;
+  border: none;
+  border-bottom: 1px transparent;
+  padding: 0;
+  margin: 0;
+
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  width: auto;
+  cursor: text;
+}
+
+.label-text{
+  margin-top: 6px;    
+  margin-bottom: 10px;
+  display: block;
+}

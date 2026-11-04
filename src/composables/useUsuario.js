@@ -6,13 +6,13 @@ const { confirm, success, error } = useAlert()
 /**End Declaraciones para alertas */
 
 import { useDto } from '@/composables/useDto'
-const { getPerfil, getPersona, getPerfilCuenta } = useDto()
+const { getPerfilSrf, getPerfil, getPersona, getPerfilCuenta } = useDto()
 
 import { dtoRegistro } from '@/composables/Dto/dtoRegistro'
-const {getRegistro} = dtoRegistro()
+const { getRegistro } = dtoRegistro()
 
 /**Declaraciones para Servicios */
-import { getPerfilService, updateUsuarioRolService, findByRolService, updateUsuarioPernicionsService, getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
+import { getPerfilSrfService, getPerfilService, updateUsuarioRolService, findByRolService, updateUsuarioPernicionsService, getUsuarioValidoService, getDatosEmpleadosService, updateUsuarioImagenService, updatePassService, addDatosService, findAllResponseService, getDatosService, getDatosUsuarioService, updatePasswordService, setEstadoService, getEmpleadosFileService } from '@/services/usuarioService'
 
 
 import { API_URL_IMG100, API_URL_IMG200, API_URL_IMG800 } from "@/env"
@@ -42,29 +42,22 @@ export const useUsuario = () => {
             "fechaCreacion": "",
             "fechaActualizacion": ""
         }
-        const resultAlert = await confirm('Foto de Perfil', 'Desea Subir su foto de perfil ?', '')
-        if (resultAlert.isConfirmed) {
-            try {
-                const resultService = await updateUsuarioImagenService(usuarioResponse)
-                if (resultService.status === 200) {
-                    await success('Operación Exitosa !!!', 'La Foto de Perfil fue guardado correctamente')
-                    return true
-                }
-                else {
-                    await error('Error !!!!!', 'No se pudo guardar la Foto de Perfil, Verifique e Intente Mas tarde', '')
-                    return false
-                }
-            } catch (err) {
-                errorUse.value = err
-                await error('Error !!!!!', 'Servicio de Almacenamiento No Disponible', '')
-                return false
-            } finally {
-                loading.value = false
+        try {
+            const resultService = await updateUsuarioImagenService(usuarioResponse)
+            if (resultService.status === 200) {
+                await success('Operación Exitosa !!!', 'La Foto de Perfil fue guardado correctamente')
+                return true
             }
-        }
-        else {
-            await error('Datos Cancelados', '', '')
+            else {
+                await error('Error !!!!!', 'No se pudo guardar la Foto de Perfil, Verifique e Intente Mas tarde', '')
+                return false
+            }
+        } catch (err) {
+            errorUse.value = err
+            await error('Error !!!!!', 'Servicio de Almacenamiento No Disponible', '')
             return false
+        } finally {
+            loading.value = false
         }
     }
 
@@ -282,6 +275,20 @@ export const useUsuario = () => {
             loading.value = false
         }
     }
+
+    const getPerfilSrfUse = async (value) => {
+        loading.value = true
+        errorUse.value = null
+        try {
+            const { data } = await getPerfilSrfService(value)
+            Object.assign(perfilCuenta, getPerfilSrf(data))
+        } catch (errr) {
+            errorUse.value = errr
+            throw errr
+        } finally {
+            loading.value = false
+        }
+    }
     /* Funcion para devolver el perfil del Usuario*/
     const getDatosUsuarioUse = async (value) => {
         loading.value = true
@@ -410,6 +417,7 @@ export const useUsuario = () => {
         updateUsuarioPernicionsUse,
         updateUsuarioRolUse,
         getPerfilUse,
+        getPerfilSrfUse,
         findAllUserUse,
         perfilUsuario,
         perfilCuenta,

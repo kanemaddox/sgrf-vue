@@ -126,6 +126,9 @@ export function useFunction() {
       'ESPERA': 'dark',
       'DEVUELTO': 'info',
       'TRAMITE': 'warning',
+      'CORREGIDO':'primary',
+      'ACTUALIZADO':'info',
+      'NUEVO':'success',
     }
     return colores[value]
   }
@@ -136,7 +139,10 @@ export function useFunction() {
       'RECHAZADO': 'bi bi-x-circle',
       'ESPERA': 'bi bi-clock',
       'DEVUELTO': 'bi bi-send-arrow-down',
-      'TRAMITE': 'bi-hourglass-split',
+      'TRAMITE': 'bi bi-hourglass-split',
+      'CORREGIDO':'bi bi-box-arrow-in-down-right',
+      'ACTUALIZADO':'bi bi-arrow-clockwise',
+      'NUEVO':'bi bi-folder-plus',
     }
     return icono[value]
   }

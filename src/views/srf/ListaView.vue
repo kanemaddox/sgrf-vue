@@ -13,8 +13,7 @@
         <!-- Cuerpo de la lista -->
         <CCardBody>
           <CRow class="table-responsive">
-            <DataTable :data="listaSrf" :columns="columns" class="table table-striped"
-              :options="{ responsive: true, language: { search: 'Buscar:', lengthMenu: 'Mostrar _MENU_ registros' } }">
+            <DataTable :data="listaSrf" :columns="columns" class="table table-striped" :options="tableOptions">
 
               <template #column-datos="{ cellData }">
                 <span><strong>No. : </strong>{{ cellData.numero }}</span><br>
@@ -128,6 +127,15 @@ const columns = [
   }
 ]
 
+const tableOptions = {
+  responsive: true,
+  order:[[0,'desc']], 
+  language: { 
+    search: 'Buscar:', 
+    lengthMenu: 'Mostrar _MENU_ registros' 
+  }
+}
+
 // ============================================================================
 // 5. FUNCIONES DE NAVEGACIÓN
 // ============================================================================
@@ -179,7 +187,7 @@ onMounted(async () => {
   try {
     await getSrfUsuarioEstadoUse(persona.value.id, lista.estado.toUpperCase())
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

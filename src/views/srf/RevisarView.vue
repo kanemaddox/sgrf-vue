@@ -1,6 +1,5 @@
 <template>
   <CRow>
-
     <CCol :xs="0" :sm="1" :md="1" :lg="1" class="align-self-start">
     </CCol>
 
@@ -22,7 +21,14 @@
         <CCardBody>
           <CRow>
             <CCol :xs="12" :sm="8" :md="7" :lg="7">
-              <h5><strong>{{ srf.titulo }}</strong></h5>
+              <h5>
+                <strong>{{ srf.titulo }}</strong>
+                <div v-if="srf.modificado !== 'NUEVO'">
+                  <CBadge :color="getColor(srf.modificado)" @click="clickModalObs(true)" style="cursor: pointer;">
+                    <i :class="getIcono(srf.modificado)"></i> {{ srf.modificado }}
+                  </CBadge>
+                </div>
+              </h5>
             </CCol>
             <CCol :xs="12" :sm="4" :md="5" :lg="5" class="text-end">
               <h3><strong>No.: {{ srf.numero }}</strong> </h3>
@@ -145,62 +151,161 @@
   <!--End Canvas Lista de Aprobadores-->
 
   <!-- ==================================================================== -->
+  <!-- Modal para Observaciones                                             -->
+  <!-- ==================================================================== -->
+  <CModal :visible="modalObs" alignment="center" size="lg" backdrop="static" @close="clickModalObs(false)">
+    <CModalHeader class="headercolor">
+      <CModalTitle class="d-flex align-items-center">
+        <CIcon icon="cil-description" size="lg" class="me-2" />Observaciones
+      </CModalTitle>
+    </CModalHeader>
+    <CModalBody>
+      <CRow>
+        <CCol :xs="12">
+          <CAlert color="light">
+            <CIcon icon="cil-info" size="xl" class="me-2 flex-shrink-0" />
+            <p v-html="updateApr.obs"></p>
+          </CAlert>
+        </CCol>
+      </CRow>
+    </CModalBody>
+    <CModalFooter>
+      <CButton @click="clickModalObs(false)" class="text-white" color="success" size="sm">
+        <CIcon icon="cil-check-alt" class="me-2" />
+        <span>Aceptar</span>
+      </CButton>
+    </CModalFooter>
+  </CModal>
+  <!-- End Modal Observaciones-->
+
+
+  <!-- ==================================================================== -->
+  <!-- Modal para Aprobar Solicitud                                        -->
+  <!-- ==================================================================== -->
+  <CModal :visible="modalAprobar" alignment="center" backdrop="static" size="lg" @close="clickModalAprobar(false)">
+    <CModalHeader class="headercolor text-white py-3">
+      <CModalTitle class="d-flex align-items-center">
+        <CIcon icon="cil-task" size="lg" class="me-2" />
+        Aprobar solicitud
+      </CModalTitle>
+    </CModalHeader>
+
+    <CModalBody class="p-4">
+      <!-- Contenedor de alerta con diseño moderno y sutil -->
+      <div class="p-3 mb-4 rounded-3 bg-body-tertiary border-start border-primary border-4 shadow-sm">
+        <div class="d-flex align-items-start">
+          <div class="text-primary me-3 mt-1">
+            <CIcon icon="cil-info" size="xl" />
+          </div>
+          <div>
+            <h6 class="fw-bold text-dark mb-1">Información de la solicitud</h6>
+            <p v-if="destino" class="text-body-secondary small mb-0">
+              La solicitud es menor al monto reglamentario de
+              <strong class="text-dark">{{ formatearNumero(srf.montoFormato) }} {{ srf.moneda }}</strong>.
+              Puedes proceder con una aprobación directa o derivarla a tu superior según corresponda.
+            </p>
+            <p v-else class="text-body-secondary small mb-0">
+              La solicitud de {{ formatearNumero(srf.monto) }} {{ srf.moneda }} es mayor al monto reglamentario de
+              <strong class="text-dark">{{ formatearNumero(srf.montoFormato) }} {{ srf.moneda }}</strong>.
+              Puedes aprobar la solicitud y esta sera derivada para una revicion.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opciones de aprobación -->
+      <CRow class="g-3">
+        <!-- Aprobación directa -->
+        <CCol :xs="12" :md="6" v-if="destino">
+          <CButton color="success" variant="outline" class="custom-hover-btn w-100 h-100 p-3" @click="solicitudDirecta">
+            <div class="d-flex flex-column align-items-center text-center">
+              <CIcon icon="cil-check-circle" size="3xl" class="mb-2" />
+              <strong class="mb-2">
+                Aprobación directa
+              </strong>
+              <small>
+                Aprobar la solicitud directamente sin remitirla a otra instancia.
+              </small>
+            </div>
+          </CButton>
+        </CCol>
+
+        <!-- Enviar al superior -->
+        <CCol v-if="!destino" :xs="12" :md="3"></CCol>
+        <CCol :xs="12" :md="6">
+          <CButton color="primary" variant="outline" class="w-100 h-100 p-3" @click="solicitudEnviada">
+            <div class="d-flex flex-column align-items-center text-center">
+              <CIcon icon="cil-share" size="3xl" class="mb-2" />
+              <strong class="mb-2">
+                Aprobar y enviar
+              </strong>
+              <small>
+                Remitir la solicitud para su evaluación y aprobación.
+              </small>
+            </div>
+          </CButton>
+        </CCol>
+
+        <CCol v-if="!destino" :xs="12" :md="3"></CCol>
+      </CRow>
+    </CModalBody>
+
+    <CModalFooter class="px-4 py-3">
+      <CButton color="danger" class="text-white" size="sm" @click="clickModalAprobar(false)">
+        <CIcon icon="cil-x" class="me-2" />
+        Cancelar
+      </CButton>
+    </CModalFooter>
+  </CModal>
+  <!-- End Modal aprobar Solicitud -->
+
+  <!-- ==================================================================== -->
   <!-- Modal para Rechazar Solicitud                                     -->
   <!-- ==================================================================== -->
-  <CModal :visible="modalRechazar" backdrop="static" @close="clickModalRechazar(false)">
+  <CModal :visible="modalRechazar" alignment="center" backdrop="static" size="lg" @close="clickModalRechazar(false)">
     <CForm @submit.prevent="RechazarSolicitud">
-      <CModalHeader class="headercolor" dismiss @close="clickModalRechazar(false)">
-        <CModalTitle>
-          <h6>
-            <CIcon icon="cil-trash" size="lg" class="me-2" />Rechazar Solicitud
-          </h6>
+      <CModalHeader class="headercolor">
+        <CModalTitle class="d-flex align-items-center">
+          <CIcon icon="cil-trash" size="lg" class="me-2" />Rechazar Solicitud
         </CModalTitle>
       </CModalHeader>
       <CModalBody>
-        <CAlert color="danger">
-          <CIcon icon="cil-trash" size="lg" class="me-2" />Motivos del Rechazo
+        <CAlert color="light" class="d-flex align-items-start mb-4">
+          <CIcon icon="cil-info" size="xl" class="me-2 flex-shrink-0" />
+          <div>
+            <strong>Información importante</strong>
+            <p class="mb-0 mt-1">
+              Estás a punto de rechazar esta solicitud. Indica claramente los motivos del rechazo.
+            </p>
+          </div>
         </CAlert>
-        <CContainer>
-          <CRow>
-            <CCol :xs="6">
-              <CFormCheck type="radio" name="obs" id="flex1" label="Moneda Incorrecta" value="Moneda Incorrecta"
-                v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex2" label="Detalle Insuficiente" value="Detalle Insuficiente"
-                v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex3" label="Solicitud Injustificada"
-                value="Solicitud Injustificada" v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex4" label="Monto Exesivo" value="Monto Exesivo"
-                v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex5" label="Fondos Insuficientes" value="Fondos Insuficientes"
-                v-model="motivoSeleccionado" required />
-            </CCol>
-            <CCol :xs="6">
-              <CFormCheck type="radio" name="obs" id="flex6" label="No Corresponde" value="No Corresponde"
-                v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex7" label="Monto Insuficiente" value="Monto Insuficiente"
-                v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex8" label="Fecha Incompatible" value="Fecha Incompatible"
-                v-model="motivoSeleccionado" required />
-              <CFormCheck type="radio" name="obs" id="flex9" label="Corto Plazo" value="Corto Plazo"
-                v-model="motivoSeleccionado" required />
-            </CCol>
-            <hr>
-            <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText>
-                <CFormCheck type="radio" value="otros" name="obs" id="flex10" v-model="motivoSeleccionado" required />
-              </CInputGroupText>
-              <CFormInput type="text" v-model="observacion" placeholder="Otros motivos de Rechazo"
-                :disabled="motivoSeleccionado !== 'otros'" />
-            </CInputGroup>
-          </CRow>
-        </CContainer>
+
+        <!-- Motivo de devolución -->
+        <div class="mb-3">
+          <CFormLabel class="fw-semibold">
+            <CIcon icon="cil-trash" class="me-2 text-primary" />
+            Motivo de Rechazo
+            <span class="text-danger">*</span>
+          </CFormLabel>
+
+          <CFormTextarea v-model="observacion" placeholder="Describe detalladamente el motivo de la rechazo..."
+            rows="4" required maxlength="500" />
+          <div class="d-flex justify-content-between mt-2">
+            <small class="text-body-secondary">
+              Especifica el motivo de rechazo al solicitante.
+            </small>
+            <small class="text-body-secondary">
+              {{ observacion?.length || 0 }}/500
+            </small>
+          </div>
+        </div>
       </CModalBody>
       <CModalFooter>
-        <CButton @click="clickModalRechazar(false)" color="danger" class="font" size="sm">
+        <CButton @click="clickModalRechazar(false)" color="danger" class="text-white" size="sm">
           <CIcon icon="cil-x" class="me-2" />Cancelar
         </CButton>
 
-        <CButton type="submit" class="font" color="success" size="sm">
+        <CButton type="submit" class="text-white" color="success" size="sm" :disabled="!observacion?.trim()">
           <CIcon icon="cil-check-alt" class="me-2" />
           <span>Aceptar</span>
         </CButton>
@@ -210,45 +315,64 @@
   <!-- End Modal Rechazar-->
 
   <!-- ==================================================================== -->
-  <!-- Modal para DEvolver Solicitud                                    -->
+  <!-- Modal para Devolver Solicitud                                       -->
   <!-- ==================================================================== -->
-  <CModal :visible="modalDevolver" backdrop="static" @close="clickModalDevolver(false)">
+  <CModal :visible="modalDevolver" alignment="center" backdrop="static" size="lg" @close="clickModalDevolver(false)">
     <CForm @submit.prevent="DevolverSolicitud">
-      <CModalHeader class="headercolor" dismiss @close="clickModalDevolver(false)">
-        <CModalTitle>
-          <h6>
-            <CIcon icon="cil-send" size="lg" class="me-2" />Devolver Solicitud
-          </h6>
+      <CModalHeader class="headercolor">
+        <CModalTitle class="d-flex align-items-center">
+          <i class="bi bi-box-arrow-up-left me-2"></i>
+          Devolver solicitud
         </CModalTitle>
       </CModalHeader>
-      <CModalBody>
-        <CAlert color="info">
-          <CIcon icon="cil-send" size="lg" class="me-2" />Motivos de la Devolucion
-        </CAlert>
-        <CContainer>
-          <CRow>
-            <CInputGroup size="sm" class="mb-3">
-              <CInputGroupText class="headercolor" as="label">
-                <i class="bi bi-recycle me-2"></i>Motivo :
-              </CInputGroupText>
-              <CFormInput type="text" v-model="observacion" placeholder="Motivo de Devolucion" required />
-            </CInputGroup>
-          </CRow>
-        </CContainer>
-      </CModalBody>
-      <CModalFooter>
-        <CButton @click="clickModalDevolver(false)" color="danger" class="font" size="sm">
-          <CIcon icon="cil-x" class="me-2" />Cancelar
-        </CButton>
 
-        <CButton type="submit" class="font" color="success" size="sm">
-          <CIcon icon="cil-check-alt" class="me-2" />
-          <span>Aceptar</span>
+      <CModalBody class="p-4">
+        <!-- Información -->
+        <CAlert color="light" class="d-flex align-items-start mb-4">
+          <CIcon icon="cil-info" size="xl" class="me-2 flex-shrink-0" />
+          <div>
+            <strong>Información importante</strong>
+            <p class="mb-0 mt-1">
+              Estás a punto de devolver esta solicitud. Indica claramente los motivos para que el solicitante pueda
+              realizar las correcciones necesarias.
+            </p>
+          </div>
+        </CAlert>
+
+        <!-- Motivo de devolución -->
+        <div class="mb-3">
+          <CFormLabel class="fw-semibold">
+            <CIcon icon="cil-comment-square" class="me-2 text-primary" />
+            Motivo de devolución
+            <span class="text-danger">*</span>
+          </CFormLabel>
+
+          <CFormTextarea v-model="observacion" placeholder="Describe detalladamente el motivo de la devolución..."
+            rows="4" required maxlength="500" />
+          <div class="d-flex justify-content-between mt-2">
+            <small class="text-body-secondary">
+              Especifica las correcciones que debe realizar el solicitante.
+            </small>
+            <small class="text-body-secondary">
+              {{ observacion?.length || 0 }}/500
+            </small>
+          </div>
+        </div>
+      </CModalBody>
+
+      <CModalFooter class="px-4 py-3">
+        <CButton color="danger" class="text-white" size="sm" @click="clickModalDevolver(false)">
+          <CIcon icon="cil-x" class="me-2" />
+          Cancelar
+        </CButton>
+        <CButton type="submit" color="primary" class="text-white" size="sm" :disabled="!observacion?.trim()">
+          <i class="bi bi-box-arrow-up-left me-2"></i>
+          Devolver solicitud
         </CButton>
       </CModalFooter>
     </CForm>
   </CModal>
-  <!-- End Modal Devolver-->
+  <!-- End Modal Devolver -->
 
 </template>
 <script setup>
@@ -299,12 +423,14 @@ const idpName = ref(auth.idpName)
 // ============================================================================
 const canvaApr = ref(false)
 const modalRechazar = ref(false)
+const modalAprobar = ref(false)
 const modalDevolver = ref(false)
+const modalObs = ref(false)
 const color = ref('danger')
 const icon = ref('')
-const motivoSeleccionado = ref('ninguna')
 const observacion = ref('')
 const valor = ref('')
+const destino = ref(false)
 
 const updateApr = reactive({
   idApr: null,
@@ -313,7 +439,8 @@ const updateApr = reactive({
   tipo: '',
   idPersona: null,
   idSrf: null,
-  obs: ''
+  obs: '',
+  modo: ''
 })
 
 const datos = reactive({
@@ -340,11 +467,41 @@ const clickModalDevolver = (value) => {
   modalDevolver.value = value
 }
 
-const AprobarSolicitud = async () => {
+const clickModalObs = (value) => {
+  modalObs.value = value
+}
+
+const clickModalAprobar = (value) => {
+  modalAprobar.value = value
+}
+
+const getSolicitud = () => {
+  if (srf.siguiente === 'ULTIMO') {
+    solicitudEnviada()
+  } else {
+    clickModalAprobar(true)
+  }
+}
+
+const solicitudDirecta = () => {
+  clickModalAprobar(false)
   updateApr.estado = 'APROBADO'
-  const ob = updateApr.obs === 'PENDIENTE' ? 'Ninguno' : (updateApr.obs + ' | Ninguno')
+  updateApr.modo = 'DIRECTO'
+  const ob = updateApr.obs === 'PENDIENTE' ? ' Aprobacion Directa.' : (updateApr.obs + '<br> APROBADO ')
   updateApr.obs = ob
-  const resultService = await updateAprobacionUse(updateApr, srf.numero, valor.value, srf.nombre, 'Solictud Aprobada Correctamente', 'Aprobar Solicitud ?')
+  updateAprobacion()
+}
+const solicitudEnviada = () => {
+  clickModalAprobar(false)
+  updateApr.estado = 'APROBADO'
+  updateApr.modo = 'ENVIADO'
+  const ob = updateApr.obs === 'PENDIENTE' ? 'Ninguno' : (updateApr.obs + '<br> APROBADO ')
+  updateApr.obs = ob
+  updateAprobacion()
+}
+
+const updateAprobacion = async () => {
+  const resultService = await updateAprobacionUse(updateApr, 'Solictud Aprobada Correctamente', 'Desea Aprobar la Solicitud ?')
   if (resultService) {
     getLista()
   } else {
@@ -355,8 +512,9 @@ const AprobarSolicitud = async () => {
 const RechazarSolicitud = async () => {
   clickModalRechazar(false)
   updateApr.estado = 'RECHAZADO'
-  updateApr.obs = motivoSeleccionado.value === 'otros' ? observacion.value : motivoSeleccionado.value
-  const resultService = await updateAprobacionUse(updateApr, srf.numero, valor.value, srf.nombre, 'Solictud Rechazada Correctamente')
+  updateApr.obs =  observacion.value
+  updateApr.modo = "SIGUIENTE"
+  const resultService = await updateAprobacionUse(updateApr, 'Solictud Rechazada Correctamente', 'Desea Rechazar la Solicitud ?')
   if (resultService) {
     getLista()
   } else {
@@ -368,7 +526,8 @@ const DevolverSolicitud = async () => {
   clickModalDevolver(false)
   updateApr.estado = 'DEVUELTO'
   updateApr.obs = observacion.value
-  const resultService = await updateAprobacionUse(updateApr, srf.numero, valor.value, srf.nombre, 'Solictud Devuelta Correctamente')
+  updateApr.modo = "SIGUIENTE"
+  const resultService = await updateAprobacionUse(updateApr, 'Solictud Devuelta Correctamente', 'Desea Devolver la Solicitud ?')
   if (resultService) {
     getLista()
   } else {
@@ -393,6 +552,11 @@ const getLoadData = () => {
   datos.cargo = srf.cargo
   datos.centroCostos = srf.centro
   datos.codigo = srf.codigo
+  if (Number(srf.montoFormato) > Number(srf.monto)) {
+    destino.value = true
+  } else {
+    destino.value = false
+  }
 }
 
 const getLista = () => {
@@ -432,7 +596,7 @@ const devolver = () => {
   clickModalDevolver(true)
 }
 const aprobar = () => {
-  AprobarSolicitud()
+  getSolicitud()
 }
 const aprobadores = () => {
   clickCanvaApr(true)
@@ -512,7 +676,7 @@ onMounted(async () => {
     await getAprUse(persona.value.id, solicitud.idSrf)
     getLoadData()
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

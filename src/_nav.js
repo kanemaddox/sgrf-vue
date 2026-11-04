@@ -29,20 +29,20 @@ export default [
   },
   {
     component: 'CNavItem',
-    name: 'Mi Cuenta',
+    name: 'Mi Perfil',
     icon: 'cil-settings',
     key:'mi_cuenta',
     items: [
       {
         component: 'CNavItem',
         name: 'Perfil Usuario',
-        to: '/cuenta/profile',
+        to: '/perfil/profile',
         key:'perfil',
       },
       {
         component:'CNavItem',
         name:'Cuentas Bancarias',
-        to:'/cuenta/cuentabancaria',
+        to:'/perfil/cuentabancaria',
         key:'cuenta_bancaria',
       },
     ],

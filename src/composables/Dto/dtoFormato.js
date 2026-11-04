@@ -20,7 +20,8 @@ export function dtoFormato() {
             detalle: '',
             estadoTres: false,
             nivel:0,
-            total:0
+            total:0,
+            monto:0
         },
         fecha: ''
     }
@@ -49,6 +50,7 @@ export function dtoFormato() {
         formatoSRF.formato.estadoTres = data.value.estadoTres
         formatoSRF.formato.nivel = data.value.nivel
         formatoSRF.formato.total = data.value.total
+        formatoSRF.formato.monto = data.value.monto || 0
         return formatoSRF
     }
     return {

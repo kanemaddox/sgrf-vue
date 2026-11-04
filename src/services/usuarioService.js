@@ -56,3 +56,7 @@ export const getUsuarioValidoService = (valueUser,valueEmail) =>{
 export const updateUsuarioPernicionsService = (value) =>{
   return axiosService.put(sgrf + 'updateUsuarioPernicions',value)
 }
+
+export const getPerfilSrfService = (value) => {
+  return axiosService.get(sgrf + 'datos/getPerfilSrf', { params: { idPersona: value } })
+}

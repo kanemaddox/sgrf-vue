@@ -20,8 +20,8 @@
               <!-- Slot para la imagen de perfil y botón de actualización -->
               <template #icon>
                 <div class="position-relative d-inline-block mb-3">
-                  <img :src="imagen" class="img-fluid rounded-circle shadow-sm border border-2 border-light"
-                    style="width: 120px; height: 120px; object-fit: cover;" alt="Avatar de perfil" />
+                  <img :src="imagen" class="img-fluid rounded-circle"
+                    style="width: 130px; height: 130px; object-fit: cover;" alt="Avatar de perfil" />
                 </div>
                 <div>
                   <CButton color="dark" variant="outline" @click="clickModalFoto(true)" size="sm" class="mt-1 px-3">
@@ -107,7 +107,7 @@
                 <CWidgetStatsB class="mb-3 border-0 bg-light p-3 rounded" :progress="{ color: 'success', value: 100 }">
                   <template #value>{{ perfilCuenta.centroCostos }}</template>
                   <template #title>{{ perfilCuenta.subCentroCostos }} | {{ perfilCuenta.codigo
-                  }}</template>
+                    }}</template>
                   <template #text>
                     {{ perfilCuenta.idpJefe }} | {{ perfilCuenta.jefe }}
                   </template>
@@ -304,45 +304,65 @@
   <!-- ========================================== -->
   <!-- MODAL: Actualizar Foto de Perfil           -->
   <!-- ========================================== -->
-  <CModal backdrop="static" :visible="modalFoto" @close="clickModalFoto(false)">
+  <CModal backdrop="static" alignment="center" :visible="modalFoto" @close="clickModalFoto(false)">
     <CForm @submit.prevent="uploadFile" enctype="multipart/form-data">
-      <CModalHeader class="headercolor" dismiss @close="clickModalFoto(false)">
-        <CModalTitle>
-          <h6>
-            <CIcon icon="cil-description" size="lg" class="me-2" />Actualizar Foto de Perfil
-          </h6>
+      <!-- Encabezado del Modal -->
+      <CModalHeader class="headercolor text-white py-3">
+        <CModalTitle class="d-flex align-items-center">
+          <CIcon icon="cil-camera" class="me-1"></CIcon>
+          <span class="fs-6">Actualizar Foto de Perfil</span>
         </CModalTitle>
       </CModalHeader>
 
+      <!-- Cuerpo del Modal -->
       <CModalBody>
         <!-- Input de selección de archivo -->
+        <div class="mb-4">
+          <label for="filedoc" class="form-label fw-semibold text-body-secondary mb-2">
+            Seleccione una foto o suba desde la camara  (.jpg, .png, ...):
+          </label>
+        </div>
         <CInputGroup class="mb-3">
-          <CInputGroupText as="label" class="headercolor" for="filedoc">Foto de Perfil : </CInputGroupText>
+          <CInputGroupText as="label" class="headercolor" for="filedoc">
+            <i class="bi bi-card-image me-2"></i>
+          </CInputGroupText>
           <CFormInput type="file" ref="fileInput" id="filedoc" accept="image/png,image/jpeg" @change="selectFile"
             :valid="fileValid" :disabled="uploading" required />
-          <CInputGroupText v-if="fileValid">
+          <CInputGroupText v-if="fileValid" class="bg-success-subtle">
             <CIcon icon="cil-check-alt" class="text-success" />
           </CInputGroupText>
         </CInputGroup>
 
         <!-- Vista previa de la nueva imagen (Con restricciones de tamaño para mejor estética) -->
         <div class="mb-3 text-center" v-if="nuevafoto">
-          <div class="p-2 border rounded bg-light d-inline-block">
-            <img :src="nuevafoto" class="img-fluid rounded shadow-sm" style="max-height: 160px; object-fit: cover;"
+          <div class="rounded bg-light d-inline-block">
+            <img :src="nuevafoto" class="img-fluid rounded shadow-sm" style="max-height: 260px; object-fit: cover;"
               alt="Vista previa" />
           </div>
         </div>
 
-        <!-- Barra de progreso de subida -->
-        <CProgress v-if="uploading" :height="25" class="mb-3">
-          <CProgressBar :value="uploadProgress" :color="uploadProgress === 100 ? 'success' : 'warning'" animated>
-            {{ uploadProgress < 100 ? `Subiendo... ${uploadProgress}%` : 'Procesando imagen...' }} </CProgressBar>
-        </CProgress>
-
-        <!-- Mensaje de error general -->
-        <div v-if="errorMsg" class="alert alert-danger text-center py-2 mb-0">
-          <small>{{ errorMsg }}</small>
+        <!-- Barra de Progreso de Carga -->
+        <div v-if="uploading" class="mb-4">
+          <div class="d-flex justify-content-between mb-1 small fw-semibold text-body-secondary">
+            <span>{{ uploadProgress < 100 ? 'Subiendo Documento...' : 'Procesando documento...' }}</span>
+                <span>{{ uploadProgress }}%</span>
+          </div>
+          <CProgress :height="20" class="rounded-pill shadow-sm">
+            <CProgressBar :value="uploadProgress" :color="uploadProgress === 100 ? 'success' : 'primary'"
+              variant="striped" animated />
+          </CProgress>
         </div>
+
+        <!-- Alerta de Error -->
+        <CAlert v-if="errorMsg" color="danger" class="d-flex align-items-start shadow-sm border-0 mb-3">
+          <CIcon icon="cil-x-circle" size="xl" class="me-3 mt-1 flex-shrink-0" />
+          <div>
+            <h5 class="alert-heading fw-bold fs-6 mb-1">¡Atención!</h5>
+            <p class="mb-1 small">No se pudo cargar la foto de perfil.</p>
+            <hr class="my-2" />
+            <span class="small font-monospace">{{ errorMsg }}</span>
+          </div>
+        </CAlert>
       </CModalBody>
 
       <CModalFooter>
@@ -489,12 +509,11 @@ const selectFile = (e) => {
 /** Proceso asíncrono para subir la foto de perfil al servidor */
 const uploadFile = async () => {
   if (!archivo.value) return
-
   uploading.value = true
   uploadProgress.value = 0
   errorMsg.value = null
 
-  dataLoading('Subiendo imagen', 'Preparando archivo...')
+  dataLoading('Subiendo foto de perfil', 'Preparando foto...')
   try {
     await uploadProfile({
       file: archivo.value,
@@ -515,10 +534,10 @@ const uploadFile = async () => {
             location.reload()
           }
           else {
-            close()
+            await close()
           }
         } catch (err) {
-          close()
+          await close()
           errorMsg.value = 'Error al actualizar la imagen: ' + err
           await error(errorMsg.value)
         }
@@ -530,7 +549,7 @@ const uploadFile = async () => {
       }
     })
   } catch (err) {
-    close()
+    await close()
     errorMsg.value = 'Error al subir archivo: ' + err
     await error(errorMsg.value)
   } finally {

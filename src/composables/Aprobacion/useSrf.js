@@ -54,7 +54,12 @@ export const useApSrf = () => {
                     fechaTitulo:item.fechaTitulo,
                     montoTitulo:item.montoTitulo,
                 },
-                estado: item.estado,
+                tipo:{
+                    modificado:item.modificado,
+                },
+                estado: {
+                    estado:item.estado,
+                },
                 acciones: {
                     token:item.token,
                     estado:item.estado,
@@ -78,10 +83,8 @@ export const useApSrf = () => {
             loadingAprobacion.value = false
         }
     }
-    const updateAprobacionUse = async (value, numero, monto, nombre, sms, titulo) => {
-        const detail = 'Solicitud No. ' + numero + ', por ' + monto + ', Solicitado por ' + nombre
-        const resultAlert = await confirm(titulo, detail, '')
-
+    const updateAprobacionUse = async (value, sms, titulo) => {
+        const resultAlert = await confirm('Atencion !!!!', titulo, '')
         const updateRequest = {
             "id": value.idApr,
             "destino": value.destino,
@@ -89,7 +92,8 @@ export const useApSrf = () => {
             "tipo": value.tipo,
             "idPersona": value.idPersona,
             "idSrf": value.idSrf,
-            "obs": value.obs
+            "obs": value.obs,
+            "modo":value.modo
         }
         if (resultAlert.isConfirmed) {
             try {
@@ -109,7 +113,7 @@ export const useApSrf = () => {
                 loadingAprobacion.value = false
             }
         } else {
-            await error('Datos Cancelados !!!!!!', detail, '')
+            await error('Datos Cancelados !!!!!!','', '')
             return false
         }
 

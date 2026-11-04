@@ -31,12 +31,10 @@
   <!-- ==================================================================== -->
   <!-- Modal para Observaciones                                             -->
   <!-- ==================================================================== -->
-  <CModal :visible="modalObs" backdrop="static" @close="clickModalObs(false)">
-    <CModalHeader class="headercolor" dismiss @close="clickModalObs(false)">
-      <CModalTitle>
-        <h6>
+  <CModal :visible="modalObs" alignment="center" size="lg" backdrop="static" @close="clickModalObs(false)">
+    <CModalHeader class="headercolor">
+      <CModalTitle class="d-flex align-items-center">
           <CIcon icon="cil-description" size="lg" class="me-2" />Observaciones
-        </h6>
       </CModalTitle>
     </CModalHeader>
     <CModalBody>
@@ -47,14 +45,15 @@
             <template #title>{{ obsSrf.nombre }} | {{ obsSrf.idp }}</template>
             <template #value>{{ obsSrf.estado }}</template>
           </CWidgetStatsB>
-          <CAlert :color="obsSrf.color">
-            {{ obsSrf.obs }}
+          <CAlert color="light">
+            <CIcon icon="cil-info" size="xl" class="me-2 flex-shrink-0" />
+            <p v-html="obsSrf.obs"></p>
           </CAlert>
         </CCol>
       </CRow>
     </CModalBody>
     <CModalFooter>
-      <CButton @click="clickModalObs(false)" class="font" color="success" size="sm">
+      <CButton @click="clickModalObs(false)" class="text-white" color="success" size="sm">
         <CIcon icon="cil-check-alt" class="me-2" />
         <span>Aceptar</span>
       </CButton>

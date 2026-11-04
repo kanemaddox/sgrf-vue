@@ -6,6 +6,7 @@
     <CCol :xs="12" :sm="4" :md="4" :lg="4" class="align-self-start">
       <ComponenteAutorizadores v-if="srf && srf.lista" :lista="srf.lista" />
     </CCol>
+
     <!-- ==================================================================== -->
     <!-- Formulario de Solicitud                                             -->
     <!-- ==================================================================== -->
@@ -77,7 +78,7 @@
           </div>
 
           {{ srf.formato?.descripcion }} :
-          <CAlert color="secondary">
+          <CAlert color="light">
             {{ srf.detalle }}
           </CAlert>
           <hr>
@@ -129,18 +130,16 @@
   <!-- ==================================================================== -->
   <!-- Modal para Actualizar Solicitud                                      -->
   <!-- ==================================================================== -->
-  <CModal :visible="modalSrf" backdrop="static" @close="clickModalSrf(false)">
+  <CModal :visible="modalSrf" alignment="center" size="lg" backdrop="static" @close="clickModalSrf(false)">
     <CForm @submit.prevent="actualizarSrf">
-      <CModalHeader class="headercolor" dismiss @close="clickModalSrf(false)">
-        <CModalTitle>
-          <h6>
-            <CIcon icon="cil-pencil" size="lg" class="me-2" />Actualizar Solicitud
-          </h6>
+      <CModalHeader class="headercolor">
+        <CModalTitle class="d-flex align-items-center">
+          <CIcon icon="cil-pencil" size="lg" class="me-2" />Actualizar Solicitud
         </CModalTitle>
       </CModalHeader>
       <CModalBody>
 
-        <CAlert color="secondary">II. {{ srf.formato?.seccionDos }}</CAlert>
+        <CAlert color="success">II. {{ srf.formato?.seccionDos }}</CAlert>
 
         <CInputGroup size="sm" class="mb-3">
           <CInputGroupText class="headercolor" as="label">
@@ -164,6 +163,11 @@
             <option value="EUR">Euros</option>
           </CFormSelect>
         </CInputGroup>
+
+        <label class="label-text small text-body-secondary">
+          Solicitud en {{ updateSrf.moneda }} de <input type="text" class="input-invisible" v-maska="maskOptions"
+            v-model="updateSrf.monto" disabled>
+        </label>
 
         <CFormTextarea :label="srf.formato?.descripcion" v-model="updateSrf.detalle" rows="3"
           :text="getCantidadCaracteres(150 - srf.detalle.length)" maxlength="150" required>
@@ -196,11 +200,11 @@
         </div>
       </CModalBody>
       <CModalFooter>
-        <CButton @click="clickModalSrf(false)" color="danger" class="font" size="sm">
+        <CButton @click="clickModalSrf(false)" color="danger" class="text-white" size="sm">
           <CIcon icon="cil-x" class="me-2" />Cancelar
         </CButton>
 
-        <CButton type="submit" class="font" color="success" size="sm">
+        <CButton type="submit" class="text-white" color="success" size="sm">
           <CIcon icon="cil-check-alt" class="me-2" />
           <span>Actualizar</span>
         </CButton>
@@ -225,6 +229,7 @@ const detalleProps = defineProps({
 // 1. IMPORTACIONES
 // ============================================================================
 import { useAuthStore } from '@/stores/authStores'
+import { vMaska } from "maska/vue"
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAlert } from '@/composables/useAlert'
@@ -234,7 +239,7 @@ import { useBreadcrumb } from '@/composables/useBreadcrumb'
 import { useSrf } from '@/composables/useSrf'
 import { usePdf } from '@/composables/usePdf';
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import { API_DOMAIN} from "@/env"
+import { API_DOMAIN } from "@/env"
 
 import ComponenteDatos from '@/components/srf/ComponenteDatos.vue'
 import ComponenteAutorizadores from '@/components/srf/ComponenteAutorizadores.vue'
@@ -266,6 +271,7 @@ const trueComplemento = ref(false)
 const modalSrf = ref(false)
 const hoy = new Date().toISOString().split('T')[0]
 const fechaSeleccionada = ref(null)
+const actualizar = ref(0)
 
 const updateSrf = reactive({
   id: null,
@@ -275,7 +281,8 @@ const updateSrf = reactive({
   detalle: '',
   texto: '',
   numerico: 0,
-  formato: {}
+  formato: {},
+  modificado:'',
 })
 
 const datos = reactive({
@@ -287,6 +294,13 @@ const datos = reactive({
   codigo: ''
 })
 
+const maskOptions = reactive({
+  mask: "0.99",
+  tokens: {
+    "0": { pattern: /\d/, multiple: true },
+    "9": { pattern: /\d/, optional: true }
+  }
+})
 // ============================================================================
 // 5. FUNCIONES DE NAVEGACIÓN
 // ============================================================================
@@ -317,6 +331,10 @@ const clickModalSrf = (value) => {
 const actualizarSrf = async () => {
   clickModalSrf(false)
   updateSrf.formato.trueComplemento = trueComplemento.value
+  updateSrf.modificado = 'ACTUALIZADO'
+  if(Number(actualizar.value)>0){
+    updateSrf.modificado = 'CORREGIDO'
+  }
   const resultService = await updateSrfUse(updateSrf)
   if (resultService) {
     location.reload()
@@ -327,10 +345,10 @@ const actualizarSrf = async () => {
 
 const generarPDF = async () => {
   await getSrfPdf({
-    srf:srf,
-    datos:datos,
+    srf: srf,
+    datos: datos,
     dominio: dominio,
-    idpName:idpName.value
+    idpName: idpName.value
   })
 }
 
@@ -360,6 +378,13 @@ const getLoadData = () => {
   datos.codigo = srf.codigo
 
   fechaSeleccionada.value = updateSrf.fechaFin
+
+  srf.lista.forEach(element => {
+    if(element.estado ==='DEVUELTO'){
+      actualizar.value = Number(actualizar.value) + 1
+    }
+  })
+
 }
 
 const getAction = () => {
@@ -368,7 +393,7 @@ const getAction = () => {
       visible: srf.editar ? true : false,
       label: 'Editar',
       icon: 'cil-pencil',
-      color: 'secondary',
+      color: 'warning',
       variant: 'ghost',
       disabled: false,
       onClick: editar
@@ -404,10 +429,9 @@ onMounted(async () => {
     await getSrfUsuarioUse(detalleProps.idSrf, persona.value.id)
     getLoadData()
   } finally {
-    close()
+    await close()
   }
   getAction()
-
 })
 
 onUnmounted(() => {
@@ -422,7 +446,7 @@ const vars = {
   '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',
   '--cui-accordion-active-bg': 'var(--cui-secondary-bg-subtle)',
   '--cui-accordion-active-color': 'var(--cui-body-color)',
-  '--cui-accordion-btn-focus-box-shadow': 'none', 
+  '--cui-accordion-btn-focus-box-shadow': 'none',
   '--cui-accordion-border-width': '10px',
   '--cui-accordion-border-style': 'solid',
   '--cui-accordion-border-color': 'var(--cui-secondary-border-subtle)',

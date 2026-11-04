@@ -69,6 +69,7 @@ export function dtoSrf() {
         seccionTres: "",
         estadoTres: false,
         detalleFormato: "",
+        montoFormato:0,
 
         //empleado
         nombre: "",
@@ -90,7 +91,10 @@ export function dtoSrf() {
         campoNumerico: "",
         tokenSrf: "",
 
-        autorizador: []
+        autorizador: [],
+
+        siguiente:'',
+        modificado:''
     }
     //====================================
     //=    FUNCIONES
@@ -145,6 +149,7 @@ export function dtoSrf() {
         revisarSrf.cantidadComplemento = data.cantidadComplemento
         revisarSrf.trueComplemento = data.trueComplemento
         revisarSrf.cantidadSolicitudes = data.cantidadSolicitudes
+        revisarSrf.montoFormato = data.montoFormato
 
         revisarSrf.seccionTres = data.seccionTres
         revisarSrf.estadoTres = data.estadoTres
@@ -170,6 +175,9 @@ export function dtoSrf() {
         revisarSrf.campoNumerico = data.campoNumerico
         revisarSrf.tokenSrf = data.tokenSrf
         revisarSrf.autorizador = data.autorizador
+
+        revisarSrf.siguiente = data.siguiente
+        revisarSrf.modificado = data.modificado
         return revisarSrf
     }
     return {

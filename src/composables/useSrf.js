@@ -210,7 +210,8 @@ export const useSrf = () => {
             "cuenta": null,
             "empleado": null,
             "aprobadores": null,
-            "formato": value.formato
+            "formato": value.formato,
+            "modificado":value.modificado,
         }
         const resultAlert = await confirm('Actualizar Solicitud', 'Esta seguro de actualizar el formulario', '')
         if (resultAlert.isConfirmed) {
