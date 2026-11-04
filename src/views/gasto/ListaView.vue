@@ -369,7 +369,7 @@ onMounted(async () => {
   try {
     await getCuentasUse('TODOS')
   } finally {
-    close()
+    await close()
   }
   getAction()
 

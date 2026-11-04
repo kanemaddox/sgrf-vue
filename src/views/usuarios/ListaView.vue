@@ -178,7 +178,7 @@ onMounted(async () => {
   try {
     await findAllResponseUse('TODOS')
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

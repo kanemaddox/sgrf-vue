@@ -150,7 +150,7 @@ onMounted(async () => {
   try {
     await findByTipoUse('JEFE')
   } finally {
-    close()
+    await close()
   }
   getAction()
 

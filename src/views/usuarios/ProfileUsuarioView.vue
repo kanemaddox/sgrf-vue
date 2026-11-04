@@ -333,7 +333,7 @@ onMounted(async () => {
       await getDatosUsuarioUse(usuario.idUsuario)
       getLoadData()
     } finally {
-      close()
+      await close()
     }
     getAction()
   }

@@ -457,7 +457,7 @@ onMounted(async () => {
   try {
     await getDatosEmpleadosUse()
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

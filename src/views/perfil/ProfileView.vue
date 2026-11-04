@@ -588,7 +588,7 @@ onMounted(async () => {
   try {
     await getPerfilUse(persona.value.id)
   } finally {
-    close()
+    await close()
   }
 })
 // ============================================================================

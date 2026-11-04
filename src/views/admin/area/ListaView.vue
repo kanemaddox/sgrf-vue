@@ -288,7 +288,7 @@ onMounted(async () => {
   try {
     await getEstructuraUse()
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

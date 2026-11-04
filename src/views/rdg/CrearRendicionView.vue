@@ -307,7 +307,7 @@ onMounted(async () => {
       getLoadData()
     }
   } finally {
-    close()
+    await close()
   }
 })
 

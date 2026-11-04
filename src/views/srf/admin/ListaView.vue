@@ -178,7 +178,7 @@ const cargarDatosPorGestion = async (anio) => {
   try {
     await getSrfUsuarioGestionUse(usuario.idUsuario, anio)
   } finally {
-    close()
+    await close()
   }
 }
 

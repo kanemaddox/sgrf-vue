@@ -108,7 +108,7 @@ onMounted(async () => {
   try {
     await getCuentasBancariasUse(persona.value.id)
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

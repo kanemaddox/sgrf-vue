@@ -270,7 +270,7 @@ onMounted(async () => {
     await findByRolUse('ADMIN')
     await findAllUserUse('TODOS')
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

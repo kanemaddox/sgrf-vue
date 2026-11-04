@@ -245,7 +245,7 @@ onMounted(async () => {
     await getSrfAdminUse(detalleProps.idUsuario, detalleProps.idSrf)
     getLoadData()
   } finally {
-    close()
+    await close()
   }
   getAction()
 })

@@ -125,20 +125,32 @@
     </CRow>
 </template>
 <script setup>
+
+// ============================================================================
+// 1. IMPORTACIONES
+// ============================================================================
 import { onMounted, ref ,onUnmounted} from 'vue';
 import { useSettings } from '@/composables/useSettings'
+import { useBreadcrumb } from '@/composables/useBreadcrumb'
+import { useRouter } from 'vue-router'
+import { useAlert } from '@/composables/useAlert'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { useBreadcrumb } from '@/composables/useBreadcrumb'
+// ============================================================================
+// 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
+// ============================================================================
+const { getSettingsLocalUse, config, updateSettingsUse } = useSettings()
 const { setActions, clearActions } = useBreadcrumb()
-import { useRouter } from 'vue-router'
+const { dataLoading, close } = useAlert()
 const router = useRouter()
 
-import { useAlert } from '@/composables/useAlert'
-const { dataLoading, close } = useAlert()
+// ============================================================================
+// 3. DATOS DEL USUARIO AUTENTICADO
+// ============================================================================
 
-const { getSettingsLocalUse, config, updateSettingsUse } = useSettings()
-
+// ============================================================================
+// 4. DECLARACIONES DE VARIABLES
+// ============================================================================
 const valores = ref({
     idp: '',
     correo: '',
@@ -150,8 +162,10 @@ const valores = ref({
     dominio: '',
     idioma: 'Spanish'
 })
+// ============================================================================
+// 5. FUNCIONES DE NAVEGACIÓN
+// ============================================================================
 
-/**Funciones */
 const salir = () => {
     getSalir()
 }
@@ -193,17 +207,24 @@ const getAction = () => {
         }
     ])
 }
+
+// ============================================================================
+// 6. CICLO DE VIDA DEL COMPONENTE
+// ============================================================================
 onMounted(async () => {
     dataLoading()
     try {
         await getSettingsLocalUse()
         getLoadData()
     } finally {
-        close()
+        await close()
     }
     getAction()
 })
 onUnmounted(() => {
     clearActions()
 })
+// ============================================================================
+// 7. CONFIGURACIÓN VISUAL
+// ============================================================================
 </script>
