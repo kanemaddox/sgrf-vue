@@ -343,6 +343,13 @@ const routes = [
             props: true,
           },
           {
+            path: 'editar/:idRdg', // hijo 2
+            name: 'EditarRDG',
+            meta: { title: 'Editar Rendicion de Fondos', },
+            component: () => import('@/views/rdg/EditarRendicionView.vue'),
+            props: true,
+          },
+          {
             path: 'solicitudes',
             name: 'Solicitudes',
             meta: { title: 'Formularios de Solicitud', },

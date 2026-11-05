@@ -40,7 +40,7 @@
             <CButton color="warning" class="font" v-if="currentStep < steps.length - 1" @click="nextStep">
               <i class="bi bi-arrow-bar-right"></i> Siguiente
             </CButton>
-            <CButton color="success" class="font" v-else @click="submitForm" :disabled="datos.crear">
+            <CButton color="success" class="text-white" v-else @click="submitForm">
               <i class="bi bi-check2-all me-2"></i> Crear
             </CButton>
             <CButton color="success" variant="outline" class="custom-hover-btn" @click="saveRdg"
@@ -75,8 +75,9 @@ import { useAuthStore } from '@/stores/authStores'
 import { useSettings } from '@/composables/useSettings'
 import { useRdg } from '@/composables/useRdg'
 import { useAlert } from '@/composables/useAlert'
-
+import { useFunction } from '@/composables/useFunction'
 import { useRouter } from 'vue-router'
+
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 import ComponenteRdg1 from '@/components/rdg/ComponenteRdg1.vue'
@@ -87,8 +88,9 @@ import ComponenteRdg3 from '@/components/rdg/ComponenteRdg3.vue'
 // 2. INICIALIZACIÓN DE STORES, COMPOSABLES Y ROUTER
 // ============================================================================
 const { getFormatoRdgUse, formatoRDG } = useSettings()
-const { createRdgUse, updateRdgUse, getRdgUsuarioUse, saveRdgUse, rdg } = useRdg()
-const { dataLoading, close, confirm } = useAlert()
+const { getRdgEstadoUse, estado, createRdgUse, updateRdgUse, getRdgUsuarioUse, saveRdgUse, rdg } = useRdg()
+const {formatearNumero} = useFunction()
+const { dataLoading, close, confirm, error } = useAlert()
 const steps = [ComponenteRdg1, ComponenteRdg2, ComponenteRdg3]
 const router = useRouter()
 const auth = useAuthStore()
@@ -107,6 +109,7 @@ const currentStepRef = ref(null);
 const STORAGE_KEY = 'rdgFormulario'
 let timeout
 const resultService = ref(false)
+const getComprobante = ref(null)
 const datos = reactive({
   idRdg: 0,
   idSrf: 0,
@@ -172,17 +175,22 @@ const prevStep = () => {
 }
 
 const submitForm = async () => {
-  if (Number(datos.idRdg) === 0) {
-    resultService.value = await createRdgUse(datos, persona.value.id)
+  if (datos.crear) {
+    await error('Fondos por Devolver','Los fondos por devolver son '+ formatearNumero(datos.devolver) +' '+ datos.moneda+'. Realize el deposito de devolucion y agregue el comprobante.','')
   } else {
-    resultService.value = await updateRdgUse(datos, persona.value.id)
+    if (Number(datos.idRdg) === 0) {
+      resultService.value = await createRdgUse(datos, persona.value.id)
+    } else {
+      resultService.value = await updateRdgUse(datos, persona.value.id)
+    }
+    if (resultService.value) {
+      localStorage.removeItem(STORAGE_KEY)
+      getLista()
+    } else {
+      location.reload()
+    }
   }
-  if (resultService.value) {
-    localStorage.removeItem(STORAGE_KEY)
-    getLista()
-  } else {
-    location.reload()
-  }
+
 }
 const saveRdg = async () => {
   resultService.value = await saveRdgUse(datos, persona.value.id)
@@ -291,20 +299,33 @@ const getLista = () => {
   })
 }
 
+const temporal = async () => {
+  const savedData = localStorage.getItem(STORAGE_KEY)
+  if (savedData) {
+    Object.assign(datos, JSON.parse(savedData))
+    valores.value = { ...datos.formato }
+  } else {
+    await getFormatoRdgUse()
+    await getRdgUsuarioUse(createRdg.idRdg, persona.value.id)
+    getLoadData()
+  }
+}
+
 // ============================================================================
 // 6. CICLO DE VIDA DEL COMPONENTE
 // ============================================================================
 onMounted(async () => {
   dataLoading()
   try {
-    const savedData = localStorage.getItem(STORAGE_KEY)
-    if (savedData) {
-      Object.assign(datos, JSON.parse(savedData))
-      valores.value = { ...datos.formato }
+    if (Number(createRdg.idRdg) === 0) {
+      await getRdgEstadoUse(persona.value.id)
+      if (Number(estado[0]) > 0) {
+        router.push({ name: 'Solicitudes' })
+      } else {
+        await temporal()
+      }
     } else {
-      await getFormatoRdgUse()
-      await getRdgUsuarioUse(createRdg.idRdg, persona.value.id)
-      getLoadData()
+      await temporal()
     }
   } finally {
     await close()

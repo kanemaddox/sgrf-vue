@@ -145,22 +145,39 @@
     </CCol>
   </CRow>
 
-  <CRow v-if="datos.devolver > 0" class="align-items-center mb-3">
-    <CAlert color="secondary">IV. FONDOS POR DEVOLVER </CAlert>
-    <CCol :xs="12" :sm="8" :md="8" :lg="8">
-      <div class="text-end">
-        Fondos por devolver a la oficina
+  <CRow v-if="datos.devolver > 0" class="align-items-stretch mb-4 g-3">
+    <hr>
+    <CCol :xs="12" :sm="6" :md="6" :lg="6">
+      <CAlert color="light" class="d-flex align-items-center mb-0 shadow-sm">
+        <i class="bi bi-arrow-clockwise me-2 fs-5"> IV. FONDOS POR DEVOLVER</i>
+              
         <CChip variant="outline" color="danger">
           <label class="total">{{ formatearNumero(datos.devolver) }}</label> {{ datos.moneda }}
         </CChip>
-      </div>
+      </CAlert>
     </CCol>
-    <CCol :xs="12" :sm="4" :md="4" :lg="4">
-      <CButton v-if="!comprobante" color="danger" variant="ghost" class="custom-hover-btn" size="sm"
+
+    <CCol v-if="!comprobante" :xs="12" :sm="6" :md="6" :lg="6"  class="text-end">
+      <CButton  color="danger" class="w-100 d-flex align-items-center justify-content-between rounded-3 shadow-sm"
         @click="getComprobante">
-        <i class="bi bi-cloud-plus me-2"></i> Agregar Comprobante
+        <div class="d-flex align-items-center justify-content-center rounded-3 bg-white text-danger me-3"
+          style="width: 48px; height: 48px; flex-shrink: 0;">
+          <i class="bi bi-cloud-arrow-up-fill fs-3"></i>
+        </div>
+
+        <!-- Texto -->
+        <div class="text-start flex-grow-1">
+          <div class="fw-bold fs-6 text-white">
+            Subir Comprobante
+          </div>
+          <div class="small opacity-75 text-white">
+            Seleccionar archivo
+          </div>
+        </div>
+        <i class="bi bi-arrow-right-circle fs-5 ms-2 text-white"></i>
       </CButton>
     </CCol>
+
     <CCol :xs="12" :sm="12" :md="12" :lg="12">
       <br>
       <CTable small hover responsive>
@@ -197,8 +214,7 @@
             </CTableDataCell>
             <CTableDataCell>
               <CButtonGroup role="group" size="sm">
-                <CButton color="danger" class="font" @click="eliminarFile(value.idDeposito)"
-                  v-c-tooltip="{ content: 'Eliminar Documento', placement: 'top' }">
+                <CButton color="danger" class="text-white" @click="eliminarFile(value.idDeposito)">
                   <i class="bi bi-trash3"></i>
                 </CButton>
               </CButtonGroup>
@@ -213,10 +229,8 @@
   <CModal :visible="modalDocumento" :size="preview" backdrop="static" @close="clickModalDocumento(false)">
     <CForm @submit.prevent="formDocumento">
       <CModalHeader class="headercolor" dismiss @close="clickModalDocumento(false)">
-        <CModalTitle>
-          <h6>
-            <CIcon :icon="icono" size="lg" class="me-2" />{{ titulo }}
-          </h6>
+        <CModalTitle class="d-flex align-items-center">
+          <CIcon :icon="icono" size="lg" class="me-2" />{{ titulo }}
         </CModalTitle>
       </CModalHeader>
       <CModalBody>
@@ -293,7 +307,6 @@
             <hr>
 
             <!--Tipo de Importe-->
-            <input type="hidden" v-maska="maskOptions" v-model="gasto.importe">
             <CInputGroup v-if="comprobante" size="sm" class="mb-3">
               <CInputGroupText as="label" class="headercolor">
                 <i class="bi bi-cash-coin me-2"></i>Importe :
@@ -313,16 +326,21 @@
                 <option value="EUR">Euros</option>
               </CFormSelect>
             </CInputGroup>
+
+            <label class="label-text small text-body-secondary">
+              {{ gasto.documento }} por <input type="text" class="input-invisible" v-maska="maskOptions"
+                v-model="gasto.importe" disabled>
+            </label>
             <!--Tipo de Documento-->
           </CCol>
         </CRow>
       </CModalBody>
       <CModalFooter>
-        <CButton @click="clickModalDocumento(false)" color="danger" class="font" size="sm">
+        <CButton @click="clickModalDocumento(false)" color="danger" class="text-white" size="sm">
           <CIcon icon="cil-x" class="me-2" />Cancelar
         </CButton>
 
-        <CButton type="submit" class="font" :color="colorboton" size="sm">
+        <CButton type="submit" class="text-white" :color="colorboton" size="sm">
           <CIcon :icon="icono" class="me-2" />
           <span>{{ boton }}</span>
         </CButton>
@@ -365,8 +383,11 @@
 
         <!-- PREVIEW -->
         <div class="md-3 text-center" v-if="nuevafoto">
-          <img v-if="!pdf" :src="nuevafoto" class="img-fluid rounded shadow-sm" />
-          <VuePdfEmbed v-if="pdf" :source="nuevafoto" :scale="escala" />
+          <img v-if="!pdf" :src="nuevafoto" class="img-fluid rounded shadow-sm"
+            style="max-height: 300px; object-fit: cover;" alt="Vista previa" />
+          <div v-if="pdf" class="pdf-preview-container">
+            <VuePdfEmbed :source="nuevafoto" :scale="escala" />
+          </div>
         </div>
 
         <!-- Barra de Progreso de Carga -->
@@ -843,7 +864,14 @@ watch(
 // 7. CONFIGURACIÓN VISUAL
 // ============================================================================
 
-
-
-
 </script>
+
+<style scoped>
+.pdf-preview-container {
+  height: 300px;
+  overflow-y: auto;
+  /* Añade scroll vertical si el PDF es más grande */
+  border: 1px solid #ccc;
+  /* Opcional: para delimitar la vista previa */
+}
+</style>
